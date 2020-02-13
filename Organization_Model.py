@@ -11,12 +11,16 @@ Model Assumptions Assumptions:
 3. Individuals change their mind through speaker-listener interactions 
 4. When an individual engages in an interaction as a listener, they only move one position in the direction of the 
    speaker.
+5. Every individual within the organization has complete knowledge of the organization state -- that is, what everybody 
+   thinks at any given point in time. This is perhaps the most unrealistic assumption, since  
+
+PREFERENCE FALSIFICATION!!!! 
 
 Model Functionality:  
 
  1. We have the following general rules: 
  A,A' |  B  |  AB
- A,A' |  AB |  B
+ A,A' |  AB |  A
  B    |  A  |  AB
  B    |  AB |  B
 
@@ -39,7 +43,7 @@ Model Functionality:
 
 4. We have a global scaling of probabilities with which A --> A' and B --> B' that is based on the % of the 
    organization that is either A or B. The idea here is that the more homogenous the organization, the less 
-   of a social cost there is for being a zealt; in fact, one may even be able to accrue social capital by 
+   of a social cost there is for being a zealot; in fact, one may even be able to accrue social capital by 
    becoming a zealot. 
     1. Bias = <B_1, B_2, .... ,B_n> <==> Probs = <P_1, P_2, ... ,P_n>
     2. This type of switch will only occur when the speaker is a zealot and the listener is a non-zealot with 
@@ -57,19 +61,49 @@ HP_CONFIG = {"B":.2, "B'":.2,"AB":.2,"A":.2,"A'":.2} #fractional representation 
 
 class Individual: 
     def __init__(self):
-        Worldview = 'A' #ideology of the individual 
+        Worldview = "A" #ideology of the individual 
         Zealot = False #boolean indicating if the the individual is a zealot or not 
         Leader = False #boolean indicating if the individual is a leader in the organization (may have multiple
                  #leaders) and thus has hiring power  
         TOPP = .5 #percentage of org of opp ideology at which individual resigns 
         THOM - .5 #percentage of org that is same ideology at which individual resigns 
-        
-    def speak(self, speaker): 
-        pass 
+        is_listener = False 
 
-    def listen(self, speaker): 
-        pass 
-    
+    def listen(self, speaker):
+        '''
+        Consider what happens when an individual is the listener in an interaction. We have various scenarios. 
+        Each of these scenarios must be hardcoded:
+            1. If speaker is A and listener is B, then the listener is converted to AB 
+            2. If speaker is A' and listener is B, then the listener is subject to preference falsification, 
+               meaning that they may lie about being a B. That is, they will pretend to be closer to worldview A. 
+               We assume that this means that B is acting as an AB, and will therefore be converted to an A. 
+            3. If speaker is B' and listener is A, then then, similarly, the listener will lie about being a true 
+               A and will pretend to be an AB in the interaction. They will subsequently be converted to a B.
+            4. If speaker is A' and listener is A, then the listener will change to A' if the global state of the 
+               organization is such that a particular 
+
+            depending on how homogenous in A the organization is, A will turn to A'. It shouldn't 
+            be advantageous to switch until the organization is very homogenous in A. There is also
+            a question about when it becomes socially |unacceptable| to not be a zealot. There is 
+            some interesting dynamics between people leaving because the organization is too 
+            homogenous and other people staying because there is social benefit to becoming
+            a zealot, or, if the organization is extremely homogenouse, social cost to not becoming one
+        '''
+        if (speaker.Worldview == "A" and lister.Worldview == "B") or (speaker.Worldview == "B" and lister.Worldview == "A"): 
+            listener.Worldview = "AB" 
+        elif (speaker.Worldview == "A'" and listener.Worldview == "B") or ((speaker.Worldview == "A" or speaker.Worldview == "A'") \
+                and listener.Worldview == "AB"):
+            #preference falsification accounted for 
+            listener.Worldview = "A"
+        elif (speaker.Worldview == "B'" and listener.Worldview == "A") or ((speaker.Worldview == "B" or speaker.Worldview == "B'") \
+                and listener.Worldview == "AB"):
+            #preference falsification accounted for 
+            listener.Woldview = "B" 
+        elif speaker.Worldview == "A'" and listener.Worldview == "A": 
+            pass 
+        elif speaker.Worldview == "B'" and listener.Worldview == "B": 
+            pass 
+
     #think about what other functionality I might want to give individuals 
 
 class Organization: 
@@ -78,8 +112,12 @@ class Organization:
         Config = ORG_CONFIG 
         Mode = ORG_MODE 
         F = TURNOVER_RATE 
+    
+    def initialize(self): 
 
-    def interact(self, individual_1, individual_2): 
+
+    def interact(self, individual_1, individual_2):
+        #this function should randomly select two individuals to interact 
         pass 
 
     def hire(self, leader): 
