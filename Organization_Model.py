@@ -31,7 +31,7 @@ Model Functionality:
     2. THOM --> this is the percentage of the organization that is of the same ideology of the individual at which
                 the individual resigns. THOM is a measure of an individual's absolute tolerance for ideological 
                 homogeneity 
-    Normally, THOM >= TOPP. We make this reasonable simplifying assumption 
+    Notice that THOM = 1 - TOPP. We make this reasonable simplifying assumption 
 
 3. Any organization will have a natural steady turn over rate. We assume that individuals won't be fired for 
   ideological reasons unless the leader is a zealot. In the normal case, once an individual leaves the organization
@@ -173,6 +173,17 @@ class Organization:
 TO DO: 
     1. Think more carefully about methods of Individual and Organization. The ones included now are preliminary.
     2. Code the actual behavior of the model --> how does the model evolve? EPOCHs? 
+
+
+Here's an interesting problem. It makes sense that for an individual, they are much less likely to quit if
+they are in a community in which they are not the ideological majority than if they are in the ideological
+minority. That is, that they are able to tolerate homogeneity more than opposition. So, it makes sense that
+THOM >= TOPP. At the same time, however, if THOM = .05 for individual X, then that means if 5% of the 
+community has the same worldview as X, then X will resign. This also means, however, by definition, that 
+if TOPP = .95. That is, if 95% of the community has the opposite worldview of X, then X will resign. So, 
+THOM(X) = .05 --> THOM(X) = .95 --> if X resigns, then (A + A')/N >= .95 or (B + B')/N >= .95, where 
+N = Org_Size. Note that this can only happy during extreme polarization. The moderates, therefore, 
+act as a cohesive binding that keeps the community from fraying at the edges. 
 ''' 
 
 
