@@ -49,12 +49,22 @@ Model Functionality:
     2. This type of switch will only occur when the speaker is a zealot and the listener is a non-zealot with 
        the same worldview 
 
+    The function mapping degree of homogeneity to probability of switching from non-zealot to zealot will
+    be the same for both cases, A --> A' and B --> B'. How should this mapping behave be structured. First, 
+    it seems reasonable that there would be a long leading tail. It will only become advantageous, either 
+    to accrue social capital or to avoid social destruction, to become a zealot if the organization is highly
+    homogenous with respect to your worldview (>80%?). 
+
+    People with high thresholds for homogeneity will likely end up as zealots if the organization tends 
+    towards homogeneity in their worldview. 
+
+    We have buckets <5, 10, 15, 20, 25, 30, 35, 40, 45, 50 ... >. These are associated with the following
+    probabilities. 
+
 ''' 
-#Globals --> these should all be inputs 
-ORG_SIZE = 1000 #number of individuals in organization 
-ORG_CONFIG = {"B":.2, "B'":.2,"AB":.2,"A":.2,"A'":.2} #fractional representation of individual types in organization
-ORG_MODE = "D" 
-TURNOVER_RATE = .01 #natural turnover rate in the organization per epoch 
+import math 
+import numpy as np
+import random 
 
 HP_SIZE = 1000 #number of individuals in hiring pool 
 HP_CONFIG = {"B":.2, "B'":.2,"AB":.2,"A":.2,"A'":.2} #fractional representation of individual types in HP
@@ -67,7 +77,7 @@ class Individual:
                  #leaders) and thus has hiring power  
         TOPP = .5 #percentage of org of opp ideology at which individual resigns 
         THOM - .5 #percentage of org that is same ideology at which individual resigns 
-        is_listener = False 
+        is_listeneer = False 
 
     def listen(self, speaker):
         '''
@@ -89,38 +99,70 @@ class Individual:
             homogenous and other people staying because there is social benefit to becoming
             a zealot, or, if the organization is extremely homogenouse, social cost to not becoming one
         '''
-        if (speaker.Worldview == "A" and lister.Worldview == "B") or (speaker.Worldview == "B" and lister.Worldview == "A"): 
-            listener.Worldview = "AB" 
-        elif (speaker.Worldview == "A'" and listener.Worldview == "B") or ((speaker.Worldview == "A" or speaker.Worldview == "A'") \
-                and listener.Worldview == "AB"):
+        if (speaker.Worldview == "A" and self.Worldview == "B") or (speaker.Worldview == "B" and self.Worldview == "A"): 
+            self.Worldview = "AB" 
+        elif (speaker.Worldview == "A'" and self.Worldview == "B") or ((speaker.Worldview == "A" or speaker.Worldview == "A'") \
+                and self.Worldview == "AB"):
             #preference falsification accounted for 
-            listener.Worldview = "A"
-        elif (speaker.Worldview == "B'" and listener.Worldview == "A") or ((speaker.Worldview == "B" or speaker.Worldview == "B'") \
-                and listener.Worldview == "AB"):
+            self.Worldview = "A"
+        elif (speaker.Worldview == "B'" and self.Worldview == "A") or ((speaker.Worldview == "B" or speaker.Worldview == "B'") \
+                and self.Worldview == "AB"):
             #preference falsification accounted for 
-            listener.Woldview = "B" 
-        elif speaker.Worldview == "A'" and listener.Worldview == "A": 
+            self.Woldview = "B" 
+        elif speaker.Worldview == "A'" and self.Worldview == "A": 
             pass 
-        elif speaker.Worldview == "B'" and listener.Worldview == "B": 
+        elif speaker.Worldview == "B'" and self.Worldview == "B": 
+            pass
+        else: 
             pass 
 
     #think about what other functionality I might want to give individuals 
 
 class Organization: 
     def __init__(self): 
-        Size = ORG_SIZE 
-        Config = ORG_CONFIG 
-        Mode = ORG_MODE 
-        F = TURNOVER_RATE 
+        Org_size = 1000 
+        Worldviews = ["A", "A'", "AB", "B", "B'"]
+        Config =  [.2, .2, .2, .2, .2} ]#fractional representation of individual types
+        Mode = "D"  
+        Turnover_rate = .01
+        Workforce = [] 
+        Leader = None 
+       
+    def populate(self):
+        #Here, we want to populate the organization with individuals
+        leader = random.randint(0, Org_size) 
+
+        for i in range(Org_size): 
+            self.Workforce.append(Individual())
+            #draw TOPP and THOM from random distribution, but set THOM at least as high as TOPP 
+            self.Workforce[i].TOPP = np.random.uniform(0,1)
+            self.Workforce[i].THOM = np.random.uniform(self.Workforce[i].TOPP,1)
+
+            #set individual's worldview based on organization config 
+            self.Workforce[i].Worldview = np.random.choice(self.Worldviews, 1, p = self.Config)
+            
+            #if A' or B' then set as zealot 
+            if self.Workforce[i].Worldview == "A'" or self.Workforce[i].Worldview == "B'": 
+                self.Workforce[i].Zealot = True
+
+            #set leader if the right individual
+            if i == leader: 
+                self.Workforce[i].Leader = True
+                self.Leader = self.Workforce[i]
+        pass 
     
-    def initialize(self): 
-
-
-    def interact(self, individual_1, individual_2):
-        #this function should randomly select two individuals to interact 
+    def interact(self):
+        #randomnly select two individuals from the workforce 
+        listener = self.Workforce[random.randint(0, Org_size)]
+        speaker = self.Workforce[random.randint(0, Org_size)] 
+        
+        #interaction takes place 
+        listener.listen(speaker)
         pass 
 
-    def hire(self, leader): 
+    def hire(self, leader):
+        #if in default mode 
+
         pass 
 
     def fire(self): 
