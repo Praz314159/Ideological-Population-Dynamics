@@ -72,13 +72,18 @@ HP_CONFIG = {"B":.2, "B'":.2,"AB":.2,"A":.2,"A'":.2} #fractional representation 
 
 class Individual: 
     def __init__(self):
+        #Personal Parameters
         Worldview = "A" #ideology of the individual 
         Zealot = False #boolean indicating if the the individual is a zealot or not 
         Leader = False #boolean indicating if the individual is a leader in the organization (may have multiple
                  #leaders) and thus has hiring power  
         TOPP = .5 #percentage of org of opp ideology at which individual resigns 
         THOM - .5 #percentage of org that is same ideology at which individual resigns 
-        is_listeneer = False 
+        
+        #Org parameters 
+        Organization = None #organization that individual belongs to  
+        Org_pos = 0 #index in organization workforce list 
+        
 
     def listen(self, speaker):
         '''
@@ -120,11 +125,13 @@ class Individual:
     #think about what other functionality I might want to give individuals 
 
 class Organization: 
-    def __init__(self): 
+    def __init__(self):
+        #Fixed parameters 
         Org_size = 1000 
         Worldviews = ["A", "A'", "AB", "B", "B'"]
-        Config =  [.2, .2, .2, .2, .2} ]#initial fractional representation of each worldview
-        
+        Config =  [.2, .2, .2, .2, .2] #initial fractional rep in org
+        H_config = [.2, .2, .2, .2, .2] #fractional rep in hiring pool 
+
         #n_* is the current fractional representation of each worldview
         n_A = 0
         n_A2 = 0
@@ -139,6 +146,7 @@ class Organization:
         N_B = 0
         N_B2 = 0
         
+        #Behavioral parameters 
         Mode = "D"  
         Turnover_rate = .01
         Workforce = []
@@ -147,10 +155,12 @@ class Organization:
        
     def populate(self):
         #Here, we want to populate the organization with individuals
-        leader = random.randint(0, Org_size) 
+        #leader = random.randint(0, Org_size-1) 
 
         for i in range(Org_size): 
             self.Workforce.append(Individual())
+            self.Workforce[i].Org_pos = i 
+
             #draw TOPP and THOM from random distribution, but set THOM at least as high as TOPP 
             self.Workforce[i].TOPP = np.random.uniform(0,1)
             self.Workforce[i].THOM = np.random.uniform(self.Workforce[i].TOPP,1)
@@ -158,8 +168,8 @@ class Organization:
             #set individual's worldview based on organization config 
             self.Workforce[i].Worldview = np.random.choice(self.Worldviews, 1, p = self.Config)
             
-            #set leader if the right individual
-            if i == leader: 
+            #set leader first individual in list as 0
+            if i == 0: 
                 self.Workforce[i].Leader = True
                 self.Leader = self.Workforce[i]
             
@@ -224,8 +234,8 @@ class Organization:
 
     def interact(self):
         #randomnly select two individuals from the workforce 
-        listener = self.Workforce[random.randint(0, Org_size)]
-        speaker = self.Workforce[random.randint(0, Org_size)] 
+        listener = self.Workforce[random.randint(1, Org_size-1)]
+        speaker = self.Workforce[random.randint(1, Org_size-1)] 
         
         #decrement global state w/ respect to pre-interaction 
         #listener worldview 
@@ -237,11 +247,36 @@ class Organization:
         #increment global state w/ respect to post-interaction
         #listener worldview 
         self.update_config(listener, "increment")
-
         pass 
 
-    def hire(self, leader):
-        #if in default mode 
+    def fire_hire(self, leader):
+        #depends on mode of hiring (D, SR, ASR) and, therefore, also
+        #on the worldveiw of the leader. We have two major assumptions: 
+        #1. leader can't distinguish between zealots and non-zealots. This 
+        #means that if in SR mode, the leader is as likely to hire a 
+        #non-zealot and zealot of the same worldview. 
+        #2. hiring pool is pre-filtered for competence 
+        #3. hiring only takes place when someone has been fired 
+        
+        #firing
+        empty_pos = random.randint(1, Org_size-1) 
+        new_fire = self.Workforce[empty_pos]
+        self.update_config(new_fire, "decrement") 
+
+        #hiring 
+        if self.Mode == "D":
+            hired_worldview = np.random.choice(self.Worldviews, 1, p = self.H_config)
+            new_hire = Individual()
+            new_hire.Worldview = hired_worldview 
+            self.update_config(new_hire, "increment") 
+            self.Workforce[empty_pos] = new_hire
+            new_hire.Org_pos = empty_pos
+            pass
+        elif self.Mode == "SR":
+            pass
+        elif self.Mode == "ASR": 
+            pass 
+
 
         pass 
 
@@ -291,6 +326,14 @@ N = Org_Size. Note that this can only happy during extreme polarization. The mod
 act as a cohesive binding that keeps the community from fraying at the edges.
 
 Now, there is the question of what distribtuio
+
+SR Mode: 
+
+
+what does being in self_replication mode mean? It means that the leader is much more likely to hire someone 
+who thinks like him. But, how much more likely? Certainly, 
+they will never hire a zealot with the opposite worldview because they would be more outspoken, so the 
+interaction would spoil. Might hire AB or non-zealot opp. 
 ''' 
 
 
