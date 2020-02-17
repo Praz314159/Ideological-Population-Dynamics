@@ -65,6 +65,7 @@ Model Functionality:
 import math 
 import numpy as np
 import random 
+import argparse 
 
 HP_SIZE = 1000 #number of individuals in hiring pool 
 HP_CONFIG = {"B":.2, "B'":.2,"AB":.2,"A":.2,"A'":.2} #fractional representation of individual types in HP
@@ -122,10 +123,26 @@ class Organization:
     def __init__(self): 
         Org_size = 1000 
         Worldviews = ["A", "A'", "AB", "B", "B'"]
-        Config =  [.2, .2, .2, .2, .2} ]#fractional representation of individual types
+        Config =  [.2, .2, .2, .2, .2} ]#initial fractional representation of each worldview
+        
+        #n_* is the current fractional representation of each worldview
+        n_A = 0
+        n_A2 = 0
+        n_AB = 0
+        n_B = 0
+        n_B2 = 0 
+
+        #N_* is the absolute number of individuals with each worldview 
+        N_A = 0
+        N_A2 = 0
+        N_AB = 0
+        N_B = 0
+        N_B2 = 0
+        
         Mode = "D"  
         Turnover_rate = .01
-        Workforce = [] 
+        Workforce = []
+        Num_interact = 0
         Leader = None 
        
     def populate(self):
@@ -141,23 +158,86 @@ class Organization:
             #set individual's worldview based on organization config 
             self.Workforce[i].Worldview = np.random.choice(self.Worldviews, 1, p = self.Config)
             
-            #if A' or B' then set as zealot 
-            if self.Workforce[i].Worldview == "A'" or self.Workforce[i].Worldview == "B'": 
-                self.Workforce[i].Zealot = True
-
             #set leader if the right individual
             if i == leader: 
                 self.Workforce[i].Leader = True
                 self.Leader = self.Workforce[i]
-        pass 
+            
+            if self.Workforce[i].Worldview == "B'" or self.Workforce[i].Worldview == "A'": 
+                self.Workforce[i].Zealot = True 
+
+            #updating global org config to true values  
+            self.update_config(self.Workforce[i], "increment") 
+
+       pass 
     
+    def update_config(self, individual, change): 
+        #function is meant to update the organizations n_* and N_* 
+        #when changes are made (increment, decrement)
+
+        if change == "increment":
+            if individual.Worldview == "A":
+                N_A += 1 
+                n_A = Org_size/n_A
+                pass 
+            elif individual.Worldview == "A'": 
+                N_A2 += 1 
+                n_A2 = Org_size/n_A2
+                pass 
+            elif individual.Worldview == "AB":
+                N_AB += 1 
+                n_AB = Org_size/n_AB
+                pass 
+            elif individual.Worldview == "B": 
+                N_B += 1 
+                n_B = Org_size/n_B
+                pass 
+            elif individual.Worldview == "B'": 
+                N_B2 += 1 
+                n_B2 = Org_size/n_B2
+                pass 
+
+        elif change == "decrement":
+            if individual.Worldview == "A":
+                N_A -= 1 
+                n_A = Org_size/n_A
+                pass 
+            elif individual.Worldview == "A'": 
+                N_A2 -= 1 
+                n_A2 = Org_size/n_A2
+                pass 
+            elif individual.Worldview == "AB":
+                N_AB -= 1 
+                n_AB = Org_size/n_AB
+                pass 
+            elif individual.Worldview == "B": 
+                N_B -= 1 
+                n_B = Org_size/n_B
+                pass 
+            elif individual.Worldview == "B'": 
+                N_B2 -= 1 
+                n_B2 = Org_size/n_B2
+                pass
+            pass 
+
+        pass 
+
     def interact(self):
         #randomnly select two individuals from the workforce 
         listener = self.Workforce[random.randint(0, Org_size)]
         speaker = self.Workforce[random.randint(0, Org_size)] 
         
+        #decrement global state w/ respect to pre-interaction 
+        #listener worldview 
+        self.update_config(listener, "decrement")
+
         #interaction takes place 
         listener.listen(speaker)
+
+        #increment global state w/ respect to post-interaction
+        #listener worldview 
+        self.update_config(listener, "increment")
+
         pass 
 
     def hire(self, leader):
@@ -169,13 +249,38 @@ class Organization:
         pass 
 
 
+
+def main(): 
+    #The purpose here is be able to run simulations from the command line 
+    #Eventually, we should be able to automate many simulations with 
+    #various parameters to explore how the system depends on them. 
+    #For now, though, we just create a command line tool in order to 
+    #run sims easily and check how things are working ... 
+    
+
+    parser = argparse.ArgumentParser() #creating argument parser
+    
+
+
+if __name__ == "__main__": 
+    main() 
+
+
 '''
 TO DO: 
     1. Think more carefully about methods of Individual and Organization. The ones included now are preliminary.
     2. Code the actual behavior of the model --> how does the model evolve? EPOCHs? 
 
+Parameters at disposal of simulation runner:  
+    1. List of fractional representations fore each of the worldviews 
+    2. Distribution of TOPP in the org
+    3. Distribution of THOM in the org 
+    4.  
 
-Here's an interesting problem. It makes sense that for an individual, they are much less likely to quit if
+
+TOPP vs THOM: 
+
+It makes sense that for an individual, they are much less likely to quit if
 they are in a community in which they are not the ideological majority than if they are in the ideological
 minority. That is, that they are able to tolerate homogeneity more than opposition. So, it makes sense that
 THOM >= TOPP. At the same time, however, if THOM = .05 for individual X, then that means if 5% of the 
@@ -183,7 +288,9 @@ community has the same worldview as X, then X will resign. This also means, howe
 if TOPP = .95. That is, if 95% of the community has the opposite worldview of X, then X will resign. So, 
 THOM(X) = .05 --> THOM(X) = .95 --> if X resigns, then (A + A')/N >= .95 or (B + B')/N >= .95, where 
 N = Org_Size. Note that this can only happy during extreme polarization. The moderates, therefore, 
-act as a cohesive binding that keeps the community from fraying at the edges. 
+act as a cohesive binding that keeps the community from fraying at the edges.
+
+Now, there is the question of what distribtuio
 ''' 
 
 
