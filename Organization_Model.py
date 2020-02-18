@@ -127,11 +127,18 @@ class Individual:
 class Organization: 
     def __init__(self):
         #Fixed parameters 
-        Org_size = 1000 
-        Worldviews = ["A", "A'", "AB", "B", "B'"]
-        Config =  [.2, .2, .2, .2, .2] #initial fractional rep in org
-        H_config = [.2, .2, .2, .2, .2] #fractional rep in hiring pool 
-
+        Org_size = 1000
+        Worldviews = ["A", "AB", "B"]
+        Config =  [.33, .33, .33] #initial fractional rep in org
+        A_config = .5 
+        B_config = .5
+        
+        #Fixed HP parameters
+        H_config = [.33, .33, .33] #fractional rep in hiring pool 
+        HP_size = 5000 
+        A_HPconfig = .5 
+        B_HPconfig = .5 
+        
         #n_* is the current fractional representation of each worldview
         n_A = 0
         n_A2 = 0
@@ -150,12 +157,11 @@ class Organization:
         Mode = "D"  
         Turnover_rate = .01
         Workforce = []
-        Num_interact = 0
+        Num_interactions = 0
         Leader = None 
        
-    def populate(self):
-        #Here, we want to populate the organization with individuals
-        #leader = random.randint(0, Org_size-1) 
+    def populate_org(self):
+        #Here, we want to populate the organization with individuals 
 
         for i in range(Org_size): 
             self.Workforce.append(Individual())
@@ -173,13 +179,38 @@ class Organization:
                 self.Workforce[i].Leader = True
                 self.Leader = self.Workforce[i]
             
-            if self.Workforce[i].Worldview == "B'" or self.Workforce[i].Worldview == "A'": 
-                self.Workforce[i].Zealot = True 
+            #creating zealots 
+            if self.Workforce[i].Worldview == "B":
+                if random.random() < B_config: 
+                    self.Workforce[i].Zealot = True 
+            elif self.Workforce[i].Worldview == "A": 
+                if random.random() < A_config: 
+                    self.Workforce[i].Zealot = True 
 
             #updating global org config to true values  
             self.update_config(self.Workforce[i], "increment") 
-
        pass 
+        
+    def populate_HP(self):
+        #Here, we want to populate the organization with individuals 
+        for i in range(HP_size): 
+            self.HP.append(Individual())
+            self.HP[i].Org_pos = i 
+
+            #draw TOPP and THOM from random distribution, but set THOM at least as high as TOPP 
+            self.HP[i].TOPP = np.random.uniform(0,1)
+            self.HP[i].THOM = np.random.uniform(self.HP[i].TOPP,1)
+
+            #set individual's worldview based on organization config 
+            self.HP[i].Worldview = np.random.choice(self.Worldviews, 1, p = self.H_config)
+            
+            #creating zealots 
+            if self.HP[i].Worldview == "B":
+                if random.random() < B_HPconfig: 
+                    self.HP[i].Zealot = True 
+            elif self.HP[i].Worldview == "A": 
+                if random.random() < A_HPconfig: 
+                    self.HP[i].Zealot = True 
     
     def update_config(self, individual, change): 
         #function is meant to update the organizations n_* and N_* 
@@ -187,50 +218,41 @@ class Organization:
 
         if change == "increment":
             if individual.Worldview == "A":
-                N_A += 1 
-                n_A = Org_size/n_A
-                pass 
-            elif individual.Worldview == "A'": 
-                N_A2 += 1 
-                n_A2 = Org_size/n_A2
-                pass 
+                if individual.Zealot == True:
+                    self.N_A2 += 1
+                    self.n_A2 = self.n_A2/self.Org_size 
+                else:
+                    self.N_A += 1 
+                    self.n_A = self.n_A/self.Org_size
             elif individual.Worldview == "AB":
-                N_AB += 1 
-                n_AB = Org_size/n_AB
-                pass 
-            elif individual.Worldview == "B": 
-                N_B += 1 
-                n_B = Org_size/n_B
-                pass 
-            elif individual.Worldview == "B'": 
-                N_B2 += 1 
-                n_B2 = Org_size/n_B2
-                pass 
+                self.N_AB += 1 
+                self.n_AB = self.n_AB/self.Org_size
+            elif individual.Worldview == "B":
+                if individual.Zealot == True: 
+                    self.N_B2 += 1
+                    self.n_B2 = self.n_B2/self.Org_size
+                else:
+                    self.N_B += 1 
+                    self.n_B = self.n_B/self.Org_size 
 
         elif change == "decrement":
-            if individual.Worldview == "A":
-                N_A -= 1 
-                n_A = Org_size/n_A
-                pass 
-            elif individual.Worldview == "A'": 
-                N_A2 -= 1 
-                n_A2 = Org_size/n_A2
-                pass 
+             if individual.Worldview == "A":
+                if individual.Zealot == True:
+                    self.N_A2 -= 1
+                    self.n_A2 = self.n_A2/self.Org_size 
+                else:
+                    self.N_A -= 1 
+                    self.n_A = self.n_A/self.Org_size
             elif individual.Worldview == "AB":
-                N_AB -= 1 
-                n_AB = Org_size/n_AB
-                pass 
-            elif individual.Worldview == "B": 
-                N_B -= 1 
-                n_B = Org_size/n_B
-                pass 
-            elif individual.Worldview == "B'": 
-                N_B2 -= 1 
-                n_B2 = Org_size/n_B2
-                pass
-            pass 
-
-        pass 
+                self.N_AB -= 1 
+                self.n_AB = self.n_AB/self.Org_size
+            elif individual.Worldview == "B":
+                if individual.Zealot == True: 
+                    self.N_B2 -= 1
+                    self.n_B2 = self.n_B2/self.Org_size
+                else:
+                    self.N_B -= 1 
+                    self.n_B = self.n_B/self.Org_size 
 
     def interact(self):
         #randomnly select two individuals from the workforce 
@@ -247,8 +269,18 @@ class Organization:
         #increment global state w/ respect to post-interaction
         #listener worldview 
         self.update_config(listener, "increment")
-        pass 
+        self.Num_interactions += 1 
+    
+    
+    def evaluate_polarization(self):
+        pass
 
+    def hire_with_probability(self, new_hire, position, probability):
+        if random.random() < probability: 
+            self.update_config(new_hire, "increment")
+            self.Workforce[position ] = new_hire 
+            new_hire.Org_pos = position 
+    
     def fire_hire(self, leader):
         #depends on mode of hiring (D, SR, ASR) and, therefore, also
         #on the worldveiw of the leader. We have two major assumptions: 
@@ -263,26 +295,61 @@ class Organization:
         new_fire = self.Workforce[empty_pos]
         self.update_config(new_fire, "decrement") 
 
-        #hiring 
+        #Default hiring mode: selecting for pre-existing bias in hiring pool 
         if self.Mode == "D":
-            hired_worldview = np.random.choice(self.Worldviews, 1, p = self.H_config)
-            new_hire = Individual()
-            new_hire.Worldview = hired_worldview 
+            new_hire = HP[random.randint(0, HP_size-1)] 
             self.update_config(new_hire, "increment") 
             self.Workforce[empty_pos] = new_hire
             new_hire.Org_pos = empty_pos
-            pass
+        #Self Replication hiring mode: selects for bias of the leader 
         elif self.Mode == "SR":
-            pass
+            for interview in range(10): 
+                candidate = self.HP[random.randint(0, HP_size-1)]
+                # [.75, .3, (.05, .1)]
+                if self.leader.Worldview == "A":
+                    if candidate.Worldview == "A":
+                        self.hire_with_probability(candidate, empty_pos, .75)
+                        break 
+                    if candidate.Worldview == "B": 
+                        if candidate.Zealot == True:
+                            self.hire_with_probability(candidate, empty_pos, .05) 
+                            break
+                        else:
+                            self.hire_with_probability(candidate, empty_pos, .1) 
+                            break  
+                    if candidate.Worldview == "AB":
+                        self.hire_with_probability(candidate, empty_pos, .3) 
+                        break 
+                # [(.05, .1), .3, .75]
+                elif self.leader.Worldview == "B":
+                    if candidate.Worldview == "A": 
+                        if candidate.Zealot == True: 
+                            self.hire_with_probability(candidate, empty_pos, .05) 
+                            break
+                        else:
+                            self.hire_with_probability(candidate, empty_pos, .1) 
+                            break
+                    if candidate.Worldview == "B":
+                        self.hire_with_probability(candidate, empty_pos, .75)
+                        break
+                    if candidate.Worldview == "AB":
+                        self.hire_with_probability(candidate, empty_pos, .3) 
+                        break
+                # [.3, .5, .3]
+                elif self.leader.Worldview == "AB":
+                    if candidate.Worldview == "A":
+                        self.hire_with_probability(candidate, empty_pos, .3) 
+                        break
+                    elif candidate.Worldview == "B":
+                        self.hire_with_probability(candidate, empty_pos, .3) 
+                        break
+                    elif candidate.Worldview == "AB":
+                        self.hire_with_probability(candidate, empty_pos, .5) 
+                        break 
+        #Anti Self-Replication hiring mode: reacting to polarization in organization  
         elif self.Mode == "ASR": 
             pass 
-
-
         pass 
-
-    def fire(self): 
-        pass 
-
 
 
 def main(): 
@@ -329,11 +396,20 @@ Now, there is the question of what distribtuio
 
 SR Mode: 
 
-
 what does being in self_replication mode mean? It means that the leader is much more likely to hire someone 
-who thinks like him. But, how much more likely? Certainly, 
-they will never hire a zealot with the opposite worldview because they would be more outspoken, so the 
-interaction would spoil. Might hire AB or non-zealot opp. 
+who thinks like him. But, how much more likely? Certainly, they will never hire a zealot with the opposite 
+worldview because they would be more outspoken and the interaction would spoil. Might hire AB or non-zealot 
+opp, but is most likley to hire someone with the same worldview. What scheme can this be reflected by? 
+The most straightforward way to do this is to change the likelhoods associated with choosing each 
+worldview (i.e, a different "H_config" when in SR mode). The other way to do this is to set up "interviews"
+in which candidates are randomly chosen from the hiring pool, but the likleyhood that worldviews are selected
+are different. What should these probabilities be!!? Let's try P(Opp_z) = .05, P(Opp_nz) = .1, P(AB) = .3, 
+P(Same) = .75
+
+ASR Mode: 
+
+What does being in anti self-replication mode mean? It means that the leader is trying to maintain ideological
+diversity within the organization. 
 ''' 
 
 
