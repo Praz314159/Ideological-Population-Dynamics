@@ -170,14 +170,14 @@ class Organization:
         self.Org_size = 1000
         self.Worldviews = ["A", "AB", "B"]
         self.Config =  [.33, .34, .33] #initial fractional rep in org
-        self.A_config = .5 
-        self.B_config = .5
+        self.A_config = .1 
+        self.B_config = .1
         
         #Fixed HP parameters
         self.H_config = [.33, .34, .33] #fractional rep in hiring pool 
         self.HP_size = 5000 
-        self.A_HPconfig = .5 
-        self.B_HPconfig = .5 
+        self.A_HPconfig = .1 
+        self.B_HPconfig = .1 
         
         #n_* is the current fractional representation of each worldview
         self.n_A = 0
@@ -210,9 +210,10 @@ class Organization:
             self.Workforce[i].Org_pos = i 
             self.Workforce[i].Organization = self
             
-            #draw TOPP and THOM from random distribution, but set THOM at least as high as TOPP 
-            self.Workforce[i].TOPP = np.random.uniform(0,1)
-            self.Workforce[i].THOM = np.random.uniform(self.Workforce[i].TOPP,1)
+            #draw TOPP and THOM from normal distribution, but set THOM at least as high as TOPP 
+            self.Workforce[i].TOPP = np.random.normal(0.5, .1) #chose normal distribution 
+            self.Workforce[i].THOM = np.random.uniform(self.Workforce[i].TOPP,1) 
+            #does choosing uniformly greater than points drawn from normal distribution give a normal distribution? 
 
             #set individual's worldview based on organization config 
             self.Workforce[i].Worldview = np.random.choice(self.Worldviews, 1, p = self.Config)[0]
@@ -296,7 +297,25 @@ class Organization:
                     self.n_B2 = self.N_B2/self.Org_size
                 else:
                     self.N_B -= 1 
-                    self.n_B = self.N_B/self.Org_size 
+                    self.n_B = self.N_B/self.Org_size
+
+            #check 0-floor condition 
+            if self.N_A < 0:
+                self.N_A = 0
+                self.n_A = 0
+            elif self.N_B < 0: 
+                self.N_B = 0
+                self.n_B = 0
+            elif self.N_A2 < 0:
+                self.N_A2 = 0
+                self.n_A2 = 0
+            elif self.N_B2 < 0:
+                self.N_B2 = 0 
+                self.n_B2 = 0 
+            elif self.N_AB < 0: 
+                self.N_AB = 0 
+                self.n_AB = 0 
+
         return 
 
     def interact(self):
@@ -368,7 +387,7 @@ class Organization:
             for interview in range(10): 
                 candidate = self.HP[random.randint(0, self.HP_size-1)]
                 # [.75, .3, (.05, .1)]
-                if self.leader.Worldview == "A":
+                if self.Leader.Worldview == "A":
                     if candidate.Worldview == "A":
                         self.hire_with_probability(candidate, empty_pos, .75)
                         break 
@@ -383,7 +402,7 @@ class Organization:
                         self.hire_with_probability(candidate, empty_pos, .3) 
                         break 
                 # [(.05, .1), .3, .75]
-                elif self.leader.Worldview == "B":
+                elif self.Leader.Worldview == "B":
                     if candidate.Worldview == "A": 
                         if candidate.Zealot == True: 
                             self.hire_with_probability(candidate, empty_pos, .05) 
@@ -398,7 +417,7 @@ class Organization:
                         self.hire_with_probability(candidate, empty_pos, .3) 
                         break
                 # [.3, .5, .3]
-                elif self.leader.Worldview == "AB":
+                elif self.Leader.Worldview == "AB":
                     if candidate.Worldview == "A":
                         self.hire_with_probability(candidate, empty_pos, .3) 
                         break
@@ -455,16 +474,22 @@ def main():
     Org.populate_org() #population organization with individuals 
     Org.populate_HP() #populated hiring pool with individuals 
     
+    #using non default settings
+    Org.mode = "SR"
+
     #checking configuration before evolution
     print("INITIAL STATE: ")
+    print("Total A: ", Org.n_A + Org.n_A2)
     print("A: ", Org.n_A)
-    print("A Zealots: ", Org.n_A2) 
+    print("A Zealots: ", Org.n_A2)
+    print("Total B: ", Org.n_B + Org.n_B2) 
     print("B: ", Org.n_B)
     print("B Zealots: ", Org.n_B2) 
-    print("Moderates :", Org.n_AB) 
+    print("Moderates :", Org.n_AB)
+    print("Leader :", Org.Leader.Worldview)
 
     #evolve model with 100 interactions
-    for interaction in range(100):
+    for interaction in range(1000):
         #anyone who wants to resign can resign 
         for employee in Org.Workforce:
             #inefficient because running resign twice
@@ -476,14 +501,16 @@ def main():
         Org.interact()
 
         #hiring and firing every 10 interactions 
-        if Org.Num_interactions % 10 == 0:
+        if Org.Num_interactions % 5 == 0:
             pos_to_fill = Org.fire() 
             Org.hire(pos_to_fill)
     
     #checking configuration after evolution
     print("\nPOST EVOLUTION STATE: ")
+    print("Total A: ", Org.n_A + Org.n_A2)
     print("A: ", Org.n_A)
     print("A Zealots: ", Org.n_A2) 
+    print("Total B: ", Org.n_B + Org.n_B2) 
     print("B: ", Org.n_B)
     print("B Zealots: ", Org.n_B2) 
     print("Moderates :", Org.n_AB) 
