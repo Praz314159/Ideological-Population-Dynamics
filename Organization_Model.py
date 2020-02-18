@@ -76,9 +76,10 @@ class Individual:
                  #leaders) and thus has hiring power  
         self.TOPP = .5 #percentage of org of opp ideology at which individual resigns 
         self.THOM = .5 #percentage of org that is same ideology at which individual resigns 
-        self.Zealot_resistance = {.05:.01, .1:.03, .15:.05, .2:.07, .25:.1, .3:.135, .35:.17, .4:.205, .45:.4, \
-                .5:.45, .55:.51, .6:.58, .65:.66, .7:.75, .75:.85, .8:.95, .85:.96, .9:.97, .95:.98, 1:.99}
-
+        #self.Zealot_resistance_buckets = [.05, .1, .15, .2, .25, .3, .35, .4, .45., .5, .55, .6, .65, .7,. 75, .8, .85, .9 \
+        #        .95, 1]
+        self.Zealot_resistance_probabilities =  [.01, .03, .05, .07, .1, .135, .17, .205, .4, .45, .51, .58, .66, .75, .85,\
+                .95, .96, .97, .98, .99]
 
         #Org parameters 
         self.Organization = None #organization that individual belongs to  
@@ -94,7 +95,7 @@ class Individual:
         elif self.Worldview == "AB":
             if self.Organization.n_AB < .1*(1-self.Organization.n_AB):
                 empty_pos = self.Organization.accept_resignation(self) 
-            elif self.Organization.n_AB > THOM: 
+            elif self.Organization.n_AB > self.THOM: 
                 empty_pos = self.Organization.accept_resignation(self)  
         elif self.Worldview == "B": 
             if self.Organization.n_B + self.Organization.n_B2 > self.THOM:
@@ -142,7 +143,7 @@ class Individual:
                 bucket = 0 
             
             #getting likelhood that A --> A' 
-            prob_switch = self.Zealot_resistance[bucket]
+            prob_switch = self.Zealot_resistance_probabilities[bucket]
 
             #A --> A' with assigned probability 
             if random.random() < prob_switch:
@@ -154,7 +155,7 @@ class Individual:
                 bucket = 0 
             
             #getting likelhood that B --> B' 
-            prob_switch = self.Zealot_resistance[bucket]
+            prob_switch = self.Zealot_resistance_probabilities[bucket]
 
             #B --> B' with assigned probability 
             if random.random() < prob_switch:
@@ -214,7 +215,7 @@ class Organization:
             self.Workforce[i].THOM = np.random.uniform(self.Workforce[i].TOPP,1)
 
             #set individual's worldview based on organization config 
-            self.Workforce[i].Worldview = np.random.choice(self.Worldviews, 1, p = self.Config)
+            self.Workforce[i].Worldview = np.random.choice(self.Worldviews, 1, p = self.Config)[0]
             
             #set leader first individual in list as 0
             if i == 0: 
@@ -244,7 +245,7 @@ class Organization:
             self.HP[i].THOM = np.random.uniform(self.HP[i].TOPP,1)
 
             #set individual's worldview based on organization config 
-            self.HP[i].Worldview = np.random.choice(self.Worldviews, 1, p = self.H_config)
+            self.HP[i].Worldview = np.random.choice(self.Worldviews, 1, p = self.H_config)[0]
             
             #creating zealots 
             if self.HP[i].Worldview == "B":
@@ -263,39 +264,39 @@ class Organization:
             if individual.Worldview == "A":
                 if individual.Zealot == True:
                     self.N_A2 += 1
-                    self.n_A2 = self.n_A2/self.Org_size 
+                    self.n_A2 = self.N_A2/self.Org_size 
                 else:
                     self.N_A += 1 
-                    self.n_A = self.n_A/self.Org_size
+                    self.n_A = self.N_A/self.Org_size
             elif individual.Worldview == "AB":
                 self.N_AB += 1 
-                self.n_AB = self.n_AB/self.Org_size
+                self.n_AB = self.N_AB/self.Org_size
             elif individual.Worldview == "B":
                 if individual.Zealot == True: 
                     self.N_B2 += 1
-                    self.n_B2 = self.n_B2/self.Org_size
+                    self.n_B2 = self.N_B2/self.Org_size
                 else:
                     self.N_B += 1 
-                    self.n_B = self.n_B/self.Org_size 
+                    self.n_B = self.N_B/self.Org_size 
 
         elif change == "decrement":
             if individual.Worldview == "A":
                 if individual.Zealot == True:
                     self.N_A2 -= 1
-                    self.n_A2 = self.n_A2/self.Org_size 
+                    self.n_A2 = self.N_A2/self.Org_size 
                 else:
                     self.N_A -= 1 
-                    self.n_A = self.n_A/self.Org_size
+                    self.n_A = self.N_A/self.Org_size
             elif individual.Worldview == "AB":
                 self.N_AB -= 1 
-                self.n_AB = self.n_AB/self.Org_size
+                self.n_AB = self.N_AB/self.Org_size
             elif individual.Worldview == "B":
                 if individual.Zealot == True: 
                     self.N_B2 -= 1
-                    self.n_B2 = self.n_B2/self.Org_size
+                    self.n_B2 = self.N_B2/self.Org_size
                 else:
                     self.N_B -= 1 
-                    self.n_B = self.n_B/self.Org_size 
+                    self.n_B = self.N_B/self.Org_size 
         return 
 
     def interact(self):
@@ -303,6 +304,8 @@ class Organization:
         listener = self.Workforce[random.randint(1, self.Org_size-1)]
         speaker = self.Workforce[random.randint(1, self.Org_size-1)] 
         
+        #print("LISTENER: ", listener.Worldview, " SPEAKER: ", speaker.Worldview) 
+
         #decrement global state w/ respect to pre-interaction 
         #listener worldview 
         self.update_config(listener, "decrement")
@@ -324,12 +327,13 @@ class Organization:
     def hire_with_probability(self, new_hire, position, probability):
         if random.random() < probability: 
             self.update_config(new_hire, "increment")
-            self.Workforce[position ] = new_hire 
+            self.Workforce[position] = new_hire 
             new_hire.Org_pos = position
+            new_hire.Organization = self
         return 
         
     def fire(self): 
-        empty_pos = random.randint(1, Org_size-1)
+        empty_pos = random.randint(1, self.Org_size-1)
         new_fire = self.Workforce[empty_pos]
         self.update_config(new_fire, "decrement") 
         return empty_pos 
@@ -452,6 +456,7 @@ def main():
     Org.populate_HP() #populated hiring pool with individuals 
     
     #checking configuration before evolution
+    print("INITIAL STATE: ")
     print("A: ", Org.n_A)
     print("A Zealots: ", Org.n_A2) 
     print("B: ", Org.n_B)
@@ -467,6 +472,7 @@ def main():
                 Org.hire(employee.resign())
         
         #interaction 
+        #print("INTERACTION: ", interaction+1)
         Org.interact()
 
         #hiring and firing every 10 interactions 
@@ -474,7 +480,8 @@ def main():
             pos_to_fill = Org.fire() 
             Org.hire(pos_to_fill)
     
-    #checking configuration after evolution 
+    #checking configuration after evolution
+    print("\nPOST EVOLUTION STATE: ")
     print("A: ", Org.n_A)
     print("A Zealots: ", Org.n_A2) 
     print("B: ", Org.n_B)
