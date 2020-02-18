@@ -70,37 +70,38 @@ import argparse
 class Individual: 
     def __init__(self):
         #Personal Parameters
-        Worldview = "A" #ideology of the individual 
-        Zealot = False #boolean indicating if the the individual is a zealot or not 
-        Leader = False #boolean indicating if the individual is a leader in the organization (may have multiple
+        self.Worldview = "A" #ideology of the individual 
+        self.Zealot = False #boolean indicating if the the individual is a zealot or not 
+        self.Leader = False #boolean indicating if the individual is a leader in the organization (may have multiple
                  #leaders) and thus has hiring power  
-        TOPP = .5 #percentage of org of opp ideology at which individual resigns 
-        THOM = .5 #percentage of org that is same ideology at which individual resigns 
-        Zealot_resistance = {.05:.01, .1:.03, .15:.05, .2:.07, .25:.1, .3:.135, .35:.17, .4:.205, .45:.4, \
+        self.TOPP = .5 #percentage of org of opp ideology at which individual resigns 
+        self.THOM = .5 #percentage of org that is same ideology at which individual resigns 
+        self.Zealot_resistance = {.05:.01, .1:.03, .15:.05, .2:.07, .25:.1, .3:.135, .35:.17, .4:.205, .45:.4, \
                 .5:.45, .55:.51, .6:.58, .65:.66, .7:.75, .75:.85, .8:.95, .85:.96, .9:.97, .95:.98, 1:.99}
 
 
         #Org parameters 
-        Organization = None #organization that individual belongs to  
-        Org_pos = 0 #index in organization workforce list 
+        self.Organization = None #organization that individual belongs to  
+        self.Org_pos = 0 #index in organization workforce list 
         
     def resign(self): 
+        empty_pos = -1
         if self.Worldview == "A":
             if self.Organization.n_A + self.Organization.n_A2 > self.THOM:
-                self.Organization.accept_resignation(self)
+                empty_pos = self.Organization.accept_resignation(self) 
             elif self.Organization.n_B + self.Organization.n_B2 > self.TOPP: 
-                self.Organization.accept_resignation(self) 
+                empty_pos = self.Organization.accept_resignation(self)
         elif self.Worldview == "AB":
-            if self.Organization.n_AB < .1*(1-self.Oraganization.n_AB):
-                self.Organization.accept_resignation(self)
+            if self.Organization.n_AB < .1*(1-self.Organization.n_AB):
+                empty_pos = self.Organization.accept_resignation(self) 
             elif self.Organization.n_AB > THOM: 
-                self.Organization.accept_resignation(self) 
-        elif self.Worldvew == "B": 
+                empty_pos = self.Organization.accept_resignation(self)  
+        elif self.Worldview == "B": 
             if self.Organization.n_B + self.Organization.n_B2 > self.THOM:
-                self.Organization.accept_resignation(self) 
+                empty_pos = self.Organization.accept_resignation(self)
             elif self.Organization.n_B + self.Organization.n_B2 > self.TOPP: 
-                self.Organization.accept_resignation(self) 
-        return 
+                empty_pos = self.Organization.accept_resignation(self) 
+        return empty_pos 
 
     def listen(self, speaker):
         '''
@@ -136,7 +137,7 @@ class Individual:
             #the key is that we have access to the global state of the organization, which means that we 
             #do indeed know how homogenous the organization is in A, for example.
             if math.floor((self.Organization.n_A + self.Organization.n_A2)/.05) > 0:
-                bucket = math.floor((self.Organization.n_A + self.Organization.n_A2) - 1
+                bucket = math.floor(self.Organization.n_A + self.Organization.n_A2) - 1
             else: 
                 bucket = 0 
             
@@ -148,7 +149,7 @@ class Individual:
                 self.Zealot == True 
         elif speaker.Worldview == "B" and speaker.Zealot == True and self.Worldview == "B" and self.Zealot == False: 
             if math.floor((self.Organization.n_B + self.Organization.n_B2)/.05) > 0:
-                bucket = math.floor((self.Organization.n_B + self.Organization.n_B2) - 1
+                bucket = math.floor(self.Organization.n_B + self.Organization.n_B2) - 1
             else: 
                 bucket = 0 
             
@@ -165,47 +166,49 @@ class Individual:
 class Organization: 
     def __init__(self):
         #Fixed parameters 
-        Org_size = 1000
-        Worldviews = ["A", "AB", "B"]
-        Config =  [.33, .33, .33] #initial fractional rep in org
-        A_config = .5 
-        B_config = .5
+        self.Org_size = 1000
+        self.Worldviews = ["A", "AB", "B"]
+        self.Config =  [.33, .34, .33] #initial fractional rep in org
+        self.A_config = .5 
+        self.B_config = .5
         
         #Fixed HP parameters
-        H_config = [.33, .33, .33] #fractional rep in hiring pool 
-        HP_size = 5000 
-        A_HPconfig = .5 
-        B_HPconfig = .5 
+        self.H_config = [.33, .34, .33] #fractional rep in hiring pool 
+        self.HP_size = 5000 
+        self.A_HPconfig = .5 
+        self.B_HPconfig = .5 
         
         #n_* is the current fractional representation of each worldview
-        n_A = 0
-        n_A2 = 0
-        n_AB = 0
-        n_B = 0
-        n_B2 = 0 
+        self.n_A = 0
+        self.n_A2 = 0
+        self.n_AB = 0
+        self.n_B = 0
+        self.n_B2 = 0 
 
         #N_* is the absolute number of individuals with each worldview 
-        N_A = 0
-        N_A2 = 0
-        N_AB = 0
-        N_B = 0
-        N_B2 = 0
+        self.N_A = 0
+        self.N_A2 = 0
+        self.N_AB = 0
+        self.N_B = 0
+        self.N_B2 = 0
         
         #Behavioral parameters 
-        Mode = "D"  
-        Turnover_rate = .01
-        Workforce = []
-        Num_interactions = 0
-        Leader = None 
-        polarization = n_A + n_A2 + n_B + n_B2 
+        self.Mode = "D"  
+        self.Turnover_rate = .01
+        self.Workforce = []
+        self.HP = []
+        self.Num_interactions = 0
+        self.Leader = None 
+        self.polarization = self.n_A + self.n_A2 + self.n_B + self.n_B2 
        
     def populate_org(self):
         #Here, we want to populate the organization with individuals 
 
-        for i in range(Org_size): 
+        for i in range(self.Org_size): 
             self.Workforce.append(Individual())
             self.Workforce[i].Org_pos = i 
-
+            self.Workforce[i].Organization = self
+            
             #draw TOPP and THOM from random distribution, but set THOM at least as high as TOPP 
             self.Workforce[i].TOPP = np.random.uniform(0,1)
             self.Workforce[i].THOM = np.random.uniform(self.Workforce[i].TOPP,1)
@@ -220,19 +223,19 @@ class Organization:
             
             #creating zealots 
             if self.Workforce[i].Worldview == "B":
-                if random.random() < B_config: 
+                if random.random() < self.B_config: 
                     self.Workforce[i].Zealot = True 
             elif self.Workforce[i].Worldview == "A": 
-                if random.random() < A_config: 
+                if random.random() < self.A_config: 
                     self.Workforce[i].Zealot = True 
 
             #updating global org config to true values  
             self.update_config(self.Workforce[i], "increment") 
-       return  
+        return  
         
     def populate_HP(self):
         #Here, we want to populate the organization with individuals 
-        for i in range(HP_size): 
+        for i in range(self.HP_size): 
             self.HP.append(Individual())
             self.HP[i].Org_pos = i 
 
@@ -245,10 +248,10 @@ class Organization:
             
             #creating zealots 
             if self.HP[i].Worldview == "B":
-                if random.random() < B_HPconfig: 
+                if random.random() < self.B_HPconfig: 
                     self.HP[i].Zealot = True 
             elif self.HP[i].Worldview == "A": 
-                if random.random() < A_HPconfig: 
+                if random.random() < self.A_HPconfig: 
                     self.HP[i].Zealot = True 
         return 
 
@@ -276,7 +279,7 @@ class Organization:
                     self.n_B = self.n_B/self.Org_size 
 
         elif change == "decrement":
-             if individual.Worldview == "A":
+            if individual.Worldview == "A":
                 if individual.Zealot == True:
                     self.N_A2 -= 1
                     self.n_A2 = self.n_A2/self.Org_size 
@@ -297,8 +300,8 @@ class Organization:
 
     def interact(self):
         #randomnly select two individuals from the workforce 
-        listener = self.Workforce[random.randint(1, Org_size-1)]
-        speaker = self.Workforce[random.randint(1, Org_size-1)] 
+        listener = self.Workforce[random.randint(1, self.Org_size-1)]
+        speaker = self.Workforce[random.randint(1, self.Org_size-1)] 
         
         #decrement global state w/ respect to pre-interaction 
         #listener worldview 
@@ -331,7 +334,7 @@ class Organization:
         self.update_config(new_fire, "decrement") 
         return empty_pos 
    
-   def accept_resignation(self, new_resignation): 
+    def accept_resignation(self, new_resignation): 
         empty_pos = new_resignation.Org_pos 
         self.update_config(new_resignation, "decrement")
         return empty_pos
@@ -353,13 +356,13 @@ class Organization:
 
         #Default hiring mode: selecting for pre-existing bias in hiring pool 
         if self.Mode == "D":
-            new_hire = HP[random.randint(0, HP_size-1)]
+            new_hire = self.HP[random.randint(0, self.HP_size-1)]
             self.hire_with_probability(new_hire, empty_pos, 1) 
 
         #Self Replication hiring mode: selects for bias of the leader 
         elif self.Mode == "SR":
             for interview in range(10): 
-                candidate = self.HP[random.randint(0, HP_size-1)]
+                candidate = self.HP[random.randint(0, self.HP_size-1)]
                 # [.75, .3, (.05, .1)]
                 if self.leader.Worldview == "A":
                     if candidate.Worldview == "A":
@@ -410,14 +413,14 @@ class Organization:
 
             #selecting 20 candidates to interview
             for i in range(20): 
-                candidates.append(HP[random.randint(0, HP_size-1))
+                candidates.append(HP[random.randint(0, HP_size-1)])
                 if candidates[i].Worldview == "AB":
                     has_moderate = True 
             
             #polarization threshold set to .75 
             if self.polarization < .75:
                 #if the polarization is tolerable, choose random 
-                new_hire = HP[random.randint(0, HP_size-1) 
+                new_hire = HP[random.randint(0, HP_size-1)] 
                 self.hire_with_probability(new_hire, empty_pos, 1) 
             else: 
                 for candidate in candidates:
@@ -443,11 +446,43 @@ def main():
     #For now, though, we just create a command line tool in order to 
     #run sims easily and check how things are working ... 
     
-
-    parser = argparse.ArgumentParser() #creating argument parser
+    #using default mode 
+    Org = Organization() #initialize organization
+    Org.populate_org() #population organization with individuals 
+    Org.populate_HP() #populated hiring pool with individuals 
     
+    #checking configuration before evolution
+    print("A: ", Org.n_A)
+    print("A Zealots: ", Org.n_A2) 
+    print("B: ", Org.n_B)
+    print("B Zealots: ", Org.n_B2) 
+    print("Moderates :", Org.n_AB) 
 
+    #evolve model with 100 interactions
+    for interaction in range(100):
+        #anyone who wants to resign can resign 
+        for employee in Org.Workforce:
+            #inefficient because running resign twice
+            if employee.resign() != -1: 
+                Org.hire(employee.resign())
+        
+        #interaction 
+        Org.interact()
 
+        #hiring and firing every 10 interactions 
+        if Org.Num_interactions % 10 == 0:
+            pos_to_fill = Org.fire() 
+            Org.hire(pos_to_fill)
+    
+    #checking configuration after evolution 
+    print("A: ", Org.n_A)
+    print("A Zealots: ", Org.n_A2) 
+    print("B: ", Org.n_B)
+    print("B Zealots: ", Org.n_B2) 
+    print("Moderates :", Org.n_AB) 
+
+    #parser = argparse.ArgumentParser() #creating argument parser
+    
 if __name__ == "__main__": 
     main() 
 
