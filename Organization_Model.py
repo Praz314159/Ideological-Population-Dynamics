@@ -159,6 +159,7 @@ class Organization:
         Workforce = []
         Num_interactions = 0
         Leader = None 
+        polarization = n_A + n_A2 + n_B + n_B2 
        
     def populate_org(self):
         #Here, we want to populate the organization with individuals 
@@ -273,6 +274,8 @@ class Organization:
     
     
     def evaluate_polarization(self):
+        #this method is for when a more sophisticated evaluation of 
+        #polarization is developed 
         pass
 
     def hire_with_probability(self, new_hire, position, probability):
@@ -297,10 +300,9 @@ class Organization:
 
         #Default hiring mode: selecting for pre-existing bias in hiring pool 
         if self.Mode == "D":
-            new_hire = HP[random.randint(0, HP_size-1)] 
-            self.update_config(new_hire, "increment") 
-            self.Workforce[empty_pos] = new_hire
-            new_hire.Org_pos = empty_pos
+            new_hire = HP[random.randint(0, HP_size-1)]
+            self.hire_with_probability(new_hire, empty_pos, 1) 
+
         #Self Replication hiring mode: selects for bias of the leader 
         elif self.Mode == "SR":
             for interview in range(10): 
@@ -346,11 +348,37 @@ class Organization:
                     elif candidate.Worldview == "AB":
                         self.hire_with_probability(candidate, empty_pos, .5) 
                         break 
+        
         #Anti Self-Replication hiring mode: reacting to polarization in organization  
-        elif self.Mode == "ASR": 
-            pass 
-        pass 
-
+        elif self.Mode == "ASR":
+            #generate 10 candidates
+            candidates = []
+            has_moderate = False 
+            for i in range(10): 
+                candidates.append(HP[random.randint(0, HP_size-1))
+                if candidates[i].Worldview = "AB":
+                    has_moderate = True 
+            
+            #polarization threshold set to .75 
+            if self.polarization < .75:
+                #if the polarization is tolerable, choose random 
+                new_hire = HP[random.randint(0, HP_size-1) 
+                self.hire_with_probability(new_hire, empty_pos, 1) 
+            else: 
+                for candidate in candidates:
+                    #if a moderate is a candidate, then hire him 
+                    if has_moderate == True and candidate.Worldview == "AB": 
+                        self.hire_with_probability(candidate, empty_pos, 1)
+                        break
+                    #if there 
+                    elif n_A + n_A2 > n_B + n_B2 and candidate.Worldview == "B":
+                        self.hire_with_probability(candidate, empty_pos, 1) 
+                        break 
+                    elif n_A + n_A2 < n_B + n_B2 and candidate.Worldview == "A": 
+                        self.hire_with_probability(candidate, empty_pos, 1) 
+                        break 
+                    elif n_A + n_A2 == n_B + n_B2 and (candidate.Worldview == "A" or candidate.Worldview == "B"): 
+                        self.hire_with_probability(candidate, empty_pos, 1) 
 
 def main(): 
     #The purpose here is be able to run simulations from the command line 
@@ -409,7 +437,12 @@ P(Same) = .75
 ASR Mode: 
 
 What does being in anti self-replication mode mean? It means that the leader is trying to maintain ideological
-diversity within the organization. 
+diversity within the organization. This means that we need a way to measure the polarization in the organization. 
+If the polarization is above a certain threshold, then ASR moves from hiring in a default behavior to counter-acting
+the polarization by hiring individuals that will move the configuration of the organization towards a uniform 
+distribution. The key questions here are: 
+    1. How will polarization be measured
+    2. What threshold must be exceeded in order for ASR mode to counteract the polarization 
 ''' 
 
 
