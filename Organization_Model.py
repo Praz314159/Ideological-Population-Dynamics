@@ -59,16 +59,13 @@ Model Functionality:
     towards homogeneity in their worldview. 
 
     We have buckets <5, 10, 15, 20, 25, 30, 35, 40, 45, 50 ... >. These are associated with the following
-    probabilities. 
+    probabilities: <.01, .02, .05, .07, .1, .135, .17, .205, .4, .45, .51, .58, .66, .75, .85, .95, .96, .97, .98. .99> 
 
 ''' 
 import math 
 import numpy as np
 import random 
 import argparse 
-
-HP_SIZE = 1000 #number of individuals in hiring pool 
-HP_CONFIG = {"B":.2, "B'":.2,"AB":.2,"A":.2,"A'":.2} #fractional representation of individual types in HP
 
 class Individual: 
     def __init__(self):
@@ -78,12 +75,32 @@ class Individual:
         Leader = False #boolean indicating if the individual is a leader in the organization (may have multiple
                  #leaders) and thus has hiring power  
         TOPP = .5 #percentage of org of opp ideology at which individual resigns 
-        THOM - .5 #percentage of org that is same ideology at which individual resigns 
-        
+        THOM = .5 #percentage of org that is same ideology at which individual resigns 
+        Zealot_resistance = {.05:.01, .1:.03, .15:.05, .2:.07, .25:.1, .3:.135, .35:.17, .4:.205, .45:.4, \
+                .5:.45, .55:.51, .6:.58, .65:.66, .7:.75, .75:.85, .8:.95, .85:.96, .9:.97, .95:.98, 1:.99}
+
+
         #Org parameters 
         Organization = None #organization that individual belongs to  
         Org_pos = 0 #index in organization workforce list 
         
+    def resign(self): 
+        if self.Worldview == "A":
+            if self.Organization.n_A + self.Organization.n_A2 > self.THOM:
+                self.Organization.accept_resignation(self)
+            elif self.Organization.n_B + self.Organization.n_B2 > self.TOPP: 
+                self.Organization.accept_resignation(self) 
+        elif self.Worldview == "AB":
+            if self.Organization.n_AB < .1*(1-self.Oraganization.n_AB):
+                self.Organization.accept_resignation(self)
+            elif self.Organization.n_AB > THOM: 
+                self.Organization.accept_resignation(self) 
+        elif self.Worldvew == "B": 
+            if self.Organization.n_B + self.Organization.n_B2 > self.THOM:
+                self.Organization.accept_resignation(self) 
+            elif self.Organization.n_B + self.Organization.n_B2 > self.TOPP: 
+                self.Organization.accept_resignation(self) 
+        return 
 
     def listen(self, speaker):
         '''
@@ -103,24 +120,45 @@ class Individual:
             a question about when it becomes socially |unacceptable| to not be a zealot. There is 
             some interesting dynamics between people leaving because the organization is too 
             homogenous and other people staying because there is social benefit to becoming
-            a zealot, or, if the organization is extremely homogenouse, social cost to not becoming one
-        '''
-        if (speaker.Worldview == "A" and self.Worldview == "B") or (speaker.Worldview == "B" and self.Worldview == "A"): 
+            a zealot, or, if the organization is extremely homogenous, social cost to not becoming one
+        '''    
+        
+        if (speaker.Worldview == "A" and speaker.Zealot == False and self.Worldview == "B") or (speaker.Worldview == "B" \
+                and speaker.Zealot == False and self.Worldview == "A"): 
             self.Worldview = "AB" 
-        elif (speaker.Worldview == "A'" and self.Worldview == "B") or ((speaker.Worldview == "A" or speaker.Worldview == "A'") \
-                and self.Worldview == "AB"):
-            #preference falsification accounted for 
-            self.Worldview = "A"
-        elif (speaker.Worldview == "B'" and self.Worldview == "A") or ((speaker.Worldview == "B" or speaker.Worldview == "B'") \
-                and self.Worldview == "AB"):
-            #preference falsification accounted for 
-            self.Woldview = "B" 
-        elif speaker.Worldview == "A'" and self.Worldview == "A": 
-            pass 
-        elif speaker.Worldview == "B'" and self.Worldview == "B": 
-            pass
-        else: 
-            pass 
+        elif ((speaker.Worldview == "A" and speaker.Zealot == True) and (self.Worldview == "B" or self.Worldview == "AB")) \
+                or (speaker.Worldview == "A" and speaker.Zealot == False and self.Worldview == "AB"):
+            self.Worldview = "A" 
+        elif ((speaker.Worldview == "B" and speaker.Zealot == True) and (self.Worldview == "A" or self.Worldview == "AB")) \
+                or (speaker.Worldview == "B" and speaker.Zealot == False and self.Worldview == "AB"): 
+            self.Worldview == "B"
+        elif speaker.Worldview == "A" and speaker.Zealot == True and self.Worldview == "A" and self.Zealot == False:
+            #the key is that we have access to the global state of the organization, which means that we 
+            #do indeed know how homogenous the organization is in A, for example.
+            if math.floor((self.Organization.n_A + self.Organization.n_A2)/.05) > 0:
+                bucket = math.floor((self.Organization.n_A + self.Organization.n_A2) - 1
+            else: 
+                bucket = 0 
+            
+            #getting likelhood that A --> A' 
+            prob_switch = self.Zealot_resistance[bucket]
+
+            #A --> A' with assigned probability 
+            if random.random() < prob_switch:
+                self.Zealot == True 
+        elif speaker.Worldview == "B" and speaker.Zealot == True and self.Worldview == "B" and self.Zealot == False: 
+            if math.floor((self.Organization.n_B + self.Organization.n_B2)/.05) > 0:
+                bucket = math.floor((self.Organization.n_B + self.Organization.n_B2) - 1
+            else: 
+                bucket = 0 
+            
+            #getting likelhood that B --> B' 
+            prob_switch = self.Zealot_resistance[bucket]
+
+            #B --> B' with assigned probability 
+            if random.random() < prob_switch:
+                self.Zealot == True          
+        return 
 
     #think about what other functionality I might want to give individuals 
 
@@ -190,7 +228,7 @@ class Organization:
 
             #updating global org config to true values  
             self.update_config(self.Workforce[i], "increment") 
-       pass 
+       return  
         
     def populate_HP(self):
         #Here, we want to populate the organization with individuals 
@@ -212,7 +250,8 @@ class Organization:
             elif self.HP[i].Worldview == "A": 
                 if random.random() < A_HPconfig: 
                     self.HP[i].Zealot = True 
-    
+        return 
+
     def update_config(self, individual, change): 
         #function is meant to update the organizations n_* and N_* 
         #when changes are made (increment, decrement)
@@ -254,6 +293,7 @@ class Organization:
                 else:
                     self.N_B -= 1 
                     self.n_B = self.n_B/self.Org_size 
+        return 
 
     def interact(self):
         #randomnly select two individuals from the workforce 
@@ -271,7 +311,7 @@ class Organization:
         #listener worldview 
         self.update_config(listener, "increment")
         self.Num_interactions += 1 
-    
+        return 
     
     def evaluate_polarization(self):
         #this method is for when a more sophisticated evaluation of 
@@ -282,9 +322,22 @@ class Organization:
         if random.random() < probability: 
             self.update_config(new_hire, "increment")
             self.Workforce[position ] = new_hire 
-            new_hire.Org_pos = position 
-    
-    def fire_hire(self, leader):
+            new_hire.Org_pos = position
+        return 
+        
+    def fire(self): 
+        empty_pos = random.randint(1, Org_size-1)
+        new_fire = self.Workforce[empty_pos]
+        self.update_config(new_fire, "decrement") 
+        return empty_pos 
+   
+   def accept_resignation(self, new_resignation): 
+        empty_pos = new_resignation.Org_pos 
+        self.update_config(new_resignation, "decrement")
+        return empty_pos
+
+
+    def hire(self, empty_pos):
         #depends on mode of hiring (D, SR, ASR) and, therefore, also
         #on the worldveiw of the leader. We have two major assumptions: 
         #1. leader can't distinguish between zealots and non-zealots. This 
@@ -294,9 +347,9 @@ class Organization:
         #3. hiring only takes place when someone has been fired 
         
         #firing
-        empty_pos = random.randint(1, Org_size-1) 
-        new_fire = self.Workforce[empty_pos]
-        self.update_config(new_fire, "decrement") 
+        #empty_pos = random.randint(1, Org_size-1) 
+        #new_fire = self.Workforce[empty_pos]
+        #self.update_config(new_fire, "decrement") 
 
         #Default hiring mode: selecting for pre-existing bias in hiring pool 
         if self.Mode == "D":
@@ -353,10 +406,12 @@ class Organization:
         elif self.Mode == "ASR":
             #generate 10 candidates
             candidates = []
-            has_moderate = False 
-            for i in range(10): 
+            has_moderate = False
+
+            #selecting 20 candidates to interview
+            for i in range(20): 
                 candidates.append(HP[random.randint(0, HP_size-1))
-                if candidates[i].Worldview = "AB":
+                if candidates[i].Worldview == "AB":
                     has_moderate = True 
             
             #polarization threshold set to .75 
@@ -378,7 +433,8 @@ class Organization:
                         self.hire_with_probability(candidate, empty_pos, 1) 
                         break 
                     elif n_A + n_A2 == n_B + n_B2 and (candidate.Worldview == "A" or candidate.Worldview == "B"): 
-                        self.hire_with_probability(candidate, empty_pos, 1) 
+                        self.hire_with_probability(candidate, empty_pos, 1)
+        return 
 
 def main(): 
     #The purpose here is be able to run simulations from the command line 
@@ -406,7 +462,6 @@ Parameters at disposal of simulation runner:
     2. Distribution of TOPP in the org
     3. Distribution of THOM in the org 
     4.  
-
 
 TOPP vs THOM: 
 
