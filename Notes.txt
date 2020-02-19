@@ -1,0 +1,11 @@
+##################################################################
+Notes on IPM being developed 
+##################################################################
+
+2/18/20: I've gotten the model to run. However, there are a few bugs that need to be worked out:
+	1. For some reason the update function is not worked as I'd like it to. It seems to be misbehaving when interactions, firings, hirings, and resignations occur. When individuals are added to the organization's workforce, we have 1K individuals. This should remain constant. For some reason, though, it isn't. This means, likely, that I'm not decrementing everywhere I should be. Perhaps in the resignation function? 
+	2. For some reason, negative n_* values were being achieved. This doesn't make any sense, since for this to happen, a resignation or interaction-as-listener needs to take place for a worldview that isn't represented in the organization. That is, a non-existent individual is having his mind changed or is resigning or is being fired from the organization. 
+
+It's good, however, that the model is at least working. Up next, once these bugs are fixed, is parameter tuning, which I'm excited about. What distribution should be used for the threshold parameters? Further, what should be threshold buckets be for zealot_resistance_probabilities? And, finally, what is a better measure for polarization than simple 1-n_AB? These are all good questions that need to be answered. Once they are, then I can develop a nice interface with which to nicely run experiments
+
+2/19/20:   
