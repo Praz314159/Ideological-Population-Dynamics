@@ -137,10 +137,7 @@ class Individual:
         elif speaker.Worldview == "A" and speaker.Zealot == True and self.Worldview == "A" and self.Zealot == False:
             #the key is that we have access to the global state of the organization, which means that we 
             #do indeed know how homogenous the organization is in A, for example.
-            if math.floor((self.Organization.n_A + self.Organization.n_A2)/.05) > 0:
-                bucket = math.floor(self.Organization.n_A + self.Organization.n_A2) - 1
-            else: 
-                bucket = 0 
+            bucket = math.floor((self.Organization.n_A + self.Organization.n_A2)/.05) 
             
             #getting likelhood that A --> A' 
             prob_switch = self.Zealot_resistance_probabilities[bucket]
@@ -149,10 +146,7 @@ class Individual:
             if random.random() < prob_switch:
                 self.Zealot == True 
         elif speaker.Worldview == "B" and speaker.Zealot == True and self.Worldview == "B" and self.Zealot == False: 
-            if math.floor((self.Organization.n_B + self.Organization.n_B2)/.05) > 0:
-                bucket = math.floor(self.Organization.n_B + self.Organization.n_B2) - 1
-            else: 
-                bucket = 0 
+            bucket = math.floor(self.Organization.n_B + self.Organization.n_B2)
             
             #getting likelhood that B --> B' 
             prob_switch = self.Zealot_resistance_probabilities[bucket]
@@ -316,6 +310,8 @@ class Organization:
                 self.N_AB = 0 
                 self.n_AB = 0 
 
+        #updating polarization 
+        self.polarization = self.n_A + self.n_A2 + self.n_B + self.n_B2 
         return 
 
     def interact(self):
@@ -361,7 +357,6 @@ class Organization:
         empty_pos = new_resignation.Org_pos 
         self.update_config(new_resignation, "decrement")
         return empty_pos
-
 
     def hire(self, empty_pos):
         #depends on mode of hiring (D, SR, ASR) and, therefore, also
@@ -479,17 +474,21 @@ def main():
 
     #checking configuration before evolution
     print("INITIAL STATE: ")
-    print("Total A: ", Org.n_A + Org.n_A2)
-    print("A: ", Org.n_A)
-    print("A Zealots: ", Org.n_A2)
-    print("Total B: ", Org.n_B + Org.n_B2) 
-    print("B: ", Org.n_B)
-    print("B Zealots: ", Org.n_B2) 
-    print("Moderates :", Org.n_AB)
+    print("Fractional Total A: ", Org.n_A + Org.n_A2)
+    print("Fractional A: ", Org.n_A) 
+    print("Fractional A Zealots: ", Org.n_A2)
+    print("Total A: ", Org.N_A + Org.N_A2) 
+    print("Fractional Total B: ", Org.n_B + Org.n_B2) 
+    print("Fractional B: ", Org.n_B)
+    print("Fractional B Zealots: ", Org.n_B2)
+    print("Total B: ", Org.N_B + Org.N_B2) 
+    print("Fractional Moderates :", Org.n_AB)
+    print("Total Moderates: ", Org.N_AB) 
     print("Leader :", Org.Leader.Worldview)
+    print("Polarization: ", Org.polarization) 
 
     #evolve model with 100 interactions
-    for interaction in range(1000):
+    for interaction in range(10000):
         #anyone who wants to resign can resign 
         for employee in Org.Workforce:
             #inefficient because running resign twice
@@ -506,15 +505,20 @@ def main():
             Org.hire(pos_to_fill)
     
     #checking configuration after evolution
-    print("\nPOST EVOLUTION STATE: ")
-    print("Total A: ", Org.n_A + Org.n_A2)
-    print("A: ", Org.n_A)
-    print("A Zealots: ", Org.n_A2) 
-    print("Total B: ", Org.n_B + Org.n_B2) 
-    print("B: ", Org.n_B)
-    print("B Zealots: ", Org.n_B2) 
-    print("Moderates :", Org.n_AB) 
-
+    print("FINAL STATE: ")
+    print("Fractional Total A: ", Org.n_A + Org.n_A2)
+    print("Fractional A: ", Org.n_A) 
+    print("Fractional A Zealots: ", Org.n_A2)
+    print("Total A: ", Org.N_A + Org.N_A2) 
+    print("Fractional Total B: ", Org.n_B + Org.n_B2) 
+    print("Fractional B: ", Org.n_B)
+    print("Fractional B Zealots: ", Org.n_B2)
+    print("Total B: ", Org.N_B + Org.N_B2) 
+    print("Fractional Moderates :", Org.n_AB)
+    print("Total Moderates: ", Org.N_AB) 
+    print("Leader :", Org.Leader.Worldview)
+    print("Polarization: ", Org.polarization)
+    print("Workforce Size: ", len(Org.Workforce)) 
     #parser = argparse.ArgumentParser() #creating argument parser
     
 if __name__ == "__main__": 
