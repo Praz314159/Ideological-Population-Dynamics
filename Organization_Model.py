@@ -319,7 +319,7 @@ class Organization:
         listener = self.Workforce[random.randint(1, self.Org_size-1)]
         speaker = self.Workforce[random.randint(1, self.Org_size-1)] 
         
-        #print("LISTENER: ", listener.Worldview, " SPEAKER: ", speaker.Worldview) 
+        print("LISTENER: ", listener.Worldview, " SPEAKER: ", speaker.Worldview) 
 
         #decrement global state w/ respect to pre-interaction 
         #listener worldview 
@@ -488,7 +488,7 @@ def main():
     print("Polarization: ", Org.polarization) 
 
     #evolve model with 100 interactions
-    for interaction in range(10000):
+    for interaction in range(100):
         #anyone who wants to resign can resign 
         for employee in Org.Workforce:
             #inefficient because running resign twice
@@ -496,7 +496,7 @@ def main():
                 Org.hire(employee.resign())
         
         #interaction 
-        #print("INTERACTION: ", interaction+1)
+        print("INTERACTION: ", interaction)
         Org.interact()
 
         #hiring and firing every 10 interactions 
