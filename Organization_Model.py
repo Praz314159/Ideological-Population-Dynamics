@@ -375,7 +375,9 @@ class Organization:
         pass
 
     def hire_with_probability(self, new_hire, position, probability):
-        if random.random() < probability: 
+        hired = False 
+        if random.random() < probability:
+            hired = True 
             self.update_config(new_hire, "increment")
             self.Workforce[position] = new_hire 
             new_hire.Org_pos = position
@@ -388,7 +390,7 @@ class Organization:
             print("B Zealots: ", self.N_B2) 
             print("Total Moderates: ", self.N_AB)
               
-        return 
+        return hired
         
     def fire(self): 
         empty_pos = random.randint(1, self.Org_size-1)
@@ -437,7 +439,7 @@ class Organization:
             self.hire_with_probability(new_hire, empty_pos, 1) 
 
         #Self Replication hiring mode: selects for bias of the leader 
-        if self.Mode == "SR":
+        elif self.Mode == "SR":
             print("ENTERING SR MODE")
             for interview in range(10): 
                 candidate = self.HP[random.randint(0, self.HP_size-1)]
@@ -445,69 +447,85 @@ class Organization:
                 # [.75, .3, (.05, .1)]
                 if self.Leader.Worldview == "A":
                     if candidate.Worldview == "A":
-                        #print("\n\n\nBEING A BITCH")
-                        self.hire_with_probability(candidate, empty_pos, .75)
-                        #print("Found hire!")
-                        break 
+                        if self.hire_with_probability(candidate, empty_pos, .75) == True:
+                            break
+                        else:
+                            continue 
                     elif candidate.Worldview == "B": 
                         if candidate.Zealot == True:
                             #print("\n\n\nBEING A BITCH")
-                            self.hire_with_probability(candidate, empty_pos, .05) 
-                            #print("Found hire!")
-                            break
+                            if self.hire_with_probability(candidate, empty_pos, .05) == True:
+                                break
+                            else:
+                                continue
                         else:
-                            #print("\n\n\nBEING A BITCH")
-                            self.hire_with_probability(candidate, empty_pos, .1) 
-                            #print("Found hire!")
-                            break  
+                            if self.hire_with_probability(candidate, empty_pos, .1) == True:
+                                break
+                            else:
+                                continue 
                     elif candidate.Worldview == "AB":
                         #print("\n\n\nBEING A BITCH")
-                        self.hire_with_probability(candidate, empty_pos, .3) 
-                        #print("Found hire!")
-                        break 
+                        if self.hire_with_probability(candidate, empty_pos, .3) == True:
+                            break
+                        else:
+                            continue
+                    
                 # [(.05, .1), .3, .75]
                 elif self.Leader.Worldview == "B":
                     if candidate.Worldview == "A": 
                         if candidate.Zealot == True:
                             #print("\n\n\nBEING A BITCH")
-                            self.hire_with_probability(candidate, empty_pos, .05) 
-                            #print("Found hire!")
-                            break
+                            if self.hire_with_probability(candidate, empty_pos, .05) == True:
+                                break
+                            else:
+                                continue
+                         
                         else:
                             #print("\n\n\nBEING A BITCH")
-                            self.hire_with_probability(candidate, empty_pos, .1) 
-                            #print("Found hire!")
-                            break
+                            if self.hire_with_probability(candidate, empty_pos, .1) == True:
+                                break
+                            else:
+                                continue
+                           
                     elif candidate.Worldview == "B":
                         #print("\n\n\nBEING A BITCH")
-                        self.hire_with_probability(candidate, empty_pos, .75)
-                        #print("Found hire!")
-                        break
+                        if self.hire_with_probability(candidate, empty_pos, .75) == True:
+                            break
+                        else:
+                            continue
+                   
                     elif candidate.Worldview == "AB":
                         #print("\n\n\nBEING A BITCH")
-                        self.hire_with_probability(candidate, empty_pos, .3) 
-                        #print("Found hire!") 
-                        break
+                        if self.hire_with_probability(candidate, empty_pos, .3) == True:
+                            break
+                        else:
+                            continue 
+                        
                 # [.3, .5, .3]
                 elif self.Leader.Worldview == "AB":
                     if candidate.Worldview == "A":
                         #print("\n\n\nBEING A BITCH")
-                        self.hire_with_probability(candidate, empty_pos, .3) 
-                        #print("Found hire!")
-                        break
+                        if self.hire_with_probability(candidate, empty_pos, .3)  == True: 
+                            break
+                        else:
+                            continue 
+
                     elif candidate.Worldview == "B":
                         #print("\n\n\nBEING A BITCH")
-                        self.hire_with_probability(candidate, empty_pos, .3) 
-                        #print("Found hire!")
-                        break
+                        if self.hire_with_probability(candidate, empty_pos, .3)  == True: 
+                            break
+                        else:
+                            continue 
+                      
                     elif candidate.Worldview == "AB":
                         #print("\n\n\nBEING A BITCH")
-                        self.hire_with_probability(candidate, empty_pos, .5) 
-                        #print("Found hire!")
-                        break 
+                        if self.hire_with_probability(candidate, empty_pos, .5)  == True: 
+                            break
+                        else:
+                            continue  
         
         #Anti Self-Replication hiring mode: reacting to polarization in organization  
-        if self.Mode == "ASR":
+        elif self.Mode == "ASR":
             #generate 10 candidates
             candidates = []
             has_moderate = False
@@ -609,7 +627,10 @@ def main():
 
         #anyone who wants to resign can resign 
         for employee in Org.Workforce:
+            #sometimes resignations are taking place without a hiring. This means 
+            #that open_position == -1. Why is this happening? 
             open_position = employee.resign()
+            #print("POTENTIALLY RESIGNED POSITION: ", open_position)
             if open_position != -1: 
                 Org.hire(open_position)
         
