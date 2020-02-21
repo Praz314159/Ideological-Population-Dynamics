@@ -66,7 +66,7 @@ import math
 import numpy as np
 import random 
 import argparse 
-
+from matplotlib import pyplot as plt 
 class Individual: 
     def __init__(self):
         #Personal Parameters
@@ -138,7 +138,16 @@ class Individual:
             #the key is that we have access to the global state of the organization, which means that we 
             #do indeed know how homogenous the organization is in A, for example.
             bucket = math.floor((self.Organization.n_A + self.Organization.n_A2)/.05) 
-            
+                 
+            print("\nSpeaker: ", speaker.Worldview, " Listener: ", self.Worldview)
+            print("Bucket: ", bucket)
+ 
+            print("A: ", self.Organization.N_A)
+            print("A Zealots: ", self.Organization.N_A2) 
+            print("B: ", self.Organization.N_B)
+            print("B Zealots: ", self.Organization.N_B2) 
+            print("Total Moderates: ", self.Organization.N_AB)
+           
             #getting likelhood that A --> A' 
             prob_switch = self.Zealot_resistance_probabilities[bucket]
 
@@ -148,6 +157,15 @@ class Individual:
         elif speaker.Worldview == "B" and speaker.Zealot == True and self.Worldview == "B" and self.Zealot == False: 
             bucket = math.floor(self.Organization.n_B + self.Organization.n_B2)
             
+            print("\nSpeaker: ", speaker.Worldview, " Listener: ", self.Worldview)
+            print("Bucket: ", bucket)
+           
+            print("A: ", self.Organization.N_A)
+            print("A Zealots: ", self.Organization.N_A2) 
+            print("B: ", self.Organization.N_B)
+            print("B Zealots: ", self.Organization.N_B2) 
+            print("Total Moderates: ", self.Organization.N_AB)
+           
             #getting likelhood that B --> B' 
             prob_switch = self.Zealot_resistance_probabilities[bucket]
 
@@ -293,7 +311,8 @@ class Organization:
                     self.N_B -= 1 
                     self.n_B = self.N_B/self.Org_size
 
-            #check 0-floor condition 
+            #check 0-floor condition
+            '''
             if self.N_A < 0:
                 self.N_A = 0
                 self.n_A = 0
@@ -309,9 +328,13 @@ class Organization:
             elif self.N_AB < 0: 
                 self.N_AB = 0 
                 self.n_AB = 0 
+            '''
+        #updating polarization
+        if self.n_A + self.n_A2 + self.n_B + self.n_B2 > 0: 
+            self.polarization = self.n_AB/(self.n_A + self.n_A2 + self.n_B + self.n_B2)
+        else: 
+            pass 
 
-        #updating polarization 
-        self.polarization = self.n_A + self.n_A2 + self.n_B + self.n_B2 
         return 
 
     def interact(self):
@@ -319,7 +342,7 @@ class Organization:
         listener = self.Workforce[random.randint(1, self.Org_size-1)]
         speaker = self.Workforce[random.randint(1, self.Org_size-1)] 
         
-        print("LISTENER: ", listener.Worldview, " SPEAKER: ", speaker.Worldview) 
+        print("INTERACTIO: LISTENER: ", listener.Worldview, " SPEAKER: ", speaker.Worldview) 
 
         #decrement global state w/ respect to pre-interaction 
         #listener worldview 
@@ -332,6 +355,13 @@ class Organization:
         #listener worldview 
         self.update_config(listener, "increment")
         self.Num_interactions += 1 
+
+        print("A: ", self.N_A)
+        print("A Zealots: ", self.N_A2) 
+        print("B: ", self.N_B)
+        print("B Zealots: ", self.N_B2) 
+        print("Total Moderates: ", self.N_AB)
+            
         return 
     
     def evaluate_polarization(self):
@@ -345,17 +375,42 @@ class Organization:
             self.Workforce[position] = new_hire 
             new_hire.Org_pos = position
             new_hire.Organization = self
+            
+            print("\nHiring: ", new_hire.Worldview) 
+            print("A: ", self.N_A)
+            print("A Zealots: ", self.N_A2) 
+            print("B: ", self.N_B)
+            print("B Zealots: ", self.N_B2) 
+            print("Total Moderates: ", self.N_AB)
+              
         return 
         
     def fire(self): 
         empty_pos = random.randint(1, self.Org_size-1)
         new_fire = self.Workforce[empty_pos]
-        self.update_config(new_fire, "decrement") 
+        self.update_config(new_fire, "decrement")
+        
+        print("\nFiring: ", new_fire.Worldview)
+        print("A: ", self.N_A)
+        print("A Zealots: ", self.N_A2) 
+        print("B: ", self.N_B)
+        print("B Zealots: ", self.N_B2) 
+        print("Total Moderates: ", self.N_AB)
+          
+      
         return empty_pos 
    
     def accept_resignation(self, new_resignation): 
         empty_pos = new_resignation.Org_pos 
         self.update_config(new_resignation, "decrement")
+        
+        print("\nResignation ", new_resignation.Worldview)
+        print("A: ", self.N_A)
+        print("A Zealots: ", self.N_A2) 
+        print("B: ", self.N_B)
+        print("B Zealots: ", self.N_B2) 
+        print("Total Moderates: ", self.N_AB)
+         
         return empty_pos
 
     def hire(self, empty_pos):
@@ -464,6 +519,14 @@ def main():
     #For now, though, we just create a command line tool in order to 
     #run sims easily and check how things are working ... 
     
+    #plotting vars 
+    polarization = []
+    fractional_A = []
+    fractional_A_Zealots = []
+    fractional_B = []
+    fractional_B_Zealots  = []
+    fractional_Moderates = [] 
+    
     #using default mode 
     Org = Organization() #initialize organization
     Org.populate_org() #population organization with individuals 
@@ -474,6 +537,7 @@ def main():
 
     #checking configuration before evolution
     print("INITIAL STATE: ")
+    print("Hiring Mode: ", Org.mode)
     print("Fractional Total A: ", Org.n_A + Org.n_A2)
     print("Fractional A: ", Org.n_A) 
     print("Fractional A Zealots: ", Org.n_A2)
@@ -486,26 +550,48 @@ def main():
     print("Total Moderates: ", Org.N_AB) 
     print("Leader :", Org.Leader.Worldview)
     print("Polarization: ", Org.polarization) 
-
+    
     #evolve model with 100 interactions
-    for interaction in range(100):
+    for interaction in range(10000):
+        
+        polarization.append(Org.polarization)
+        fractional_A.append(Org.n_A)
+        fractional_A_Zealots.append(Org.n_A2)
+        fractional_B.append(Org.n_B) 
+        fractional_B_Zealots.append(Org.n_B2)
+        fractional_Moderates.append(Org.n_AB) 
+        
+
+        if Org.N_A + Org.N_A2 + Org.N_B + Org.N_B2 + Org.N_AB != Org.Org_size \
+                or Org.N_A < 0 or Org.N_A2 < 0 or Org.N_B < 0 or Org.N_B2 < 0 \
+                or Org.N_AB < 0:
+            print("Something isn't adding up!")
+            print("A: ", Org.N_A)
+            print("A Zealots: ", Org.N_A2) 
+            print("B: ", Org.N_B)
+            print("B Zealots: ", Org.N_B2) 
+            print("Total Moderates: ", Org.N_AB) 
+            break 
+
         #anyone who wants to resign can resign 
         for employee in Org.Workforce:
             #inefficient because running resign twice
-            if employee.resign() != -1: 
-                Org.hire(employee.resign())
+            open_position = employee.resign()
+            if open_position != -1: 
+                Org.hire(open_position)
         
         #interaction 
         print("INTERACTION: ", interaction)
         Org.interact()
-
+        print("\n")
         #hiring and firing every 10 interactions 
         if Org.Num_interactions % 5 == 0:
             pos_to_fill = Org.fire() 
             Org.hire(pos_to_fill)
-    
+        
+
     #checking configuration after evolution
-    print("FINAL STATE: ")
+    print("\nFINAL STATE: ")
     print("Fractional Total A: ", Org.n_A + Org.n_A2)
     print("Fractional A: ", Org.n_A) 
     print("Fractional A Zealots: ", Org.n_A2)
@@ -521,6 +607,16 @@ def main():
     print("Workforce Size: ", len(Org.Workforce)) 
     #parser = argparse.ArgumentParser() #creating argument parser
     
+    plt.plot(polarization)
+    plt.plot(fractional_A)
+    plt.plot(fractional_A_Zealots)
+    plt.plot(fractional_B)
+    plt.plot(fractional_B_Zealots)
+    plt.plot(fractional_Moderates)
+    plt.xlabel("Number of Interactions")
+    plt.ylabel("Fractional Representation in the Organization")
+    #plt.legend()
+    plt.show()
 if __name__ == "__main__": 
     main() 
 
