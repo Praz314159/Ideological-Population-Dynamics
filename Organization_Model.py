@@ -87,6 +87,7 @@ class Individual:
         
     def resign(self): 
         empty_pos = -1
+
         if self.Worldview == "A":
             if self.Organization.n_A + self.Organization.n_A2 > self.THOM:
                 empty_pos = self.Organization.accept_resignation(self) 
@@ -102,6 +103,7 @@ class Individual:
                 empty_pos = self.Organization.accept_resignation(self)
             elif self.Organization.n_B + self.Organization.n_B2 > self.TOPP: 
                 empty_pos = self.Organization.accept_resignation(self) 
+        
         return empty_pos 
 
     def listen(self, speaker):
@@ -171,7 +173,10 @@ class Individual:
 
             #B --> B' with assigned probability 
             if random.random() < prob_switch:
-                self.Zealot == True          
+                self.Zealot == True
+        else: 
+            pass 
+
         return 
 
     #think about what other functionality I might want to give individuals 
@@ -342,7 +347,7 @@ class Organization:
         listener = self.Workforce[random.randint(1, self.Org_size-1)]
         speaker = self.Workforce[random.randint(1, self.Org_size-1)] 
         
-        print("INTERACTIO: LISTENER: ", listener.Worldview, " SPEAKER: ", speaker.Worldview) 
+        print("LISTENER: ", listener.Worldview, " SPEAKER: ", speaker.Worldview) 
 
         #decrement global state w/ respect to pre-interaction 
         #listener worldview 
@@ -376,7 +381,7 @@ class Organization:
             new_hire.Org_pos = position
             new_hire.Organization = self
             
-            print("\nHiring: ", new_hire.Worldview) 
+            print("\nHiring: ", new_hire.Worldview, " Hiring for Position: ", position) 
             print("A: ", self.N_A)
             print("A Zealots: ", self.N_A2) 
             print("B: ", self.N_B)
@@ -389,22 +394,21 @@ class Organization:
         empty_pos = random.randint(1, self.Org_size-1)
         new_fire = self.Workforce[empty_pos]
         self.update_config(new_fire, "decrement")
-        
+        #self.Workforce[empty_pos] = None 
         print("\nFiring: ", new_fire.Worldview)
         print("A: ", self.N_A)
         print("A Zealots: ", self.N_A2) 
         print("B: ", self.N_B)
         print("B Zealots: ", self.N_B2) 
         print("Total Moderates: ", self.N_AB)
-          
       
         return empty_pos 
    
     def accept_resignation(self, new_resignation): 
         empty_pos = new_resignation.Org_pos 
         self.update_config(new_resignation, "decrement")
-        
-        print("\nResignation ", new_resignation.Worldview)
+        #self.Workforce[empty_pos] = None
+        print("\nResignation ", new_resignation.Worldview, "Open Position: ", empty_pos)
         print("A: ", self.N_A)
         print("A Zealots: ", self.N_A2) 
         print("B: ", self.N_B)
@@ -433,53 +437,77 @@ class Organization:
             self.hire_with_probability(new_hire, empty_pos, 1) 
 
         #Self Replication hiring mode: selects for bias of the leader 
-        elif self.Mode == "SR":
+        if self.Mode == "SR":
+            print("ENTERING SR MODE")
             for interview in range(10): 
                 candidate = self.HP[random.randint(0, self.HP_size-1)]
+                print("CANDIDATE ", interview, " Worldview: ", candidate.Worldview)
                 # [.75, .3, (.05, .1)]
                 if self.Leader.Worldview == "A":
                     if candidate.Worldview == "A":
+                        #print("\n\n\nBEING A BITCH")
                         self.hire_with_probability(candidate, empty_pos, .75)
+                        #print("Found hire!")
                         break 
-                    if candidate.Worldview == "B": 
+                    elif candidate.Worldview == "B": 
                         if candidate.Zealot == True:
+                            #print("\n\n\nBEING A BITCH")
                             self.hire_with_probability(candidate, empty_pos, .05) 
+                            #print("Found hire!")
                             break
                         else:
+                            #print("\n\n\nBEING A BITCH")
                             self.hire_with_probability(candidate, empty_pos, .1) 
+                            #print("Found hire!")
                             break  
-                    if candidate.Worldview == "AB":
+                    elif candidate.Worldview == "AB":
+                        #print("\n\n\nBEING A BITCH")
                         self.hire_with_probability(candidate, empty_pos, .3) 
+                        #print("Found hire!")
                         break 
                 # [(.05, .1), .3, .75]
                 elif self.Leader.Worldview == "B":
                     if candidate.Worldview == "A": 
-                        if candidate.Zealot == True: 
+                        if candidate.Zealot == True:
+                            #print("\n\n\nBEING A BITCH")
                             self.hire_with_probability(candidate, empty_pos, .05) 
+                            #print("Found hire!")
                             break
                         else:
+                            #print("\n\n\nBEING A BITCH")
                             self.hire_with_probability(candidate, empty_pos, .1) 
+                            #print("Found hire!")
                             break
-                    if candidate.Worldview == "B":
+                    elif candidate.Worldview == "B":
+                        #print("\n\n\nBEING A BITCH")
                         self.hire_with_probability(candidate, empty_pos, .75)
+                        #print("Found hire!")
                         break
-                    if candidate.Worldview == "AB":
+                    elif candidate.Worldview == "AB":
+                        #print("\n\n\nBEING A BITCH")
                         self.hire_with_probability(candidate, empty_pos, .3) 
+                        #print("Found hire!") 
                         break
                 # [.3, .5, .3]
                 elif self.Leader.Worldview == "AB":
                     if candidate.Worldview == "A":
+                        #print("\n\n\nBEING A BITCH")
                         self.hire_with_probability(candidate, empty_pos, .3) 
+                        #print("Found hire!")
                         break
                     elif candidate.Worldview == "B":
+                        #print("\n\n\nBEING A BITCH")
                         self.hire_with_probability(candidate, empty_pos, .3) 
+                        #print("Found hire!")
                         break
                     elif candidate.Worldview == "AB":
+                        #print("\n\n\nBEING A BITCH")
                         self.hire_with_probability(candidate, empty_pos, .5) 
+                        #print("Found hire!")
                         break 
         
         #Anti Self-Replication hiring mode: reacting to polarization in organization  
-        elif self.Mode == "ASR":
+        if self.Mode == "ASR":
             #generate 10 candidates
             candidates = []
             has_moderate = False
@@ -500,16 +528,21 @@ class Organization:
                     #if a moderate is a candidate, then hire him 
                     if has_moderate == True and candidate.Worldview == "AB": 
                         self.hire_with_probability(candidate, empty_pos, 1)
+                        print("Found hire!")
                         break
                     #if there 
                     elif n_A + n_A2 > n_B + n_B2 and candidate.Worldview == "B":
                         self.hire_with_probability(candidate, empty_pos, 1) 
+                        print("Found hire!")
                         break 
                     elif n_A + n_A2 < n_B + n_B2 and candidate.Worldview == "A": 
                         self.hire_with_probability(candidate, empty_pos, 1) 
+                        print("Found hire!")
                         break 
                     elif n_A + n_A2 == n_B + n_B2 and (candidate.Worldview == "A" or candidate.Worldview == "B"): 
                         self.hire_with_probability(candidate, empty_pos, 1)
+                        print("Found hire!")
+                        break
         return 
 
 def main(): 
@@ -533,11 +566,17 @@ def main():
     Org.populate_HP() #populated hiring pool with individuals 
     
     #using non default settings
-    Org.mode = "SR"
+    Org.Mode = "SR"
+    
+    initial_workforce = Org.Workforce
+    initial_worldviews = []
+    for worker in initial_workforce:
+        initial_worldviews.append(worker.Worldview)
 
+    
     #checking configuration before evolution
     print("INITIAL STATE: ")
-    print("Hiring Mode: ", Org.mode)
+    print("Hiring Mode: ", Org.Mode)
     print("Fractional Total A: ", Org.n_A + Org.n_A2)
     print("Fractional A: ", Org.n_A) 
     print("Fractional A Zealots: ", Org.n_A2)
@@ -566,22 +605,16 @@ def main():
                 or Org.N_A < 0 or Org.N_A2 < 0 or Org.N_B < 0 or Org.N_B2 < 0 \
                 or Org.N_AB < 0:
             print("Something isn't adding up!")
-            print("A: ", Org.N_A)
-            print("A Zealots: ", Org.N_A2) 
-            print("B: ", Org.N_B)
-            print("B Zealots: ", Org.N_B2) 
-            print("Total Moderates: ", Org.N_AB) 
             break 
 
         #anyone who wants to resign can resign 
         for employee in Org.Workforce:
-            #inefficient because running resign twice
             open_position = employee.resign()
             if open_position != -1: 
                 Org.hire(open_position)
         
         #interaction 
-        print("INTERACTION: ", interaction)
+        print("\nINTERACTION: ", interaction)
         Org.interact()
         print("\n")
         #hiring and firing every 10 interactions 
@@ -589,7 +622,15 @@ def main():
             pos_to_fill = Org.fire() 
             Org.hire(pos_to_fill)
         
+    
+    final_workforce = Org.Workforce
+    final_worldviews = []
+    for worker in final_workforce:
+        final_worldviews.append(worker.Worldview)
 
+    print("INITIAL WORLDVIEWS: ", initial_worldviews)
+    print("\nFINAL WORLDVIEWS: ", final_worldviews)
+    '''
     #checking configuration after evolution
     print("\nFINAL STATE: ")
     print("Fractional Total A: ", Org.n_A + Org.n_A2)
@@ -606,7 +647,8 @@ def main():
     print("Polarization: ", Org.polarization)
     print("Workforce Size: ", len(Org.Workforce)) 
     #parser = argparse.ArgumentParser() #creating argument parser
-    
+    '''        
+
     plt.plot(polarization)
     plt.plot(fractional_A)
     plt.plot(fractional_A_Zealots)
