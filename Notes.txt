@@ -8,4 +8,4 @@ Notes on IPM being developed
 
 It's good, however, that the model is at least working. Up next, once these bugs are fixed, is parameter tuning, which I'm excited about. What distribution should be used for the threshold parameters? Further, what should be threshold buckets be for zealot_resistance_probabilities? And, finally, what is a better measure for polarization than simple 1-n_AB? These are all good questions that need to be answered. Once they are, then I can develop a nice interface with which to nicely run experiments
 
-2/19/20:   
+2/21/20: The code is now fully debugged and working. Remaining is to build a tool to efficiently run experiments. Even better would be to get a pygame simulations so that the dynamics can be visualized.   
