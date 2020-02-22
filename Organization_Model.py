@@ -202,21 +202,6 @@ class Organization:
         self.A_HPconfig = .1 
         self.B_HPconfig = .1 
         
-        '''
-        #n_* is the current fractional representation of each worldview
-        self.n_A = 0
-        self.n_A2 = 0
-        self.n_AB = 0
-        self.n_B = 0
-        self.n_B2 = 0 
-
-        #N_* is the absolute number of individuals with each worldview 
-        self.N_A = 0
-        self.N_A2 = 0
-        self.N_AB = 0
-        self.N_B = 0
-        self.N_B2 = 0
-        '''
         #Behavioral parameters 
         self.Mode = "D"  
         self.Turnover_rate = .01 #probably don't need 
@@ -254,9 +239,6 @@ class Organization:
             elif self.Workforce[i].Worldview == "A": 
                 if random.random() < self.A_config: 
                     self.Workforce[i].Zealot = True 
-
-            #updating global org config to true values  
-            #self.update_config(self.Workforce[i], "increment")
         return  
         
     def populate_HP(self):
@@ -280,100 +262,15 @@ class Organization:
                 if random.random() < self.A_HPconfig: 
                     self.HP[i].Zealot = True 
         return 
-    '''
-    def update_config(self, individual, change): 
-        #function is meant to update the organizations n_* and N_* 
-        #when changes are made (increment, decrement)
-
-        if change == "increment":
-            if individual.Worldview == "A":
-                if individual.Zealot == True:
-                    self.N_A2 += 1
-                    self.n_A2 = self.N_A2/self.Org_size 
-                else:
-                    self.N_A += 1 
-                    self.n_A = self.N_A/self.Org_size
-            elif individual.Worldview == "AB":
-                self.N_AB += 1 
-                self.n_AB = self.N_AB/self.Org_size
-            elif individual.Worldview == "B":
-                if individual.Zealot == True: 
-                    self.N_B2 += 1
-                    self.n_B2 = self.N_B2/self.Org_size
-                else:
-                    self.N_B += 1 
-                    self.n_B = self.N_B/self.Org_size 
-
-        elif change == "decrement":
-            if individual.Worldview == "A":
-                if individual.Zealot == True:
-                    self.N_A2 -= 1
-                    self.n_A2 = self.N_A2/self.Org_size 
-                else:
-                    self.N_A -= 1 
-                    self.n_A = self.N_A/self.Org_size
-            elif individual.Worldview == "AB":
-                self.N_AB -= 1 
-                self.n_AB = self.N_AB/self.Org_size
-            elif individual.Worldview == "B":
-                if individual.Zealot == True: 
-                    self.N_B2 -= 1
-                    self.n_B2 = self.N_B2/self.Org_size
-                else:
-                    self.N_B -= 1 
-                    self.n_B = self.N_B/self.Org_size
-
-            #check 0-floor condition
-            
-            
-            if self.N_A < 0:
-                self.N_A = 0
-                self.n_A = 0
-            elif self.N_B < 0: 
-                self.N_B = 0
-                self.n_B = 0
-            elif self.N_A2 < 0:
-                self.N_A2 = 0
-                self.n_A2 = 0
-            elif self.N_B2 < 0:
-                self.N_B2 = 0 
-                self.n_B2 = 0 
-            elif self.N_AB < 0: 
-                self.N_AB = 0 
-                self.n_AB = 0 
-            
-        #updating polarization
-        if self.n_A + self.n_A2 + self.n_B + self.n_B2 > 0: 
-            self.polarization = self.n_AB/(self.n_A + self.n_A2 + self.n_B + self.n_B2)
-        else: 
-            pass 
-
-        return
-    ''' 
+  
     def interact(self):
         #randomnly select two individuals from the workforce 
         listener = self.Workforce[random.randint(1, self.Org_size-1)]
         speaker = self.Workforce[random.randint(1, self.Org_size-1)] 
         
         print("LISTENER: ", listener.Worldview, " SPEAKER: ", speaker.Worldview) 
-
-        #decrement global state w/ respect to pre-interaction 
-        #listener worldview
-        #N_A = self.N_A
-        #wv = listener.Worldview
-
-        #self.update_config(listener, "decrement")
-        #self.validate()
-        #interaction takes place 
+ 
         listener.listen(speaker)
-        #self.validate()
-        # print("LISTENER: ", listener.Worldview, " SPEAKER: ", speaker.Worldview) 
-
-
-        #increment global state w/ respect to post-interaction
-        #listener worldview 
-        #self.update_config(listener, "increment")
-        #self.validate()
         self.Num_interactions += 1 
         
         N = self.get_statistics()[0]
@@ -383,12 +280,7 @@ class Organization:
         print("B Zealots: ", N.get("N_B2")) 
         print("Total Moderates: ", N.get("N_AB"))
             
-        
-        '''
-        if wv == 'A':
-            if N_A != self.N_A and wv == listener.Worldview:
-                raise("Yikes!")
-        '''    
+           
         return 
     
     def evaluate_polarization(self):
@@ -400,8 +292,6 @@ class Organization:
         hired = False 
         if random.random() < probability:
             hired = True 
-            #self.update_config(new_hire, "increment")
-            #self.validate()
             self.Workforce[position] = new_hire 
             new_hire.Org_pos = position
             new_hire.Organization = self
@@ -429,19 +319,11 @@ class Organization:
         print("Total Moderates: ", N.get("N_AB"))
             
         
-        '''
-        #self.update_config(new_fire, "decrement")
-        #self.validate()
-        #self.Workforce[empty_pos] = None 
-        '''
         return empty_pos 
    
     def accept_resignation(self, new_resignation): 
         empty_pos = new_resignation.Org_pos 
-        #self.update_config(new_resignation, "decrement")
-        #self.validate()
-        #self.Workforce[empty_pos] = None
-        
+
         N = self.get_statistics()[0]
         print("\nResignation: ", new_resignation.Worldview, " Firing for Position: ", empty_pos)
         print("A: ", N.get("N_A"))
@@ -461,11 +343,6 @@ class Organization:
         #2. hiring pool is pre-filtered for competence 
         #3. hiring only takes place when someone has been fired 
         
-        #firing
-        #empty_pos = random.randint(1, Org_size-1) 
-        #new_fire = self.Workforce[empty_pos]
-        #self.update_config(new_fire, "decrement") 
-
         #Default hiring mode: selecting for pre-existing bias in hiring pool 
         if self.Mode == "D":
             new_hire = self.HP[random.randint(0, self.HP_size-1)]
@@ -708,21 +585,16 @@ def main():
             #sometimes resignations are taking place without a hiring. This means 
             #that open_position == -1. Why is this happening? 
             open_position = employee.resign()
-            #print("POTENTIALLY RESIGNED POSITION: ", open_position)
             if open_position != -1: 
                 Org.hire(open_position)
-                #Org.validate()
         
         #interaction 
         print("\nINTERACTION: ", interaction)
         Org.interact()
-        print("\n")
         #hiring and firing every 10 interactions 
         if Org.Num_interactions % 5 == 0:
             pos_to_fill = Org.fire() 
             Org.hire(pos_to_fill)
-            #Org.validate()
-        
     
     final_workforce = Org.Workforce
     final_worldviews = []
@@ -735,24 +607,22 @@ def main():
 
     print("INITIAL WORLDVIEWS: ", initial_worldviews)
     print("\nFINAL WORLDVIEWS: ", final_worldviews)
-    '''
+    
     #checking configuration after evolution
     print("\nFINAL STATE: ")
-    print("Fractional Total A: ", Org.n_A + Org.n_A2)
-    print("Fractional A: ", Org.n_A) 
-    print("Fractional A Zealots: ", Org.n_A2)
-    print("Total A: ", Org.N_A + Org.N_A2) 
-    print("Fractional Total B: ", Org.n_B + Org.n_B2) 
-    print("Fractional B: ", Org.n_B)
-    print("Fractional B Zealots: ", Org.n_B2)
-    print("Total B: ", Org.N_B + Org.N_B2) 
-    print("Fractional Moderates :", Org.n_AB)
-    print("Total Moderates: ", Org.N_AB) 
+    print("Hiring Mode: ", Org.Mode)
+    print("Fractional Total A: ", initial_n.get("n_A") + initial_n.get("n_A2"))
+    print("Fractional A: ", initial_n.get("n_A")) 
+    print("Fractional A Zealots: ", initial_n.get("n_A2"))
+    print("Total A: ", initial_N.get("N_A") + initial_N.get("N_A2")) 
+    print("Fractional Total B: ", initial_n.get("n_B") + initial_n.get("n_B2")) 
+    print("Fractional B: ", initial_n.get("n_B"))
+    print("Fractional B Zealots: ", initial_n.get("n_B2"))
+    print("Total B: ", initial_N.get("N_B") + initial_N.get("N_B2")) 
+    print("Fractional Moderates :", initial_n.get("n_AB"))
+    print("Total Moderates: ", initial_N.get("N_AB")) 
     print("Leader :", Org.Leader.Worldview)
-    print("Polarization: ", Org.polarization)
-    print("Workforce Size: ", len(Org.Workforce)) 
-    #parser = argparse.ArgumentParser() #creating argument parser
-    '''        
+    print("Polarization: ", initial_polarization)        
 
     plt.plot(polarization)
     plt.plot(fractional_A)
