@@ -144,7 +144,11 @@ class Individual:
         elif speaker.Worldview == "A" and speaker.Zealot == True and self.Worldview == "A" and self.Zealot == False:
             #the key is that we have access to the global state of the organization, which means that we 
             #do indeed know how homogenous the organization is in A, for example. 
-            bucket = math.floor((n.get("n_A") + n.get("n_A2"))/.05) 
+            #bucket = math.floor((n.get("n_A") + n.get("n_A2"))/.05) 
+            if math.floor((n.get("n_A") + n.get("n_A2"))/.05) == 0: 
+                bucket = 0
+            else: 
+                bucket = math.floor((n.get("n_A") + n.get("n_A2"))/.05) - 1  
                  
             print("\nSpeaker: ", speaker.Worldview, " Listener: ", self.Worldview)
             print("Bucket: ", bucket)
@@ -162,7 +166,12 @@ class Individual:
             if random.random() < prob_switch:
                 self.Zealot == True 
         elif speaker.Worldview == "B" and speaker.Zealot == True and self.Worldview == "B" and self.Zealot == False:
-            bucket = math.floor((n.get("n_B") + n.get("n_B2"))/.05)
+            if math.floor((n.get("n_B") + n.get("n_B2"))/.05) == 0: 
+                bucket = 0
+            else: 
+                bucket = math.floor((n.get("n_B") + n.get("n_B2"))/.05) - 1
+            
+            #bucket = math.floor((n.get("n_B") + n.get("n_B2"))/.05)
             
             print("\nSpeaker: ", speaker.Worldview, " Listener: ", self.Worldview)
             print("Bucket: ", bucket)
@@ -570,7 +579,7 @@ def main():
     print("Polarization: ", initial_polarization) 
     
     #evolve model with 100 interactions
-    for interaction in range(5000):
+    for interaction in range(10000):
         
         N = Org.get_statistics()[0]
         n = Org.get_statistics()[1]
