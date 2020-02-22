@@ -67,6 +67,7 @@ import numpy as np
 import random 
 import argparse 
 from matplotlib import pyplot as plt 
+
 class Individual: 
     def __init__(self):
         #Personal Parameters
@@ -127,14 +128,16 @@ class Individual:
             a zealot, or, if the organization is extremely homogenous, social cost to not becoming one
         '''    
         
-        if (speaker.Worldview == "A" and speaker.Zealot == False and self.Worldview == "B") or (speaker.Worldview == "B" \
-                and speaker.Zealot == False and self.Worldview == "A"): 
+        if (speaker.Worldview == "A" and speaker.Zealot == False and self.Worldview == "B" and self.Zealot == False ) \
+                or (speaker.Worldview == "B" and speaker.Zealot == False and self.Worldview == "A" and self.Zealot == False): 
             self.Worldview = "AB" 
-        elif ((speaker.Worldview == "A" and speaker.Zealot == True) and (self.Worldview == "B" or self.Worldview == "AB")) \
-                or (speaker.Worldview == "A" and speaker.Zealot == False and self.Worldview == "AB"):
+        elif ((speaker.Worldview == "A" and speaker.Zealot == True) and ((self.Worldview == "B" or self.Worldview == "AB") and \
+                self.Zealot == False)) or (speaker.Worldview == "A" and speaker.Zealot == False and self.Worldview == "AB" \
+                and self.Zealot == False):
             self.Worldview = "A" 
-        elif ((speaker.Worldview == "B" and speaker.Zealot == True) and (self.Worldview == "A" or self.Worldview == "AB")) \
-                or (speaker.Worldview == "B" and speaker.Zealot == False and self.Worldview == "AB"): 
+        elif ((speaker.Worldview == "B" and speaker.Zealot == True) and ((self.Worldview == "A" or self.Worldview == "AB")\
+                and self.Zealot == False)) or (speaker.Worldview == "B" and speaker.Zealot == False and self.Worldview == "AB"\
+                and self.Zealot == False): 
             self.Worldview == "B"
         elif speaker.Worldview == "A" and speaker.Zealot == True and self.Worldview == "A" and self.Zealot == False:
             #the key is that we have access to the global state of the organization, which means that we 
@@ -249,7 +252,7 @@ class Organization:
                     self.Workforce[i].Zealot = True 
 
             #updating global org config to true values  
-            self.update_config(self.Workforce[i], "increment") 
+            self.update_config(self.Workforce[i], "increment")
         return  
         
     def populate_HP(self):
@@ -317,6 +320,7 @@ class Organization:
                     self.n_B = self.N_B/self.Org_size
 
             #check 0-floor condition
+            
             '''
             if self.N_A < 0:
                 self.N_A = 0
@@ -334,13 +338,14 @@ class Organization:
                 self.N_AB = 0 
                 self.n_AB = 0 
             '''
+
         #updating polarization
         if self.n_A + self.n_A2 + self.n_B + self.n_B2 > 0: 
             self.polarization = self.n_AB/(self.n_A + self.n_A2 + self.n_B + self.n_B2)
         else: 
             pass 
 
-        return 
+        return
 
     def interact(self):
         #randomnly select two individuals from the workforce 
@@ -350,17 +355,28 @@ class Organization:
         print("LISTENER: ", listener.Worldview, " SPEAKER: ", speaker.Worldview) 
 
         #decrement global state w/ respect to pre-interaction 
-        #listener worldview 
-        self.update_config(listener, "decrement")
+        #listener worldview
+        N_A = self.N_A
+        wv = listener.Worldview
 
+        self.update_config(listener, "decrement")
+        #self.validate()
         #interaction takes place 
         listener.listen(speaker)
+        #self.validate()
+        # print("LISTENER: ", listener.Worldview, " SPEAKER: ", speaker.Worldview) 
+
 
         #increment global state w/ respect to post-interaction
         #listener worldview 
         self.update_config(listener, "increment")
+        #self.validate()
         self.Num_interactions += 1 
-
+        '''
+        if wv == 'A':
+            if N_A != self.N_A and wv == listener.Worldview:
+                raise("Yikes!")
+        '''
         print("A: ", self.N_A)
         print("A Zealots: ", self.N_A2) 
         print("B: ", self.N_B)
@@ -379,6 +395,7 @@ class Organization:
         if random.random() < probability:
             hired = True 
             self.update_config(new_hire, "increment")
+            #self.validate()
             self.Workforce[position] = new_hire 
             new_hire.Org_pos = position
             new_hire.Organization = self
@@ -396,8 +413,9 @@ class Organization:
         empty_pos = random.randint(1, self.Org_size-1)
         new_fire = self.Workforce[empty_pos]
         self.update_config(new_fire, "decrement")
+        #self.validate()
         #self.Workforce[empty_pos] = None 
-        print("\nFiring: ", new_fire.Worldview)
+        print("\nFiring: ", new_fire.Worldview, " Firing for Position: ", empty_pos)
         print("A: ", self.N_A)
         print("A Zealots: ", self.N_A2) 
         print("B: ", self.N_B)
@@ -409,7 +427,8 @@ class Organization:
     def accept_resignation(self, new_resignation): 
         empty_pos = new_resignation.Org_pos 
         self.update_config(new_resignation, "decrement")
-        #self.Workforce[empty_pos] = None
+        #self.validate()
+        self.Workforce[empty_pos] = None
         print("\nResignation ", new_resignation.Worldview, "Open Position: ", empty_pos)
         print("A: ", self.N_A)
         print("A Zealots: ", self.N_A2) 
@@ -440,8 +459,9 @@ class Organization:
 
         #Self Replication hiring mode: selects for bias of the leader 
         elif self.Mode == "SR":
-            print("ENTERING SR MODE")
-            for interview in range(10): 
+            print("\nENTERING SR MODE")
+            #possible we keep interviewing until we find someone ... 
+            for interview in range(50): 
                 candidate = self.HP[random.randint(0, self.HP_size-1)]
                 print("CANDIDATE ", interview, " Worldview: ", candidate.Worldview)
                 # [.75, .3, (.05, .1)]
@@ -561,7 +581,24 @@ class Organization:
                         self.hire_with_probability(candidate, empty_pos, 1)
                         print("Found hire!")
                         break
-        return 
+        return
+
+
+    def validate(self): 
+
+        N = {"N_A": 0, "N_A2": 0, "N_B": 0, "N_B2": 0, "N_AB": 0}
+        for worker in self.Workforce:
+            wv = worker.Worldview
+            char = "2" if worker.Zealot else ''
+            N["N_"+wv+char] += 1
+        for k in N.keys():
+            count = getattr(self, k)
+            if count != N[k]: 
+                raise ValueError("COUNT: ", count, " !=", N[k], "for Worldview: ", k)
+            else: 
+                continue 
+        
+        return   
 
 def main(): 
     #The purpose here is be able to run simulations from the command line 
@@ -589,7 +626,10 @@ def main():
     initial_workforce = Org.Workforce
     initial_worldviews = []
     for worker in initial_workforce:
-        initial_worldviews.append(worker.Worldview)
+        if worker.Zealot == True: 
+            initial_worldviews.append(worker.Worldview + " Zealot")
+        else:
+            initial_worldviews.append(worker.Worldview)
 
     
     #checking configuration before evolution
@@ -633,6 +673,7 @@ def main():
             #print("POTENTIALLY RESIGNED POSITION: ", open_position)
             if open_position != -1: 
                 Org.hire(open_position)
+                Org.validate()
         
         #interaction 
         print("\nINTERACTION: ", interaction)
@@ -642,12 +683,17 @@ def main():
         if Org.Num_interactions % 5 == 0:
             pos_to_fill = Org.fire() 
             Org.hire(pos_to_fill)
+            Org.validate()
         
     
     final_workforce = Org.Workforce
     final_worldviews = []
+
     for worker in final_workforce:
-        final_worldviews.append(worker.Worldview)
+        if worker.Zealot == True:
+            final_worldviews.append(worker.Worldview + " Zealot")
+        else:
+            final_worldviews.append(worker.Worldview)
 
     print("INITIAL WORLDVIEWS: ", initial_worldviews)
     print("\nFINAL WORLDVIEWS: ", final_worldviews)
