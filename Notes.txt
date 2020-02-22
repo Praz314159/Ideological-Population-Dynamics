@@ -8,4 +8,16 @@ Notes on IPM being developed
 
 It's good, however, that the model is at least working. Up next, once these bugs are fixed, is parameter tuning, which I'm excited about. What distribution should be used for the threshold parameters? Further, what should be threshold buckets be for zealot_resistance_probabilities? And, finally, what is a better measure for polarization than simple 1-n_AB? These are all good questions that need to be answered. Once they are, then I can develop a nice interface with which to nicely run experiments
 
-2/21/20: The code is now fully debugged and working. Remaining is to build a tool to efficiently run experiments. Even better would be to get a pygame simulations so that the dynamics can be visualized.   
+2/21/20: The code is now fully debugged and working. The main error fixed today was particularly frustrating, although I learned quite a bit from it: 
+
+I originally updated the configuration of the organization's workforce using an update_config() function. Statistical information about the workforce was stored as fields (n_*, N_*, polarization, etc.). The update_config() function then either incremented or decremented the count of individuals with a particular worldview when a change in the workforce took place -- hiring, firing, interaction, resignation. It's unclear why, but this resulted in an out-of-sync issue between the statistical information about the workforce and the workforce itself. Particular worldviews would be detected in the workforce and selected for resignation or firing even when the count with respect to their worldview had been driven to zero already. This meant that worldview counts were negative given enough epochs. This was solved simply by simplifying the organization class with a get_statistics() function that reads in the workforce list and operates on it directly to recover all the relevant statistical information. get_statistics() was then called whenever the statistical information was required. This allowed the statistics and the workforce list (assuming the workforce list was updated correctly) to always be in sync. 
+
+So, it looks like the model is now fully operational, and I can move on to the finer details. In particular: 
+	1. Building a command line interface that I can use to efficiently run experiments 
+	2. Developing a proper metric for polarization w/ range [0,1] that increases as components become more segregated 
+	3. Finding the proper distributions for TOPP and THOM (in particular, think about TOPP for moderates and THOM for zealots)  
+	4. Probabilities for SR and ASR	
+	5. Developing the differential equations that predict the behavior we see 
+	6. Building a pygame functionality so that the dynamics of the model can be visualized 
+
+In addition, it is probably time to drop all the notes made thus far into a word doc and linguistically flush out the model. This will be a good way to get the ball rolling on the paper whose publication, I'm sure, is inevitable. Ha, laughable.   
