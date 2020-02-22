@@ -149,7 +149,7 @@ class Individual:
                 bucket = 0
             else: 
                 bucket = math.floor((n.get("n_A") + n.get("n_A2"))/.05) - 1  
-                 
+            '''     
             print("\nSpeaker: ", speaker.Worldview, " Listener: ", self.Worldview)
             print("Bucket: ", bucket)
             
@@ -158,7 +158,7 @@ class Individual:
             print("B: ", N.get("N_B"))
             print("B Zealots: ", N.get("N_B2")) 
             print("Total Moderates: ", N.get("N_AB"))
-            
+            '''
             #getting likelhood that A --> A' 
             prob_switch = self.Zealot_resistance_probabilities[bucket]
 
@@ -170,9 +170,7 @@ class Individual:
                 bucket = 0
             else: 
                 bucket = math.floor((n.get("n_B") + n.get("n_B2"))/.05) - 1
-            
-            #bucket = math.floor((n.get("n_B") + n.get("n_B2"))/.05)
-            
+            '''
             print("\nSpeaker: ", speaker.Worldview, " Listener: ", self.Worldview)
             print("Bucket: ", bucket)
             
@@ -181,7 +179,7 @@ class Individual:
             print("B: ", N.get("N_B"))
             print("B Zealots: ", N.get("N_B2")) 
             print("Total Moderates: ", N.get("N_AB"))
-            
+            '''
            
             #getting likelhood that B --> B' 
             prob_switch = self.Zealot_resistance_probabilities[bucket]
@@ -277,18 +275,18 @@ class Organization:
         listener = self.Workforce[random.randint(1, self.Org_size-1)]
         speaker = self.Workforce[random.randint(1, self.Org_size-1)] 
         
-        print("LISTENER: ", listener.Worldview, " SPEAKER: ", speaker.Worldview) 
+        #print("LISTENER: ", listener.Worldview, " SPEAKER: ", speaker.Worldview) 
  
         listener.listen(speaker)
         self.Num_interactions += 1 
-        
+        '''
         N = self.get_statistics()[0]
         print("A: ", N.get("N_A"))
         print("A Zealots: ", N.get("N_A2")) 
         print("B: ", N.get("N_B"))
         print("B Zealots: ", N.get("N_B2")) 
         print("Total Moderates: ", N.get("N_AB"))
-            
+        '''    
            
         return 
     
@@ -304,7 +302,7 @@ class Organization:
             self.Workforce[position] = new_hire 
             new_hire.Org_pos = position
             new_hire.Organization = self
-            
+            '''
             N = self.get_statistics()[0]
             print("\nHiring: ", new_hire.Worldview, " Hiring for Position: ", position) 
             print("A: ", N.get("N_A"))
@@ -312,13 +310,13 @@ class Organization:
             print("B: ", N.get("N_B"))
             print("B Zealots: ", N.get("N_B2")) 
             print("Total Moderates: ", N.get("N_AB"))
-            
+            '''
         return hired
         
     def fire(self): 
         empty_pos = random.randint(1, self.Org_size-1)
         new_fire = self.Workforce[empty_pos]
-
+        '''
         N = self.get_statistics()[0]
         print("\nFiring: ", new_fire.Worldview, " Firing for Position: ", empty_pos)
         print("A: ", N.get("N_A"))
@@ -326,13 +324,13 @@ class Organization:
         print("B: ", N.get("N_B"))
         print("B Zealots: ", N.get("N_B2")) 
         print("Total Moderates: ", N.get("N_AB"))
-            
+        ''' 
         
         return empty_pos 
    
     def accept_resignation(self, new_resignation): 
         empty_pos = new_resignation.Org_pos 
-
+        '''
         N = self.get_statistics()[0]
         print("\nResignation: ", new_resignation.Worldview, " Firing for Position: ", empty_pos)
         print("A: ", N.get("N_A"))
@@ -340,7 +338,7 @@ class Organization:
         print("B: ", N.get("N_B"))
         print("B Zealots: ", N.get("N_B2")) 
         print("Total Moderates: ", N.get("N_AB"))
-         
+        ''' 
         return empty_pos
 
     def hire(self, empty_pos):
@@ -359,11 +357,11 @@ class Organization:
 
         #Self Replication hiring mode: selects for bias of the leader 
         elif self.Mode == "SR":
-            print("\nENTERING SR MODE")
+            #print("\nENTERING SR MODE")
             #possible we keep interviewing until we find someone ... 
             for interview in range(50): 
                 candidate = self.HP[random.randint(0, self.HP_size-1)]
-                print("CANDIDATE ", interview, " Worldview: ", candidate.Worldview)
+                #print("CANDIDATE ", interview, " Worldview: ", candidate.Worldview)
                 # [.75, .3, (.05, .1)]
                 if self.Leader.Worldview == "A":
                     if candidate.Worldview == "A":
@@ -511,7 +509,8 @@ class Organization:
                 "n_B2": N.get("N_B2")/self.Org_size, "n_AB": N.get("N_AB")/self.Org_size}
         
         #print("n dict: ", n)
-        polarization = n.get("n_AB")/(n.get("n_A") + n.get("n_A2") + n.get("n_B") + n.get("n_B2"))  
+        #polarization = #n.get("n_AB")/
+        polarization = (n.get("n_A") + n.get("n_A2") + n.get("n_B") + n.get("n_B2"))  
 
         return N, n, polarization
 
@@ -538,14 +537,15 @@ def main():
     Org.Mode = "SR"
     Org.Org_size = 100 
     Org.HP_size = 500 
-    Org.Config = [.3, .1, .6] #initial fractional rep in org
+    Org.Config = [.33, .34, .33] #initial fractional rep in org
     Org.A_config = .5 
     Org.B_config = .5
     Org.H_config = [.02, .13, .85] #fractional rep in hiring pool  
     Org.A_HPconfig = .1 
     Org.B_HPconfig = .8 
     
-    Org.populate_org() #population organization with individuals 
+    Org.populate_org() #population organization with individuals
+    Org.Leader.Worldview = "B" #setting leader's worldview
     Org.populate_HP() #populated hiring pool with individuals 
     
 
@@ -579,7 +579,7 @@ def main():
     print("Polarization: ", initial_polarization) 
     
     #evolve model with 100 interactions
-    for interaction in range(10000):
+    for interaction in range(500):
         
         N = Org.get_statistics()[0]
         n = Org.get_statistics()[1]
@@ -592,7 +592,6 @@ def main():
         fractional_B_Zealots.append(n.get("n_B2"))
         fractional_Moderates.append(n.get("n_AB")) 
         
-
         if N.get("N_A") + N.get("N_A2") + N.get("N_B") + N.get("N_B2") + N.get("N_AB") != Org.Org_size \
                 or N.get("N_A") < 0 or N.get("N_A2") < 0 or N.get("N_B") < 0 or N.get("N_B2") < 0 \
                 or N.get("N_AB") < 0:
@@ -608,7 +607,7 @@ def main():
                 Org.hire(open_position)
         
         #interaction 
-        print("\n\nINTERACTION: ", interaction)
+        #print("INTERACTION: ", interaction)
         Org.interact()
 
         #hiring and firing every 10 interactions 
@@ -646,17 +645,26 @@ def main():
     print("Fractional Moderates :", final_n.get("n_AB"))
     print("Total Moderates: ", final_N.get("N_AB")) 
     print("Leader :", Org.Leader.Worldview)
-    print("Polarization: ", final_polarization)        
+    print("Polarization: ", final_polarization)
 
-    plt.plot(polarization, label = "Polarization")
+
+    txt = "Mode = " + str(Org.Mode) + "| Leader Worldview = " + Org.Leader.Worldview + "| Org Size = " +\
+            str(Org.Org_size) + "| Initial Org Config = " + str(Org.Config) + "| Fraction of A Zealots = " + \
+            str(Org.A_config) + "| Fraction of B Zealots = " + str(Org.B_config) + "| Hiring Pool Size = " + \
+            str(Org.HP_size) + "| Initial HP Config = " + str(Org.H_config) + "| Fraction of HP A Zealots = " +\
+            str(Org.A_HPconfig) + "| Fraction of HP B Zealots = " + str(Org.B_HPconfig)
+
+    plt.plot(polarization_vals, label = "Polarization")
     plt.plot(fractional_A, label = "A")
     plt.plot(fractional_A_Zealots, label = "A Zealots")
     plt.plot(fractional_B, label = "B")
     plt.plot(fractional_B_Zealots, label = "B Zealots")
     plt.plot(fractional_Moderates, label = "Moderates")
+    plt.title("Ideological Configuration of Organization Over Time") 
     plt.xlabel("Number of Interactions")
     plt.ylabel("Fractional Representation in the Organization")
     plt.legend()
+    plt.text(.5, -0.2, txt, horizontalalignment = "center") 
     #plt.legend()
     plt.show()
 if __name__ == "__main__": 
