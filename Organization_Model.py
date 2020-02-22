@@ -524,12 +524,22 @@ def main():
     
     #using default mode 
     Org = Organization() #initialize organization
+   
+    #using non default settings
+    Org.Mode = "SR"
+    Org.Org_size = 100 
+    Org.HP_size = 500 
+    Org.Config = [.3, .1, .6] #initial fractional rep in org
+    Org.A_config = .5 
+    Org.B_config = .5
+    Org.H_config = [.02, .13, .85] #fractional rep in hiring pool  
+    Org.A_HPconfig = .1 
+    Org.B_HPconfig = .8 
+    
     Org.populate_org() #population organization with individuals 
     Org.populate_HP() #populated hiring pool with individuals 
     
-    #using non default settings
-    Org.Mode = "SR"
-    
+
     initial_workforce = Org.Workforce
     initial_worldviews = []
     for worker in initial_workforce:
@@ -560,7 +570,7 @@ def main():
     print("Polarization: ", initial_polarization) 
     
     #evolve model with 100 interactions
-    for interaction in range(10000):
+    for interaction in range(5000):
         
         N = Org.get_statistics()[0]
         n = Org.get_statistics()[1]
@@ -589,8 +599,9 @@ def main():
                 Org.hire(open_position)
         
         #interaction 
-        print("\nINTERACTION: ", interaction)
+        print("\n\nINTERACTION: ", interaction)
         Org.interact()
+
         #hiring and firing every 10 interactions 
         if Org.Num_interactions % 5 == 0:
             pos_to_fill = Org.fire() 
@@ -608,30 +619,35 @@ def main():
     print("INITIAL WORLDVIEWS: ", initial_worldviews)
     print("\nFINAL WORLDVIEWS: ", final_worldviews)
     
+    final_N = Org.get_statistics()[0]
+    final_n = Org.get_statistics()[1]
+    final_polarization = Org.get_statistics()[2]
+
     #checking configuration after evolution
     print("\nFINAL STATE: ")
     print("Hiring Mode: ", Org.Mode)
-    print("Fractional Total A: ", initial_n.get("n_A") + initial_n.get("n_A2"))
-    print("Fractional A: ", initial_n.get("n_A")) 
-    print("Fractional A Zealots: ", initial_n.get("n_A2"))
-    print("Total A: ", initial_N.get("N_A") + initial_N.get("N_A2")) 
-    print("Fractional Total B: ", initial_n.get("n_B") + initial_n.get("n_B2")) 
-    print("Fractional B: ", initial_n.get("n_B"))
-    print("Fractional B Zealots: ", initial_n.get("n_B2"))
-    print("Total B: ", initial_N.get("N_B") + initial_N.get("N_B2")) 
-    print("Fractional Moderates :", initial_n.get("n_AB"))
-    print("Total Moderates: ", initial_N.get("N_AB")) 
+    print("Fractional Total A: ", final_n.get("n_A") + final_n.get("n_A2"))
+    print("Fractional A: ", final_n.get("n_A")) 
+    print("Fractional A Zealots: ", final_n.get("n_A2"))
+    print("Total A: ", final_N.get("N_A") + final_N.get("N_A2")) 
+    print("Fractional Total B: ", final_n.get("n_B") + final_n.get("n_B2")) 
+    print("Fractional B: ", final_n.get("n_B"))
+    print("Fractional B Zealots: ", final_n.get("n_B2"))
+    print("Total B: ", final_N.get("N_B") + final_N.get("N_B2")) 
+    print("Fractional Moderates :", final_n.get("n_AB"))
+    print("Total Moderates: ", final_N.get("N_AB")) 
     print("Leader :", Org.Leader.Worldview)
-    print("Polarization: ", initial_polarization)        
+    print("Polarization: ", final_polarization)        
 
-    plt.plot(polarization)
-    plt.plot(fractional_A)
-    plt.plot(fractional_A_Zealots)
-    plt.plot(fractional_B)
-    plt.plot(fractional_B_Zealots)
-    plt.plot(fractional_Moderates)
+    plt.plot(polarization, label = "Polarization")
+    plt.plot(fractional_A, label = "A")
+    plt.plot(fractional_A_Zealots, label = "A Zealots")
+    plt.plot(fractional_B, label = "B")
+    plt.plot(fractional_B_Zealots, label = "B Zealots")
+    plt.plot(fractional_Moderates, label = "Moderates")
     plt.xlabel("Number of Interactions")
     plt.ylabel("Fractional Representation in the Organization")
+    plt.legend()
     #plt.legend()
     plt.show()
 if __name__ == "__main__": 
