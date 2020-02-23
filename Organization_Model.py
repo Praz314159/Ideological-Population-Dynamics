@@ -302,7 +302,7 @@ class Organization:
             self.Workforce[position] = new_hire 
             new_hire.Org_pos = position
             new_hire.Organization = self
-            
+            '''
             N = self.get_statistics()[0]
             print("\nHiring: ", new_hire.Worldview, " Hiring for Position: ", position) 
             print("A: ", N.get("N_A"))
@@ -310,7 +310,7 @@ class Organization:
             print("B: ", N.get("N_B"))
             print("B Zealots: ", N.get("N_B2")) 
             print("Total Moderates: ", N.get("N_AB"))
-            
+            '''
         return hired
         
     def fire(self): 
@@ -445,22 +445,41 @@ class Organization:
             has_moderate = False
 
             #selecting 20 candidates to interview
-            for i in range(100): 
+            for i in range(50): 
                 candidates.append(self.HP[random.randint(0, self.HP_size-1)])
                 if candidates[i].Worldview == "AB":
                     has_moderate = True 
-            print("HAS MODERATE: ", has_moderate)
+            #print("HAS MODERATE: ", has_moderate)
             n = self.get_statistics()[1]
             N = self.get_statistics()[0]
             polarization = self.get_statistics()[2] 
 
             #polarization threshold set to .75
-            if polarization < .7:
+            if polarization < .6:
                 #if the polarization is tolerable, choose random 
                 new_hire = self.HP[random.randint(0, self.HP_size-1)] 
                 self.hire_with_probability(new_hire, empty_pos, 1) 
-            else: 
-                for candidate in candidates:
+            else:
+                if has_moderate == True:
+                    for candidate in candidates: 
+                        if candidate.Worldview == "AB": 
+                            self.hire_with_probability(candidate, empty_pos, 1) 
+                            break
+                        else:
+                            pass
+                else:
+                    for candidate in candidates:
+                        if n.get("n_A") + n.get("n_A2") > n.get("n_B") + n.get("n_B2") and candidate.Worldview == "B":
+                            self.hire_with_probability(candidate, empty_pos, 1)
+                            break 
+                        elif n.get("n_A") + n.get("n_A2") < n.get("n_B") + n.get("n_B2") and candidate.Worldview == "A":
+                            self.hire_with_probability(candidate, empty_pos, 1) 
+                            break
+                        elif n.get("n_A") + n.get("n_A2") == n.get("n_B") + n.get("n_B2"):
+                            self.hire_with_probability(candidate, empty_pos, 1)
+                            break 
+
+                    '''
                     #if a moderate is a candidate, then hire him 
                     if has_moderate == True and candidate.Worldview == "AB": 
                         if self.hire_with_probability(candidate, empty_pos, 1) == True:
@@ -482,6 +501,7 @@ class Organization:
                             break
                         else:
                             continue
+                    '''
         return
 
 
@@ -582,7 +602,7 @@ def main():
     print("Polarization: ", initial_polarization) 
     
     #evolve model with 100 interactions
-    for interaction in range(1000):
+    for interaction in range(2500):
         
         N = Org.get_statistics()[0]
         n = Org.get_statistics()[1]
