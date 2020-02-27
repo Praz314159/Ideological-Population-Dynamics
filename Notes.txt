@@ -51,3 +51,7 @@ moderates and THOM for zealots)
 In addition, it is probably time to drop all the notes made thus far into a word doc and 
 linguistically flush out the model. This will be a good way to get the ball rolling on the paper 
 whose publication, I'm sure, is inevitable. Ha, laughable.   
+
+2/27/20: For some reason, when in ASR mode, whenever a new AB is hired, he is hired to the same 
+position. In one case it was position 99. It looks like when ASR mode is entered, any AB will 
+always resign. We therefore get stuck in a rut, where the same position resigned by an AB is filled by an AB who then resigns again.

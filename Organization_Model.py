@@ -302,15 +302,15 @@ class Organization:
             self.Workforce[position] = new_hire 
             new_hire.Org_pos = position
             new_hire.Organization = self
-            '''
-            N = self.get_statistics()[0]
-            print("\nHiring: ", new_hire.Worldview, " Hiring for Position: ", position) 
-            print("A: ", N.get("N_A"))
-            print("A Zealots: ", N.get("N_A2")) 
-            print("B: ", N.get("N_B"))
-            print("B Zealots: ", N.get("N_B2")) 
-            print("Total Moderates: ", N.get("N_AB"))
-            '''
+            
+            #N = self.get_statistics()[0]
+            print("Hiring: ", new_hire.Worldview, " Hiring for Position: ", position, "\n") 
+            #print("A: ", N.get("N_A"))
+            #print("A Zealots: ", N.get("N_A2")) 
+            #print("B: ", N.get("N_B"))
+            #print("B Zealots: ", N.get("N_B2")) 
+            #print("Total Moderates: ", N.get("N_AB"))
+            
         return hired
         
     def fire(self): 
@@ -453,7 +453,10 @@ class Organization:
             n = self.get_statistics()[1]
             N = self.get_statistics()[0]
             polarization = self.get_statistics()[2] 
-
+            
+            print("HAS MODERAGE: ", has_moderate) 
+            print("ASR HIRING: ", polarization >= .6)
+            print("POLARIZATION: ", polarization)
             #polarization threshold set to .75
             if polarization < .6:
                 #if the polarization is tolerable, choose random 
@@ -626,7 +629,9 @@ def main():
             #sometimes resignations are taking place without a hiring. This means 
             #that open_position == -1. Why is this happening? 
             open_position = employee.resign()
+            #print("POSITION RESIGNED: ", open_position) 
             if open_position != -1: 
+                print("POSITION RESIGNED: ", open_position) 
                 Org.hire(open_position)
         
         #interaction 
@@ -635,7 +640,8 @@ def main():
 
         #hiring and firing every 10 interactions 
         if Org.Num_interactions % 5 == 0:
-            pos_to_fill = Org.fire() 
+            pos_to_fill = Org.fire()
+            print("POSITION FIRED: ", pos_to_fill)
             Org.hire(pos_to_fill)
     
     final_workforce = Org.Workforce
