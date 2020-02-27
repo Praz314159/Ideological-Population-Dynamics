@@ -54,4 +54,11 @@ whose publication, I'm sure, is inevitable. Ha, laughable.
 
 2/27/20: For some reason, when in ASR mode, whenever a new AB is hired, he is hired to the same 
 position. In one case it was position 99. It looks like when ASR mode is entered, any AB will 
-always resign. We therefore get stuck in a rut, where the same position resigned by an AB is filled by an AB who then resigns again.
+always resign. We therefore get stuck in a rut, where the same position resigned by an AB is filled by an AB who then resigns again. There is a choice here about whether or not to assume that the
+the state of the organization is transparent to the hiring pool or not. If we make this assumption,
+then an individual will not enter the organization if either of his tolerances -- TOPP or THOM --
+are exceeded. This avoids the problem, however, of individuals with the same worldview being hired
+for then resigning from the same position. 
+
+
+

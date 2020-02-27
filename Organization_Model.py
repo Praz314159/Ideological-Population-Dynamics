@@ -95,7 +95,7 @@ class Individual:
             elif n.get("n_B") + n.get("n_B2") > self.TOPP: 
                 empty_pos = self.Organization.accept_resignation(self)
         elif self.Worldview == "AB":
-            if n.get("n_AB") < .1*(1-n.get("n_AB")):
+            if n.get("n_AB") > self.TOPP:
                 empty_pos = self.Organization.accept_resignation(self) 
             elif n.get("n_AB") > self.THOM: 
                 empty_pos = self.Organization.accept_resignation(self)  
