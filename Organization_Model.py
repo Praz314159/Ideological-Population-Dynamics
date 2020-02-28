@@ -298,13 +298,52 @@ class Organization:
     def hire_with_probability(self, new_hire, position, probability):
         hired = False 
         if random.random() < probability:
+            
             hired = True 
             self.Workforce[position] = new_hire 
             new_hire.Org_pos = position
             new_hire.Organization = self
             
+            '''
+            n = self.get_statistics()[1]
+            # only hire if candidate can handle the current org state 
+            if new_hire.Worldview == "A":
+                if n.get("n_A") + n.get("n_A2") < new_hire.THOM:
+                    hired = True 
+                    self.Workforce[position] = new_hire 
+                    new_hire.Org_pos = position
+                    new_hire.Organization = self     
+                elif n.get("n_B") + n.get("n_B2") > new_hire.TOPP: 
+                    hired = True 
+                    self.Workforce[position] = new_hire 
+                    new_hire.Org_pos = position
+                    new_hire.Organization = self
+            elif new_hire.Worldview == "AB":
+                if n.get("n_AB") > new_hire.TOPP:
+                    hired = True 
+                    self.Workforce[position] = new_hire 
+                    new_hire.Org_pos = position
+                    new_hire.Organization = self 
+                elif n.get("n_AB") > new_hire.THOM: 
+                    hired = True 
+                    self.Workforce[position] = new_hire 
+                    new_hire.Org_pos = position
+                    new_hire.Organization = self
+            elif new_hire.Worldview == "B": 
+                if n.get("n_B") + n.get("n_B2") > new_hire.THOM:
+                    hired = True 
+                    self.Workforce[position] = new_hire 
+                    new_hire.Org_pos = position
+                    new_hire.Organization = self
+                elif n.get("n_B") + n.get("n_B2") > new_hire.TOPP: 
+                    hired = True 
+                    self.Workforce[position] = new_hire 
+                    new_hire.Org_pos = position
+                    new_hire.Organization = self
+            '''
+
             #N = self.get_statistics()[0]
-            print("Hiring: ", new_hire.Worldview, " Hiring for Position: ", position, "\n") 
+            #print("Hiring: ", new_hire.Worldview, " Hiring for Position: ", position, "\n") 
             #print("A: ", N.get("N_A"))
             #print("A Zealots: ", N.get("N_A2")) 
             #print("B: ", N.get("N_B"))
@@ -454,9 +493,9 @@ class Organization:
             N = self.get_statistics()[0]
             polarization = self.get_statistics()[2] 
             
-            print("HAS MODERAGE: ", has_moderate) 
-            print("ASR HIRING: ", polarization >= .6)
-            print("POLARIZATION: ", polarization)
+            #print("HAS MODERAGE: ", has_moderate) 
+            #print("ASR HIRING: ", polarization >= .6)
+            #print("POLARIZATION: ", polarization)
             #polarization threshold set to .75
             if polarization < .6:
                 #if the polarization is tolerable, choose random 
@@ -605,7 +644,7 @@ def main():
     print("Polarization: ", initial_polarization) 
     
     #evolve model with 100 interactions
-    for interaction in range(2500):
+    for interaction in range(5000):
         
         N = Org.get_statistics()[0]
         n = Org.get_statistics()[1]
@@ -631,7 +670,7 @@ def main():
             open_position = employee.resign()
             #print("POSITION RESIGNED: ", open_position) 
             if open_position != -1: 
-                print("POSITION RESIGNED: ", open_position) 
+                #print("POSITION RESIGNED: ", open_position) 
                 Org.hire(open_position)
         
         #interaction 
@@ -641,7 +680,7 @@ def main():
         #hiring and firing every 10 interactions 
         if Org.Num_interactions % 5 == 0:
             pos_to_fill = Org.fire()
-            print("POSITION FIRED: ", pos_to_fill)
+            #print("POSITION FIRED: ", pos_to_fill)
             Org.hire(pos_to_fill)
     
     final_workforce = Org.Workforce
@@ -693,7 +732,7 @@ def main():
     plt.xlabel("Number of Interactions")
     plt.ylabel("Fractional Representation in the Organization")
     plt.legend()
-    plt.text(.5, -0.2, txt, horizontalalignment = "center") 
+    #plt.text(0, -0.2, txt) 
     #plt.legend()
     plt.show()
 if __name__ == "__main__": 
