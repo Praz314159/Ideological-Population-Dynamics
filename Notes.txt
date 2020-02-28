@@ -58,7 +58,17 @@ always resign. We therefore get stuck in a rut, where the same position resigned
 the state of the organization is transparent to the hiring pool or not. If we make this assumption,
 then an individual will not enter the organization if either of his tolerances -- TOPP or THOM --
 are exceeded. This avoids the problem, however, of individuals with the same worldview being hired
-for then resigning from the same position. 
+for then resigning from the same position. This can be solved simply by only hiring individuals who
+are able to "handle" the current state of the organization. Or, rather, by assuming that, since
+the state of the organization is visible to the hiring pool, there is some self-selection force 
+causing only individuals who have the ability to withstand the current state of the organization 
+to submit themselves for candidacy. 
+
+When we assume this selective force, born of the prior assumption of "organizational visibility to 
+hiring pool", the long term dynamics of the organization change. The organization's polarization
+is kept in check, hovering at around .6, which is the threshold used to trigger conscious hiring of
+ABs. In the opposite case, the predominant worldview and the opposite worldview zealots converge to
+roughly .5, while everything else converges to 0.   
 
 
 
