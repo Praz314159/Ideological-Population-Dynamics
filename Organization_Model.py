@@ -298,7 +298,7 @@ class Organization:
     def hire_with_probability(self, new_hire, position, probability):
         hired = False 
         if random.random() < probability:
-            
+            '''
             hired = True 
             self.Workforce[position] = new_hire 
             new_hire.Org_pos = position
@@ -340,7 +340,7 @@ class Organization:
                     self.Workforce[position] = new_hire 
                     new_hire.Org_pos = position
                     new_hire.Organization = self
-            '''
+            
 
             #N = self.get_statistics()[0]
             #print("Hiring: ", new_hire.Worldview, " Hiring for Position: ", position, "\n") 
@@ -484,7 +484,7 @@ class Organization:
             has_moderate = False
 
             #selecting 20 candidates to interview
-            for i in range(50): 
+            for i in range(10): 
                 candidates.append(self.HP[random.randint(0, self.HP_size-1)])
                 if candidates[i].Worldview == "AB":
                     has_moderate = True 
@@ -493,7 +493,7 @@ class Organization:
             N = self.get_statistics()[0]
             polarization = self.get_statistics()[2] 
             
-            #print("HAS MODERAGE: ", has_moderate) 
+            #print("HAS MODERATE: ", has_moderate) 
             #print("ASR HIRING: ", polarization >= .6)
             #print("POLARIZATION: ", polarization)
             #polarization threshold set to .75
@@ -503,7 +503,8 @@ class Organization:
                 self.hire_with_probability(new_hire, empty_pos, 1) 
             else:
                 if has_moderate == True:
-                    for candidate in candidates: 
+                    for candidate in candidates:
+                        print("CANDIDATE ", candidates.index(candidate), " Worldview: ", candidate.Worldview)
                         if candidate.Worldview == "AB": 
                             self.hire_with_probability(candidate, empty_pos, 1) 
                             break
@@ -511,6 +512,7 @@ class Organization:
                             pass
                 else:
                     for candidate in candidates:
+                        print("CANDIDATE ", candidates.index(candidate), " Worldview: ", candidate.Worldview)
                         if n.get("n_A") + n.get("n_A2") > n.get("n_B") + n.get("n_B2") and candidate.Worldview == "B":
                             self.hire_with_probability(candidate, empty_pos, 1)
                             break 
@@ -600,8 +602,8 @@ def main():
    
     #using non default settings
     Org.Mode = "ASR"
-    Org.Org_size = 100 
-    Org.HP_size = 500 
+    Org.Org_size = 1000 
+    Org.HP_size = 5000 
     Org.Config = [.1, .1, .8] #initial fractional rep in org
     Org.A_config = .5 
     Org.B_config = .7
