@@ -522,30 +522,6 @@ class Organization:
                         elif n.get("n_A") + n.get("n_A2") == n.get("n_B") + n.get("n_B2"):
                             self.hire_with_probability(candidate, empty_pos, 1)
                             break 
-
-                    '''
-                    #if a moderate is a candidate, then hire him 
-                    if has_moderate == True and candidate.Worldview == "AB": 
-                        if self.hire_with_probability(candidate, empty_pos, 1) == True:
-                            break
-                        else:
-                            continue
-                    elif has_moderate == False and n.get("n_A") + n.get("n_A2") > n.get("n_B") + n.get("n_B2") and candidate.Worldview == "B":
-                        if self.hire_with_probability(candidate, empty_pos, 1) == True:
-                            break
-                        else:
-                            continue
-                    elif has_moderate == False and n.get("n_A") + n.get("n_A2") < n.get("n_B") + n.get("n_B2") and candidate.Worldview == "A": 
-                        if self.hire_with_probability(candidate, empty_pos, 1) == True: 
-                            break
-                        else:
-                            continue
-                    elif has_moderate == False and n.get("n_A") + n.get("n_A2") == n.get("n_B") + n.get("n_B2") and (candidate.Worldview == "A" or candidate.Worldview == "B"): 
-                        if self.hire_with_probability(candidate, empty_pos, 1) == True:
-                            break
-                        else:
-                            continue
-                    '''
         return
 
 
