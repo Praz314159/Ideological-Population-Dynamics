@@ -504,7 +504,7 @@ class Organization:
             else:
                 if has_moderate == True:
                     for candidate in candidates:
-                        print("CANDIDATE ", candidates.index(candidate), " Worldview: ", candidate.Worldview)
+                        #print("CANDIDATE ", candidates.index(candidate), " Worldview: ", candidate.Worldview)
                         if candidate.Worldview == "AB": 
                             self.hire_with_probability(candidate, empty_pos, 1) 
                             break
@@ -512,7 +512,7 @@ class Organization:
                             pass
                 else:
                     for candidate in candidates:
-                        print("CANDIDATE ", candidates.index(candidate), " Worldview: ", candidate.Worldview)
+                        #print("CANDIDATE ", candidates.index(candidate), " Worldview: ", candidate.Worldview)
                         if n.get("n_A") + n.get("n_A2") > n.get("n_B") + n.get("n_B2") and candidate.Worldview == "B":
                             self.hire_with_probability(candidate, empty_pos, 1)
                             break 
@@ -557,7 +557,7 @@ class Organization:
 
         return N, n, polarization
 
-
+'''
 def main(): 
     #The purpose here is be able to run simulations from the command line 
     #Eventually, we should be able to automate many simulations with 
@@ -717,7 +717,7 @@ if __name__ == "__main__":
     main() 
 
 
-'''
+
 TO DO: 
     1. Think more carefully about methods of Individual and Organization. The ones included now are preliminary.
     2. Code the actual behavior of the model --> how does the model evolve? EPOCHs? 
