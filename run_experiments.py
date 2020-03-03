@@ -22,7 +22,8 @@ def run_simulation( ):
     pass 
 
 #mainly SR and ASR modes 
-def test_hiring_effort(): 
+def test_hiring_effort():
+    pass
 
 def main(): 
     #The purpose here is be able to run simulations from the command line 
@@ -32,14 +33,14 @@ def main():
     #run sims easily and check how things are working ... 
     
     parser = argparse.ArgumentParser() 
-    hiring_mode = parser.mutually_exclusive_group() 
-    hiring_mode.add_argument("-d", "--default", nargs = 0, help = "This is the default hiring mode.\
+    hiring_mode = parser.add_mutually_exclusive_group(required = True) 
+    hiring_mode.add_argument("-d", "--default", nargs = 1, type = str, help = "This is the default hiring mode.\
             When in this mode, the leader of the organization himself has no bias. However, because \
             he has no hiring bias, he selects for whatever bias may be intrisic to the hiring pool.")
-    hiring_mode.add_argument("-sr", "--replication", nargs = 0, help = "This is the self-replication \
+    hiring_mode.add_argument("-sr", "--replication", nargs = 1, type = str, help = "This is the self-replication \
             hiring mode. When in this mode, the leader is biased towards hiring candidates with the \
             same worldview as him.") 
-    hiring_mode.add_argument("-asr", "--anti_replication", nargs = 0, help = "This is the anti \
+    hiring_mode.add_argument("-asr", "--anti_replication", nargs = 1, type = str, help = "This is the anti \
             self-replication hiring mode. When in this mode, no matter what the worldview of the leader \
             is, he attempts to maintain an ideologically diverse, non-polarized organization. This may \
             require him to hire against his worldview.")
@@ -47,19 +48,12 @@ def main():
     #we distinguish between parameters that should remain constant and those that we are interested
     #to get results from. The parameters that should remain constant (e.g, Org_Size) will be entered 
     #from input() rather than nargs
-
+    '''
     Org.Org_size = input("Organization Size: " ) 
     Org.HP_size = input("Hiring Pool Size:  ") 
     THOM_distribution = input("THOM distribution: ") 
     TOPP_distribution = input("TOPP distribution: ") 
-    
-
-
-
-
-
-
-
+    '''
     #plotting vars 
     polarization_vals = []
     fractional_A = []
@@ -117,7 +111,7 @@ def main():
     print("Polarization: ", initial_polarization) 
     
     #evolve model with 100 interactions
-    for interaction in range(100):
+    for interaction in range(1000):
         
         N = Org.get_statistics()[0]
         n = Org.get_statistics()[1]

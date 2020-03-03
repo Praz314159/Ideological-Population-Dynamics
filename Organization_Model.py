@@ -398,7 +398,7 @@ class Organization:
         elif self.Mode == "SR":
             #print("\nENTERING SR MODE")
             #possible we keep interviewing until we find someone ... 
-            for interview in range(50): 
+            for interview in range(10): 
                 candidate = self.HP[random.randint(0, self.HP_size-1)]
                 #print("CANDIDATE ", interview, " Worldview: ", candidate.Worldview)
                 
@@ -484,7 +484,7 @@ class Organization:
             has_moderate = False
 
             #selecting 20 candidates to interview
-            for i in range(10): 
+            for i in range(50): 
                 candidates.append(self.HP[random.randint(0, self.HP_size-1)])
                 if candidates[i].Worldview == "AB":
                     has_moderate = True 
