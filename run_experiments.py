@@ -44,6 +44,16 @@ def main():
             self-replication hiring mode. When in this mode, no matter what the worldview of the leader \
             is, he attempts to maintain an ideologically diverse, non-polarized organization. This may \
             require him to hire against his worldview.")
+    
+
+    args = parser.parse_args() 
+
+    if args.default:
+        pass 
+    elif args.replication: 
+        pass 
+    elif args.anti_replication: 
+        pass 
 
     #we distinguish between parameters that should remain constant and those that we are interested
     #to get results from. The parameters that should remain constant (e.g, Org_Size) will be entered 
@@ -69,12 +79,12 @@ def main():
     Org.Mode = "ASR"
     Org.Org_size = 100 
     Org.HP_size = 500 
-    Org.Config = [.1, .1, .8] #initial fractional rep in org
+    Org.Config = [.33, .34, .33] #initial fractional rep in org
     Org.A_config = .5 
-    Org.B_config = .7
-    Org.H_config = [.2, .2, .6] #fractional rep in hiring pool  
-    Org.A_HPconfig = .1 
-    Org.B_HPconfig = .8 
+    Org.B_config = .5
+    Org.H_config = [.34, .33, .33] #fractional rep in hiring pool  
+    Org.A_HPconfig = .5 
+    Org.B_HPconfig = .5 
     
     Org.populate_org() #population organization with individuals
     Org.Leader.Worldview = "B" #setting leader's worldview
@@ -135,7 +145,7 @@ def main():
                 Org.hire(open_position)
         
         #interaction 
-        #print("INTERACTION: ", interaction)
+        print("INTERACTION: ", interaction)
         Org.interact()
 
         #hiring and firing every 10 interactions 

@@ -67,6 +67,7 @@ import numpy as np
 import random 
 import argparse 
 from matplotlib import pyplot as plt 
+import statistics 
 
 class Individual: 
     def __init__(self):
@@ -210,11 +211,9 @@ class Organization:
         self.B_HPconfig = .1 
         
         #Behavioral parameters 
-        self.Mode = "D"  
-        self.Turnover_rate = .01 #probably don't need 
+        self.Mode = "D"   
         self.Workforce = []
         self.HP = []
-        self.Num_interactions = 0
         self.Leader = None 
         #self.polarization = self.n_A + self.n_A2 + self.n_B + self.n_B2 
        
@@ -278,7 +277,7 @@ class Organization:
         #print("LISTENER: ", listener.Worldview, " SPEAKER: ", speaker.Worldview) 
  
         listener.listen(speaker)
-        self.Num_interactions += 1 
+
         '''
         N = self.get_statistics()[0]
         print("A: ", N.get("N_A"))
@@ -553,6 +552,15 @@ class Organization:
         
         #print("n dict: ", n)
         #polarization = #n.get("n_AB")/
+        n_A* = n.get("n_A") + n.get("n_A2")
+        n_B* = n.get("n_B") + n.get("n_B2") 
+        n_AB = n.get("n_AB") 
+        alpha = abs(1 - (n_A*/n_B*)) 
+        beta = abs(1 - (n_A*/n_AB)) 
+        gamma = abs(1 - (n_B*/n_AB)) 
+        ratios = [alpha, beta, gamma] 
+        mean_ration = statistics.mean(ratios) 
+
         polarization = (n.get("n_A") + n.get("n_A2") + n.get("n_B") + n.get("n_B2"))  
 
         return N, n, polarization
