@@ -215,6 +215,7 @@ class Organization:
         self.Workforce = []
         self.HP = []
         self.Leader = None 
+        self.num_interactions = 0
         #self.polarization = self.n_A + self.n_A2 + self.n_B + self.n_B2 
        
     def populate_org(self):
@@ -277,7 +278,7 @@ class Organization:
         #print("LISTENER: ", listener.Worldview, " SPEAKER: ", speaker.Worldview) 
  
         listener.listen(speaker)
-
+        self.num_interactions += 1
         '''
         N = self.get_statistics()[0]
         print("A: ", N.get("N_A"))
@@ -297,7 +298,7 @@ class Organization:
     def hire_with_probability(self, new_hire, position, probability):
         hired = False 
         if random.random() < probability:
-            '''
+            
             hired = True 
             self.Workforce[position] = new_hire 
             new_hire.Org_pos = position
@@ -339,7 +340,7 @@ class Organization:
                     self.Workforce[position] = new_hire 
                     new_hire.Org_pos = position
                     new_hire.Organization = self
-            
+            '''
 
             #N = self.get_statistics()[0]
             #print("Hiring: ", new_hire.Worldview, " Hiring for Position: ", position, "\n") 
@@ -496,7 +497,7 @@ class Organization:
             #print("ASR HIRING: ", polarization >= .6)
             #print("POLARIZATION: ", polarization)
             #polarization threshold set to .75
-            if polarization < .6:
+            if polarization < .5:
                 #if the polarization is tolerable, choose random 
                 new_hire = self.HP[random.randint(0, self.HP_size-1)] 
                 self.hire_with_probability(new_hire, empty_pos, 1) 
@@ -552,16 +553,27 @@ class Organization:
         
         #print("n dict: ", n)
         #polarization = #n.get("n_AB")/
-        n_A* = n.get("n_A") + n.get("n_A2")
-        n_B* = n.get("n_B") + n.get("n_B2") 
-        n_AB = n.get("n_AB") 
-        alpha = abs(1 - (n_A*/n_B*)) 
-        beta = abs(1 - (n_A*/n_AB)) 
-        gamma = abs(1 - (n_B*/n_AB)) 
-        ratios = [alpha, beta, gamma] 
-        mean_ration = statistics.mean(ratios) 
+        
+        n_A = n.get("n_A") + n.get("n_A2")
+        n_B = n.get("n_B") + n.get("n_B2") 
+        n_AB = n.get("n_AB")
+        
+        #Zero checking 
+        if n_B == 0: 
+            alpha = 1000
+        else: 
+            alpha = abs(1 - (n_A/n_B)) 
 
-        polarization = (n.get("n_A") + n.get("n_A2") + n.get("n_B") + n.get("n_B2"))  
+        if n_AB == 0:
+            beta = 1000 
+            gamma = 1000 
+        else: 
+            beta = abs(1 - (n_A/n_AB)) 
+            gamma = abs(1 - (n_B/n_AB))
+
+        ratios = [alpha, beta, gamma] 
+        mean_ratios = statistics.mean(ratios) 
+        polarization = (2/math.pi)*np.arctan(mean_ratios)  
 
         return N, n, polarization
 

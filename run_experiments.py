@@ -76,9 +76,9 @@ def main():
     Org = Organization() #initialize organization
    
     #using non default settings
-    Org.Mode = "ASR"
-    Org.Org_size = 100 
-    Org.HP_size = 500 
+    Org.Mode = "D"
+    Org.Org_size = 200 
+    Org.HP_size = 1000 
     Org.Config = [.33, .34, .33] #initial fractional rep in org
     Org.A_config = .5 
     Org.B_config = .5
@@ -121,7 +121,7 @@ def main():
     print("Polarization: ", initial_polarization) 
     
     #evolve model with 100 interactions
-    for interaction in range(1000):
+    for interaction in range(2000):
         
         N = Org.get_statistics()[0]
         n = Org.get_statistics()[1]
@@ -149,7 +149,7 @@ def main():
         Org.interact()
 
         #hiring and firing every 10 interactions 
-        if Org.Num_interactions % 5 == 0:
+        if Org.num_interactions % 5 == 0:
             pos_to_fill = Org.fire()
             #print("POSITION FIRED: ", pos_to_fill)
             Org.hire(pos_to_fill)

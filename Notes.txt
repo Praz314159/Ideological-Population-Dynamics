@@ -78,13 +78,19 @@ moderates. More accurately, the organization will hire with the same bias as the
 polarization will steadly increase. 
 
 3/7/20: For the past few days, I have been working on the mathematical characterization of the system.
-There are multiple areas in which things are illdefined. Perhaps I should have begun with the mathematical
-characterization then implemented the model to validate analytical results. In particular, I have finally come
-up with what I think is a workable metric for polarization that is constructed, first, using an average of three 
-values that tell us how distant from being equal each subpopulation is relative to the others. Note that 
-this average, which we'll call rho_0 is in [0,inf). Because we want the polarization value to be in the interval
-[0,1), we take Polarization = 2/pi*arctan(rho_0). Now polarization is increasing as rho_0 increases and converges
-to a limit of 1 on [0,inf).  
+There are multiple areas in which things are illdefined. Perhaps I should have begun with the 
+mathematical characterization then implemented the model to validate analytical results. In 
+particular, I have finally come up with what I think is a workable metric for polarization that is 
+constructed, first, using an average of three values that tell us how distant from being equal each 
+subpopulation is relative to the others. Note that this average, which we'll call rho_0 is in [0,inf).
+ Because we want the polarization value to be in the interval [0,1), we take Polarization = 
+2/pi*arctan(rho_0). Now polarization is increasing as rho_0 increases and converges to a limit of 1 
+on [0,inf).  
 
+3/10/20: I'm now conducted a fixed point analysis of the system of nonlinear differential equations. 
+It looks like the easy fixed point analysis given in the Strogatz paper won't be applicable here. 
+However, it might be possible to conduct a generalized stability analysis using methods involving 
+eigenanalysis of the Jacobian. I also was able to think a bit more carefully about the system of 
+differential equations I orginally drew up. I realized several flaws which have now been corrected. 
 
 
