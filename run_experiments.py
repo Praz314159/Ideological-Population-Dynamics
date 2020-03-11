@@ -142,12 +142,41 @@ def plot_single(polarization_vals, fractional_A, fractional_A_Zealots, fractiona
     plt.xlabel("Number of Interactions")
     plt.ylabel("Fractional Representation in the Organization")
     plt.legend()
-    #plt.text(0, -0.2, txt) 
-    #plt.legend()
     plt.show()
     pass 
 
-def plot_all(): 
+def plot_all(D, SR, ASR):
+    
+    fig, axs = plt.subplots(3) 
+    fig.suptitle("D, SR, ASR") 
+    axs[0].plot(D[0], label = "Polarization") 
+    axs[0].plot(D[1], label = "A")
+    axs[0].plot(D[2], label = "A Zealots") 
+    axs[0].plot(D[3], label = "B")
+    axs[0].plot(D[4], label = "B Zealots") 
+    axs[0].plot(D[5], label = "Moderates") 
+    #axs[0].set(xlabel = "Number of Interactions", ylabel = "Fractional Representation in the Organization")
+    axs[0].legend()
+    
+    axs[1].plot(SR[0], label = "Polarization") 
+    axs[1].plot(SR[1], label = "A")
+    axs[1].plot(SR[2], label = "A Zealots") 
+    axs[1].plot(SR[3], label = "B")
+    axs[1].plot(SR[4], label = "B Zealots") 
+    axs[1].plot(SR[5],label = "Moderates") 
+    axs[1].set(ylabel = "Fractional Representation in the Organization")
+    #axs[1].legend()
+    
+    axs[2].plot(ASR[0], label = "Polarization") 
+    axs[2].plot(ASR[1], label = "A")
+    axs[2].plot(ASR[2], label = "A Zealots") 
+    axs[2].plot(ASR[3], label = "B")
+    axs[2].plot(ASR[4], label = "B Zealots") 
+    axs[2].plot(ASR[5], label = "Moderates") 
+    axs[2].set(xlabel = "Number of Interactions")
+    #axs[2].legend()   
+    
+    plt.show()
     pass 
 
 def test_hiring_effort():
@@ -173,7 +202,7 @@ def main():
             self-replication hiring mode. When in this mode, no matter what the worldview of the leader \
             is, he attempts to maintain an ideologically diverse, non-polarized organization. This may \
             require him to hire against his worldview.")
-    hiring_mode.add_argument("-all", "--all", nargs = 1, type = str, help = "this is the flag that allows \
+    hiring_mode.add_argument("-all", "--all", nargs = 1, type = int, help = "this is the flag that allows \
             you to run the experiment on all modes and plot them side by side in order to compare their \
             behavior.")
 
@@ -233,9 +262,20 @@ def main():
         pass
     elif args.all: 
         Modes = ["D", "SR", "ASR"]
-        for mode in modes: 
+        epochs = args.all[0]
+        D = []
+        SR = []
+        ASR = []
+        for mode in Modes: 
             Org.Mode = mode
-            run_simulation(Org, epochs)
+            if mode == "D": 
+                D = run_simulation(Org, epochs)
+            elif mode == "SR": 
+                SR = run_simulation(Org, epochs) 
+            elif mode == "ASR": 
+                ASR = run_simulation(Org, epochs) 
+        
+        plot_all(D, SR, ASR)
 
 if __name__ == "__main__": 
     main() 

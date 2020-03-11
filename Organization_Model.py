@@ -428,7 +428,7 @@ class Organization:
                     if candidate.Worldview == "A": 
                         if candidate.Zealot == True:
                             #print("\n\n\nBEING A BITCH")
-                            if seelf.hire_with_probability(candidate, empty_pos, .05) == True:
+                            if self.hire_with_probability(candidate, empty_pos, .05) == True:
                                 break
                             else:
                                 continue
