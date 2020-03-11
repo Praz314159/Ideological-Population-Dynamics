@@ -93,18 +93,18 @@ class Individual:
         if self.Worldview == "A":
             if n.get("n_A") + n.get("n_A2") > self.THOM:
                 empty_pos = self.Organization.accept_resignation(self) 
-            elif n.get("n_B") + n.get("n_B2") > self.TOPP: 
-                empty_pos = self.Organization.accept_resignation(self)
+            #elif n.get("n_B") + n.get("n_B2") > self.TOPP: 
+            #    empty_pos = self.Organization.accept_resignation(self)
         elif self.Worldview == "AB":
             if n.get("n_AB") > self.TOPP:
                 empty_pos = self.Organization.accept_resignation(self) 
-            elif n.get("n_AB") > self.THOM: 
-                empty_pos = self.Organization.accept_resignation(self)  
+            #elif n.get("n_AB") > self.THOM: 
+            #    empty_pos = self.Organization.accept_resignation(self)  
         elif self.Worldview == "B": 
             if n.get("n_B") + n.get("n_B2") > self.THOM:
                 empty_pos = self.Organization.accept_resignation(self)
-            elif n.get("n_B") + n.get("n_B2") > self.TOPP: 
-                empty_pos = self.Organization.accept_resignation(self) 
+            #elif n.get("n_B") + n.get("n_B2") > self.TOPP: 
+            #    empty_pos = self.Organization.accept_resignation(self) 
         
         return empty_pos 
 
@@ -228,7 +228,7 @@ class Organization:
             
             #draw TOPP and THOM from normal distribution, but set THOM at least as high as TOPP 
             self.Workforce[i].TOPP = np.random.normal(0.5, .1) #chose normal distribution 
-            self.Workforce[i].THOM = np.random.uniform(self.Workforce[i].TOPP,1) 
+            #self.Workforce[i].THOM = np.random.uniform(self.Workforce[i].TOPP,1) 
             #does choosing uniformly greater than points drawn from normal distribution give a normal distribution? 
 
             #set individual's worldview based on organization config 
@@ -290,11 +290,6 @@ class Organization:
            
         return 
     
-    def evaluate_polarization(self):
-        #this method is for when a more sophisticated evaluation of 
-        #polarization is developed 
-        pass
-
     def hire_with_probability(self, new_hire, position, probability):
         hired = False 
         if random.random() < probability:
@@ -433,7 +428,7 @@ class Organization:
                     if candidate.Worldview == "A": 
                         if candidate.Zealot == True:
                             #print("\n\n\nBEING A BITCH")
-                            if self.hire_with_probability(candidate, empty_pos, .05) == True:
+                            if seelf.hire_with_probability(candidate, empty_pos, .05) == True:
                                 break
                             else:
                                 continue
