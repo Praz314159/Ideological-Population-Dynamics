@@ -123,10 +123,33 @@ def run_simulation(Org, epochs):
     print("Leader :", Org.Leader.Worldview)
     print("Polarization: ", final_polarization)
 
-    return polarization_vals, fractional_A, fractional_A_Zealots, fractional_B, fractional_Moderates 
+    return polarization_vals, fractional_A, fractional_A_Zealots, fractional_B, fractional_B_Zealots, \
+            fractional_Moderates 
     pass 
 
-#mainly SR and ASR modes 
+#mainly SR and ASR modes
+
+def plot_single(polarization_vals, fractional_A, fractional_A_Zealots, fractional_B, fractional_B_Zealots, \
+        fractional_Moderates):
+
+    plt.plot(polarization_vals, label = "Polarization")
+    plt.plot(fractional_A, label = "A")
+    plt.plot(fractional_A_Zealots, label = "A Zealots")
+    plt.plot(fractional_B, label = "B")
+    plt.plot(fractional_B_Zealots, label = "B Zealots")
+    plt.plot(fractional_Moderates, label = "Moderates")
+    plt.title("Ideological Configuration of Organization Over Time") 
+    plt.xlabel("Number of Interactions")
+    plt.ylabel("Fractional Representation in the Organization")
+    plt.legend()
+    #plt.text(0, -0.2, txt) 
+    #plt.legend()
+    plt.show()
+    pass 
+
+def plot_all(): 
+    pass 
+
 def test_hiring_effort():
     pass
 
@@ -140,13 +163,13 @@ def main():
     
     parser = argparse.ArgumentParser() 
     hiring_mode = parser.add_mutually_exclusive_group(required = True) 
-    hiring_mode.add_argument("-d", "--default", nargs = 1, type = str, help = "This is the default hiring mode.\
+    hiring_mode.add_argument("-d", "--default", nargs = 1, type = int, help = "This is the default hiring mode.\
             When in this mode, the leader of the organization himself has no bias. However, because \
             he has no hiring bias, he selects for whatever bias may be intrisic to the hiring pool.")
-    hiring_mode.add_argument("-sr", "--replication", nargs = 1, type = str, help = "This is the self-replication \
+    hiring_mode.add_argument("-sr", "--replication", nargs = 1, type = int, help = "This is the self-replication \
             hiring mode. When in this mode, the leader is biased towards hiring candidates with the \
             same worldview as him.") 
-    hiring_mode.add_argument("-asr", "--anti_replication", nargs = 1, type = str, help = "This is the anti \
+    hiring_mode.add_argument("-asr", "--anti_replication", nargs = 1, type = int, help = "This is the anti \
             self-replication hiring mode. When in this mode, no matter what the worldview of the leader \
             is, he attempts to maintain an ideologically diverse, non-polarized organization. This may \
             require him to hire against his worldview.")
@@ -162,61 +185,57 @@ def main():
     #Now we want to ask the user what he'd like to set each of the main parameters too 
     #in order to run the experiment: size, HP size, Config, A config, B config, HP A config,
     #HP B config
-    Org.Org_size = raw_input("Number of individuals in organization: ")  
-    Org.HP_size = raw_input("Hiring pool size: ") 
-    Org.Config = raw_input("Fractional woldview configuration of organization: ")
-    Org.A_config = raw_input("Fraction of A's that are zealots: ")  
-    Org.B_config = raw_input("Fraction of B's that are zealots: ") 
-    Org.H_config = raw_input("Fractional worldview configuration of hiring pool: ") 
-    Org.A_HPconfig = raw_input("Fraction of hiring pools A's that are zealots: ") 
-    Org.B_HPconfig = raw_input("Fraction of hiring pool B's that are zealots: ")
-    epochs = raw_input("Number of epochs for which the simulation will be run: ") 
+    Org.Org_size = int(input("Number of individuals in organization: "))  
+    Org.HP_size = int(input("Hiring pool size: ")) 
+    config_A = float(input("Fractional woldview configuration A: "))
+    config_B = float(input("Fractional woldview configuration B: ")) 
+    config_AB = float(input("Fractional worldview configuration AB: ")) 
+    Org.Config = [config_A, config_B, config_AB] 
+    Org.A_config = float(input("Fraction of A's that are zealots: "))  
+    Org.B_config = float(input("Fraction of B's that are zealots: ")) 
+    Hconfig_A = float(input("Fractional woldview HP configuration A: "))
+    Hconfig_B = float(input("Fractional woldview HP configuration B: ")) 
+    Hconfig_AB = float(input("Fractional worldview HP configuration AB: "))
+    Org.H_config = [Hconfig_A, Hconfig_B, Hconfig_AB]  
+    Org.A_HPconfig = float(input("Fraction of hiring pools A's that are zealots: "))
+    Org.B_HPconfig = float(input("Fraction of hiring pool B's that are zealots: "))
 
-    Org.populate() 
-    Org.leader.Worldview = raw_input("Woldview of leader: ") 
+    Org.populate_org() 
+    Org.Leader.Worldview = input("Woldview of leader: ") 
     Org.populate_HP() #populated hiring pool with individuals 
     
     if args.default:
         #set organization params 
         Org.Mode = "D"
-        run_simpulations(Org, epochs)
+        epochs = args.default[0]
+        polarization_vals, fractional_A, fractional_A_Zealots, fractional_B, fractional_B_Zealots, \
+                fractional_Moderates = run_simulation(Org, epochs)
+        plot_single(polarization_vals, fractional_A, fractional_A_Zealots, fractional_B,\
+                fractional_B_Zealots, fractional_Moderates)
         pass 
     elif args.replication: 
         Org.Mode = "SR" 
+        epochs = args.default[0]
         run_simulation(Org, epochs) 
+        polarization_vals, fractional_A, fractional_A_Zealots, fractional_B, fractional_B_Zealots, \
+                fractional_Moderates = run_simulation(Org, epochs)
+        plot_single(polarization_vals, fractional_A, fractional_A_Zealots, fractional_B,\
+                fractional_B_Zealots, fractional_Moderates)
         pass 
     elif args.anti_replication:
         Org.Mode = "ASR" 
+        epochs = args.default[0] 
         run_simulation(Org, epochs) 
+        polarization_vals, fractional_A, fractional_A_Zealots, fractional_B, fractional_B_Zealots, \
+                fractional_Moderates = run_simulation(Org, epochs)
+        plot_single(polarization_vals, fractional_A, fractional_A_Zealots, fractional_B,\
+                fractional_B_Zealots, fractional_Moderates)
         pass
     elif args.all: 
         Modes = ["D", "SR", "ASR"]
         for mode in modes: 
             Org.Mode = mode
             run_simulation(Org, epochs)
-
-
-    #we distinguish between parameters that should remain constant and those that we are interested
-    #to get results from. The parameters that should remain constant (e.g, Org_Size) will be entered 
-    txt = "Mode = " + str(Org.Mode) + "| Leader Worldview = " + Org.Leader.Worldview + "| Org Size = " +\
-            str(Org.Org_size) + "| Initial Org Config = " + str(Org.Config) + "| Fraction of A Zealots = " + \
-            str(Org.A_config) + "| Fraction of B Zealots = " + str(Org.B_config) + "| Hiring Pool Size = " + \
-            str(Org.HP_size) + "| Initial HP Config = " + str(Org.H_config) + "| Fraction of HP A Zealots = " +\
-            str(Org.A_HPconfig) + "| Fraction of HP B Zealots = " + str(Org.B_HPconfig)
-
-    plt.plot(polarization_vals, label = "Polarization")
-    plt.plot(fractional_A, label = "A")
-    plt.plot(fractional_A_Zealots, label = "A Zealots")
-    plt.plot(fractional_B, label = "B")
-    plt.plot(fractional_B_Zealots, label = "B Zealots")
-    plt.plot(fractional_Moderates, label = "Moderates")
-    plt.title("Ideological Configuration of Organization Over Time") 
-    plt.xlabel("Number of Interactions")
-    plt.ylabel("Fractional Representation in the Organization")
-    plt.legend()
-    #plt.text(0, -0.2, txt) 
-    #plt.legend()
-    plt.show()
 
 if __name__ == "__main__": 
     main() 
