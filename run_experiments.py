@@ -82,7 +82,7 @@ def run_simulation(Org, epochs):
                 Org.hire(open_position)
         
         #interaction 
-        print("INTERACTION: ", interaction)
+        #print("INTERACTION: ", interaction)
         Org.interact()
 
         #hiring and firing every 10 interactions 
@@ -179,6 +179,35 @@ def plot_all(D, SR, ASR):
     plt.show()
     pass 
 
+def set_initial_conditions(Org_size, HP_size, config_A, config_B, config_AB, A_config, B_config,\
+        Hconfig_A, Hconfig_B, Hconfig_AB, A_HPconfig, B_HPconfig, Leader_worldview): 
+
+    #initialize organization
+    Org = Organization() 
+    
+    #set parameters to user input 
+    Org.Org_size = Org_size
+    Org.HP_size = HP_size 
+    Org.Config = [config_A, config_B, config_AB] 
+    Org.A_config = A_config 
+    Org.B_config = B_config
+    Org.H_config = [Hconfig_A, Hconfig_B, Hconfig_AB]  
+    Org.A_HPconfig = A_HPconfig
+    Org.B_HPconfig = B_HPconfig
+
+    Org.populate_org()
+    #populate hiring pool 
+    Org.populate_HP() 
+    
+    #use custom leader worldview or random
+    if Leader_worldview != "No Preference":
+        Org.Leader.Worldview = Leader_worldview
+    else:
+        pass
+    
+    #return initialized organization
+    return Org
+
 def test_hiring_effort():
     pass
 
@@ -208,33 +237,27 @@ def main():
 
     args = parser.parse_args() 
     
-    #instantiate organization 
-    Org = Organization()
-    
     #Now we want to ask the user what he'd like to set each of the main parameters too 
     #in order to run the experiment: size, HP size, Config, A config, B config, HP A config,
     #HP B config
-    Org.Org_size = int(input("Number of individuals in organization: "))  
-    Org.HP_size = int(input("Hiring pool size: ")) 
+    Org_size = int(input("Number of individuals in organization: "))  
+    HP_size = int(input("Hiring pool size: ")) 
     config_A = float(input("Fractional woldview configuration A: "))
     config_B = float(input("Fractional woldview configuration B: ")) 
-    config_AB = float(input("Fractional worldview configuration AB: ")) 
-    Org.Config = [config_A, config_B, config_AB] 
-    Org.A_config = float(input("Fraction of A's that are zealots: "))  
-    Org.B_config = float(input("Fraction of B's that are zealots: ")) 
+    config_AB = float(input("Fractional worldview configuration AB: "))  
+    A_config = float(input("Fraction of A's that are zealots: "))  
+    B_config = float(input("Fraction of B's that are zealots: ")) 
     Hconfig_A = float(input("Fractional woldview HP configuration A: "))
     Hconfig_B = float(input("Fractional woldview HP configuration B: ")) 
-    Hconfig_AB = float(input("Fractional worldview HP configuration AB: "))
-    Org.H_config = [Hconfig_A, Hconfig_B, Hconfig_AB]  
-    Org.A_HPconfig = float(input("Fraction of hiring pools A's that are zealots: "))
-    Org.B_HPconfig = float(input("Fraction of hiring pool B's that are zealots: "))
-
-    Org.populate_org() 
-    Org.Leader.Worldview = input("Woldview of leader: ") 
-    Org.populate_HP() #populated hiring pool with individuals 
-    
+    Hconfig_AB = float(input("Fractional worldview HP configuration AB: "))  
+    A_HPconfig = float(input("Fraction of hiring pools A's that are zealots: "))
+    B_HPconfig = float(input("Fraction of hiring pool B's that are zealots: "))
+    Leader_worldview = input("Worldview of leader: ") 
+   
     if args.default:
         #set organization params 
+        Org = set_initial_conditions(Org_size, HP_size, config_A, config_B, config_AB, A_config, \
+                B_config, Hconfig_A, Hconfig_B, Hconfig_AB, A_HPconfig, B_HPconfig, Leader_worldview)
         Org.Mode = "D"
         epochs = args.default[0]
         polarization_vals, fractional_A, fractional_A_Zealots, fractional_B, fractional_B_Zealots, \
@@ -243,6 +266,8 @@ def main():
                 fractional_B_Zealots, fractional_Moderates)
         pass 
     elif args.replication: 
+        Org = set_initial_conditions(Org_size, HP_size, config_A, config_B, config_AB, A_config, \
+                B_config, Hconfig_A, Hconfig_B, Hconfig_AB, A_HPconfig, B_HPconfig, Leader_worldview)
         Org.Mode = "SR" 
         epochs = args.default[0]
         run_simulation(Org, epochs) 
@@ -252,6 +277,8 @@ def main():
                 fractional_B_Zealots, fractional_Moderates)
         pass 
     elif args.anti_replication:
+        Org = set_initial_conditions(Org_size, HP_size, config_A, config_B, config_AB, A_config, \
+                B_config, Hconfig_A, Hconfig_B, Hconfig_AB, A_HPconfig, B_HPconfig, Leader_worldview)
         Org.Mode = "ASR" 
         epochs = args.default[0] 
         run_simulation(Org, epochs) 
@@ -266,7 +293,9 @@ def main():
         D = []
         SR = []
         ASR = []
-        for mode in Modes: 
+        for mode in Modes:
+            Org = set_initial_conditions(Org_size, HP_size, config_A, config_B, config_AB, A_config, \
+                    B_config, Hconfig_A, Hconfig_B, Hconfig_AB, A_HPconfig, B_HPconfig, Leader_worldview)
             Org.Mode = mode
             if mode == "D": 
                 D = run_simulation(Org, epochs)
