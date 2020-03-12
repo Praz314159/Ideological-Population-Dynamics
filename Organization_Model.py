@@ -553,6 +553,7 @@ class Organization:
         polarization = (2/math.pi)*np.arctan(mean_ratios)  
 
         return N, n, polarization
+
 '''
 TO DO: 
     1. Think more carefully about methods of Individual and Organization. The ones included now are preliminary.
