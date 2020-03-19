@@ -58,13 +58,14 @@ def run_simulation(Org, epochs):
     fractional_Moderates = [] 
 
     initial_workforce = Org.Workforce
+    '''
     initial_worldviews = []
     for worker in initial_workforce:
         if worker.Zealot == True: 
             initial_worldviews.append(worker.Worldview + " Zealot")
         else:
             initial_worldviews.append(worker.Worldview)
-
+    '''
     initial_n = Org.get_statistics()[1]
     initial_N = Org.get_statistics()[0]
     initial_polarization = Org.get_statistics()[2]
@@ -119,6 +120,8 @@ def run_simulation(Org, epochs):
             Org.hire(pos_to_fill)
  
     final_workforce = Org.Workforce
+    
+    '''
     final_worldviews = []
 
     for worker in final_workforce:
@@ -126,7 +129,7 @@ def run_simulation(Org, epochs):
             final_worldviews.append(worker.Worldview + " Zealot")
         else:
             final_worldviews.append(worker.Worldview)
-
+    '''
     #print("INITIAL WORLDVIEWS: ", initial_worldviews)
     #print("\nFINAL WORLDVIEWS: ", final_worldviews)
     
@@ -152,7 +155,6 @@ def run_simulation(Org, epochs):
     
     return polarization_vals, fractional_A, fractional_A_Zealots, fractional_B, fractional_B_Zealots, \
             fractional_Moderates, initial_workforce, final_workforce 
-    pass 
 
 #mainly SR and ASR modes
 
@@ -207,15 +209,16 @@ def plot_all(D, SR, ASR):
     pass 
 
 def get_TOPP_dists(initial_workforce, final_workforce):  
-    initial_dist = []
-    final_dist = []
+    #look at this fucking list compression. Booyakasha. 
+    initial_dist = [worker.TOPP for worker in initial_workforce]
+    final_dist = [worker.TOPP for worker in final_workforce]
+   
+    if initial_dist == final_dist: 
+        print("TOPP not changed")
+    else: 
+        print("TOPP changed")
+        changes = [final_dist[i] for i in range(len(final_dist)) if final_dist[i] != initial_dist[i]]
 
-    for worker in initial_workforce:
-        initial_dist.append(worker.TOPP)
-    
-    for worker in final_workforce:
-        final_dist.append(worker.TOPP) 
-    
     return initial_dist, final_dist  
 
 def plot_TOPP_dist(initial_workforce, final_workforce):
