@@ -17,6 +17,35 @@ from Organization_Model import Organization
 import matplotlib.pyplot as plt
 import argparse 
 
+def set_initial_conditions(Org_size, HP_size, config_A, config_B, config_AB, A_config, B_config,\
+        Hconfig_A, Hconfig_B, Hconfig_AB, A_HPconfig, B_HPconfig, Leader_worldview): 
+
+    #initialize organization
+    Org = Organization() 
+    
+    #set parameters to user input 
+    Org.Org_size = Org_size
+    Org.HP_size = HP_size 
+    Org.Config = [config_A, config_B, config_AB] 
+    Org.A_config = A_config 
+    Org.B_config = B_config
+    Org.H_config = [Hconfig_A, Hconfig_B, Hconfig_AB]  
+    Org.A_HPconfig = A_HPconfig
+    Org.B_HPconfig = B_HPconfig
+
+    Org.populate_org()
+    #populate hiring pool 
+    Org.populate_HP() 
+    
+    #use custom leader worldview or random
+    if Leader_worldview != "No Preference":
+        Org.Leader.Worldview = Leader_worldview
+    else:
+        pass
+    
+    #return initialized organization
+    return Org
+
 #this is a normal simulation that only looks at n_A, n_A', n_AB, n_B, n_B' 
 def run_simulation(Org, epochs):
     
@@ -42,7 +71,7 @@ def run_simulation(Org, epochs):
   
     #print("initial n: ", initial_n)
     #checking configuration before evolution
-    print("INITIAL STATE: ")
+    print("\nINITIAL STATE: ")
     print("Hiring Mode: ", Org.Mode)
     print("Fractional Total A: ", initial_n.get("n_A") + initial_n.get("n_A2"))
     print("Fractional A: ", initial_n.get("n_A")) 
@@ -72,9 +101,7 @@ def run_simulation(Org, epochs):
         fractional_Moderates.append(n.get("n_AB")) 
         
         #anyone who wants to resign can resign 
-        for employee in Org.Workforce:
-            #sometimes resignations are taking place without a hiring. This means 
-            #that open_position == -1. Why is this happening? 
+        for employee in Org.Workforce: 
             open_position = employee.resign()
             #print("POSITION RESIGNED: ", open_position) 
             if open_position != -1: 
@@ -82,10 +109,10 @@ def run_simulation(Org, epochs):
                 Org.hire(open_position)
         
         #interaction 
-        #print("INTERACTION: ", interaction)
+        print("INTERACTION: ", interaction) 
         Org.interact()
-
-        #hiring and firing every 10 interactions 
+        
+        #Firing 
         if Org.num_interactions % 5 == 0:
             pos_to_fill = Org.fire()
             #print("POSITION FIRED: ", pos_to_fill)
@@ -100,8 +127,8 @@ def run_simulation(Org, epochs):
         else:
             final_worldviews.append(worker.Worldview)
 
-    print("INITIAL WORLDVIEWS: ", initial_worldviews)
-    print("\nFINAL WORLDVIEWS: ", final_worldviews)
+    #print("INITIAL WORLDVIEWS: ", initial_worldviews)
+    #print("\nFINAL WORLDVIEWS: ", final_worldviews)
     
     final_N = Org.get_statistics()[0]
     final_n = Org.get_statistics()[1]
@@ -122,9 +149,9 @@ def run_simulation(Org, epochs):
     print("Total Moderates: ", final_N.get("N_AB")) 
     print("Leader :", Org.Leader.Worldview)
     print("Polarization: ", final_polarization)
-
+    
     return polarization_vals, fractional_A, fractional_A_Zealots, fractional_B, fractional_B_Zealots, \
-            fractional_Moderates 
+            fractional_Moderates, initial_workforce, final_workforce 
     pass 
 
 #mainly SR and ASR modes
@@ -163,7 +190,7 @@ def plot_all(D, SR, ASR):
     axs[1].plot(SR[2], label = "A Zealots") 
     axs[1].plot(SR[3], label = "B")
     axs[1].plot(SR[4], label = "B Zealots") 
-    axs[1].plot(SR[5],label = "Moderates") 
+    axs[1].plot(SR[5], label = "Moderates") 
     axs[1].set(ylabel = "Fractional Representation in the Organization")
     #axs[1].legend()
     
@@ -179,35 +206,72 @@ def plot_all(D, SR, ASR):
     plt.show()
     pass 
 
-def set_initial_conditions(Org_size, HP_size, config_A, config_B, config_AB, A_config, B_config,\
-        Hconfig_A, Hconfig_B, Hconfig_AB, A_HPconfig, B_HPconfig, Leader_worldview): 
+def get_TOPP_dists(initial_workforce, final_workforce):  
+    initial_dist = []
+    final_dist = []
 
-    #initialize organization
-    Org = Organization() 
+    for worker in initial_workforce:
+        initial_dist.append(worker.TOPP)
     
-    #set parameters to user input 
-    Org.Org_size = Org_size
-    Org.HP_size = HP_size 
-    Org.Config = [config_A, config_B, config_AB] 
-    Org.A_config = A_config 
-    Org.B_config = B_config
-    Org.H_config = [Hconfig_A, Hconfig_B, Hconfig_AB]  
-    Org.A_HPconfig = A_HPconfig
-    Org.B_HPconfig = B_HPconfig
+    for worker in final_workforce:
+        final_dist.append(worker.TOPP) 
+    
+    return initial_dist, final_dist  
 
-    Org.populate_org()
-    #populate hiring pool 
-    Org.populate_HP() 
-    
-    #use custom leader worldview or random
-    if Leader_worldview != "No Preference":
-        Org.Leader.Worldview = Leader_worldview
-    else:
-        pass
-    
-    #return initialized organization
-    return Org
+def plot_TOPP_dist(initial_workforce, final_workforce):
+    #getting TOPP values before and after simulation 
+    #Note that before should look normal 
+    initial_dist, final_dist = get_TOPP_dists(initial_workforce, final_workforce) 
 
+    # plt.plot(1,1,1)
+    plt.hist([initial_dist, final_dist], 100, label = ['initial', 'final'])
+    #plt.hist(initial_dist, 100, density = True, label = 'initial')
+    #plt.hist(final_dist, 100, density = True, label = 'final')
+    plt.legend(loc = 'upper right') 
+    plt.xlabel("TOPP")
+    plt.ylabel("Number of Individuals") 
+    plt.title("TOPP Distribution in Workforce") 
+    
+    '''
+    plt.plt(1,2,1) 
+    final_n, final_bins, final_patchs = plt.hist(final_dist, 100, density = True, facebolor = 'b') 
+    plt.xlabel("TOPP")
+    plt.ylabel("Number of Individuals") 
+    plt.title("TOPP Distribution in Workforce") 
+    '''  
+    plt.show() 
+   
+def plot_all_TOPP_dists(D, SR, ASR): 
+    #getting information for all modes to plot 
+    D_initial_wf = D[6]
+    D_final_wf = D[7] 
+    D_initial_dist, D_final_dist = get_TOPP_dists(D_initial_wf, D_final_wf)  
+
+    SR_initial_wf = SR[6]
+    SR_final_wf = SR[7] 
+    SR_initial_dist, SR_final_dist = get_TOPP_dists(SR_initial_wf, SR_final_wf) 
+
+    ASR_initial_wf = ASR[6] 
+    ASR_final_wf = ASR[7] 
+    ASR_initial_dist, ASR_final_dist = get_TOPP_dists(ASR_initial_wf, ASR_final_wf) 
+    
+    #creating 3 subplots and immediately unpacking output data 
+    fig, (ax1, ax2, ax3) = plt.subplots(3,1, sharey=True) 
+    
+    #default plot  
+    ax1.hist([D_initial_dist, D_final_dist], 100, density = True, facecolor = ['g','b']) 
+    #ax1.hist(D_final_dist, 100, density = True, facecolor = 'b') 
+    ax1.title("TOPP Distribution in Workforce") 
+    #SR plot 
+    ax2.hist([SR_initial_dist, SR_final_dist], 100, density = True, facecolor = ['g','b']) 
+    #ax2.hist(SR_final_dist, 100, density = True, facecolor = 'b') 
+    ax2.ylabel("Number of Individuals")
+    #ASR plot 
+    ax3.hist([ASR_initial_dist, ASR_final_dist], 100, density = True, facecolor = ['g','b']) 
+    #ax3.hist(ASR_final_dist, 100, density = True, facecolor = 'b') 
+    ax3.xlabel("TOPP") 
+
+    plt.show() 
 def test_hiring_effort():
     pass
 
@@ -220,18 +284,23 @@ def main():
     #run sims easily and check how things are working ... 
     
     parser = argparse.ArgumentParser() 
+    
+    #This is the argument that 
+    parser.add_argument("--info", default = "Subpopulations", type = str, choices = ["TOPP", "Subpopulations"],\
+            required = True, help = "This is the type of information you'd like to gather from the experiment.")
+
     hiring_mode = parser.add_mutually_exclusive_group(required = True) 
     hiring_mode.add_argument("-d", "--default", nargs = 1, type = int, help = "This is the default hiring mode.\
             When in this mode, the leader of the organization himself has no bias. However, because \
-            he has no hiring bias, he selects for whatever bias may be intrisic to the hiring pool.")
-    hiring_mode.add_argument("-sr", "--replication", nargs = 1, type = int, help = "This is the self-replication \
+            he has no hiring bias, he selects for whatever bias may be intrisic to the hiring pool." )
+    hiring_mode.add_argument("-sr", "--replication", nargs = 2, type = int, help = "This is the self-replication \
             hiring mode. When in this mode, the leader is biased towards hiring candidates with the \
             same worldview as him.") 
     hiring_mode.add_argument("-asr", "--anti_replication", nargs = 1, type = int, help = "This is the anti \
             self-replication hiring mode. When in this mode, no matter what the worldview of the leader \
             is, he attempts to maintain an ideologically diverse, non-polarized organization. This may \
             require him to hire against his worldview.")
-    hiring_mode.add_argument("-all", "--all", nargs = 1, type = int, help = "this is the flag that allows \
+    hiring_mode.add_argument("-all", "--all", nargs = 2, type = int, help = "this is the flag that allows \
             you to run the experiment on all modes and plot them side by side in order to compare their \
             behavior.")
 
@@ -260,32 +329,54 @@ def main():
                 B_config, Hconfig_A, Hconfig_B, Hconfig_AB, A_HPconfig, B_HPconfig, Leader_worldview)
         Org.Mode = "D"
         epochs = args.default[0]
+
+        #run simulation 
         polarization_vals, fractional_A, fractional_A_Zealots, fractional_B, fractional_B_Zealots, \
-                fractional_Moderates = run_simulation(Org, epochs)
-        plot_single(polarization_vals, fractional_A, fractional_A_Zealots, fractional_B,\
-                fractional_B_Zealots, fractional_Moderates)
+                fractional_Moderates, initial_workforce, final_workforce = run_simulation(Org, epochs)
+
+        #get info 
+        if args.info == "Subpopulations": #default 
+            plot_single(polarization_vals, fractional_A, fractional_A_Zealots, fractional_B, \
+                    fractional_B_Zealots, fractional_Moderates)
+        elif args.info == "TOPP":
+            plot_TOPP_dist(initial_workforce, final_workforce)
         pass 
-    elif args.replication: 
+    elif args.replication:
+        #set org params 
         Org = set_initial_conditions(Org_size, HP_size, config_A, config_B, config_AB, A_config, \
                 B_config, Hconfig_A, Hconfig_B, Hconfig_AB, A_HPconfig, B_HPconfig, Leader_worldview)
         Org.Mode = "SR" 
-        epochs = args.default[0]
-        run_simulation(Org, epochs) 
+        epochs = args.default[0] 
+        
+        #run simulation 
         polarization_vals, fractional_A, fractional_A_Zealots, fractional_B, fractional_B_Zealots, \
-                fractional_Moderates = run_simulation(Org, epochs)
-        plot_single(polarization_vals, fractional_A, fractional_A_Zealots, fractional_B,\
-                fractional_B_Zealots, fractional_Moderates)
+                fractional_Moderates, initial_workforce, final_workforce = run_simulation(Org, epochs)
+        
+        #get info 
+        if args.info == "Subpopulations": #default 
+            plot_single(polarization_vals, fractional_A, fractional_A_Zealots, fractional_B, \
+                    fractional_B_Zealots, fractional_Moderates)
+        elif args.info == "TOPP":
+            plot_TOPP_dist(initial_workforce, final_workforce)
+    
         pass 
     elif args.anti_replication:
+        #set params 
         Org = set_initial_conditions(Org_size, HP_size, config_A, config_B, config_AB, A_config, \
                 B_config, Hconfig_A, Hconfig_B, Hconfig_AB, A_HPconfig, B_HPconfig, Leader_worldview)
         Org.Mode = "ASR" 
         epochs = args.default[0] 
-        run_simulation(Org, epochs) 
+        
+        #run_simulation 
         polarization_vals, fractional_A, fractional_A_Zealots, fractional_B, fractional_B_Zealots, \
                 fractional_Moderates = run_simulation(Org, epochs)
-        plot_single(polarization_vals, fractional_A, fractional_A_Zealots, fractional_B,\
-                fractional_B_Zealots, fractional_Moderates)
+        
+        #get info 
+        if args.info == "Subpopulations": #default 
+            plot_single(polarization_vals, fractional_A, fractional_A_Zealots, fractional_B, \
+                    fractional_B_Zealots, fractional_Moderates)
+        elif args.info == "TOPP":
+            plot_TOPP_dist(initial_workforce, final_workforce)
         pass
     elif args.all: 
         Modes = ["D", "SR", "ASR"]
@@ -304,7 +395,11 @@ def main():
             elif mode == "ASR": 
                 ASR = run_simulation(Org, epochs) 
         
-        plot_all(D, SR, ASR)
+        #get info
+        if args.info == "Subpopulations": 
+            plot_all(D, SR, ASR)
+        elif args.info == "TOPP": 
+            plot_all_TOPP_dists(D, SR, ASR) 
 
 if __name__ == "__main__": 
     main() 
