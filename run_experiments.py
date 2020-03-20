@@ -310,7 +310,7 @@ def main():
             self-replication hiring mode. When in this mode, no matter what the worldview of the leader \
             is, he attempts to maintain an ideologically diverse, non-polarized organization. This may \
             require him to hire against his worldview.")
-    hiring_mode.add_argument("-all", "--all", nargs = 2, type = int, help = "this is the flag that allows \
+    hiring_mode.add_argument("-all", "--all", nargs = 1, type = int, help = "this is the flag that allows \
             you to run the experiment on all modes and plot them side by side in order to compare their \
             behavior.")
 

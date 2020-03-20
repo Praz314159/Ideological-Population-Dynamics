@@ -291,7 +291,7 @@ class Organization:
     def hire_with_probability(self, new_hire, position, probability):
         hired = False 
         if random.random() < probability:
-            
+            '''
             hired = True 
             self.Workforce[position] = new_hire 
             new_hire.Org_pos = position
@@ -318,7 +318,7 @@ class Organization:
                     self.Workforce[position] = new_hire 
                     new_hire.Org_pos = position
                     new_hire.Organization = self
-            '''
+            
             #N = self.get_statistics()[0]
             #print("Hiring: ", new_hire.Worldview, " Hiring for Position: ", position, "\n") 
             #print("A: ", N.get("N_A"))
