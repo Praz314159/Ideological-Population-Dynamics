@@ -254,8 +254,8 @@ class Organization:
             self.HP[i].Org_pos = i 
 
             #draw TOPP and THOM from random distribution, but set THOM at least as high as TOPP 
-            self.HP[i].TOPP = np.random.uniform(0,1)
-            self.HP[i].THOM = np.random.uniform(self.HP[i].TOPP,1)
+            self.HP[i].TOPP = np.random.uniform(0.5,1)
+            #self.HP[i].THOM = np.random.uniform(self.HP[i].TOPP,1)
 
             #set individual's worldview based on organization config 
             self.HP[i].Worldview = np.random.choice(self.Worldviews, 1, p = self.H_config)[0]
@@ -291,7 +291,7 @@ class Organization:
     def hire_with_probability(self, new_hire, position, probability):
         hired = False 
         if random.random() < probability:
-            '''
+            
             hired = True 
             self.Workforce[position] = new_hire 
             new_hire.Org_pos = position
@@ -318,7 +318,7 @@ class Organization:
                     self.Workforce[position] = new_hire 
                     new_hire.Org_pos = position
                     new_hire.Organization = self
-            
+            '''
             #N = self.get_statistics()[0]
             #print("Hiring: ", new_hire.Worldview, " Hiring for Position: ", position, "\n") 
             #print("A: ", N.get("N_A"))
