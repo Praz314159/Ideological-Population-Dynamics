@@ -226,7 +226,7 @@ class Organization:
             self.Workforce[i].Organization = self
             
             #draw TOPP and THOM from normal distribution, but set THOM at least as high as TOPP 
-            self.Workforce[i].TOPP = np.random.normal(0.5, .1) #chose normal distribution 
+            self.Workforce[i].TOPP = np.random.normal(0.5, .1) #choose normal distribution 
             #self.Workforce[i].THOM = np.random.uniform(self.Workforce[i].TOPP,1) 
             #does choosing uniformly greater than points drawn from normal distribution give a normal distribution? 
 
@@ -551,8 +551,11 @@ class Organization:
         ratios = [alpha, beta, gamma] 
         mean_ratios = statistics.mean(ratios) 
         polarization = (2/math.pi)*np.arctan(mean_ratios)  
+        TOPP = [worker.TOPP for worker in self.Workforce]
+        Worldviews = [worker.Worldview for worker in self.Workforce]
+        character = {Worldviews[i] + str(i): TOPP[i] for i in range(len(Worldviews))}
 
-        return N, n, polarization
+        return N, n, polarization, TOPP, character 
 
 '''
 TO DO: 

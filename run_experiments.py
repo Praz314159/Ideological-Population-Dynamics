@@ -57,7 +57,7 @@ def run_simulation(Org, epochs):
     fractional_B_Zealots  = []
     fractional_Moderates = [] 
 
-    initial_workforce = Org.Workforce
+    #initial_TOPP = Org.Workforce
     '''
     initial_worldviews = []
     for worker in initial_workforce:
@@ -66,10 +66,11 @@ def run_simulation(Org, epochs):
         else:
             initial_worldviews.append(worker.Worldview)
     '''
-    initial_n = Org.get_statistics()[1]
-    initial_N = Org.get_statistics()[0]
-    initial_polarization = Org.get_statistics()[2]
-  
+    initial_N, initial_n, initial_polarization, initial_TOPP, initial_character = Org.get_statistics()
+    #initial_N = Org.get_statistics()[0]
+    #initial_polarization = Org.get_statistics()[2]
+    #initial_TOPP = Org.get_statistics()[3]
+    
     #print("initial n: ", initial_n)
     #checking configuration before evolution
     print("\nINITIAL STATE: ")
@@ -119,7 +120,7 @@ def run_simulation(Org, epochs):
             #print("POSITION FIRED: ", pos_to_fill)
             Org.hire(pos_to_fill)
  
-    final_workforce = Org.Workforce
+    #final_workforce = Org.Workforce
     
     '''
     final_worldviews = []
@@ -133,9 +134,11 @@ def run_simulation(Org, epochs):
     #print("INITIAL WORLDVIEWS: ", initial_worldviews)
     #print("\nFINAL WORLDVIEWS: ", final_worldviews)
     
-    final_N = Org.get_statistics()[0]
-    final_n = Org.get_statistics()[1]
-    final_polarization = Org.get_statistics()[2]
+    final_N, final_n, final_polarization, final_TOPP, final_character = Org.get_statistics()
+    #final_n = Org.get_statistics()[1]
+    #final_polarization = Org.get_statistics()[2]
+    #final_TOPP = Org.get_statistics()[3]
+    #final_character = Org.get_statistics[4]
 
     #checking configuration after evolution
     print("\nFINAL STATE: ")
@@ -154,7 +157,7 @@ def run_simulation(Org, epochs):
     print("Polarization: ", final_polarization)
     
     return polarization_vals, fractional_A, fractional_A_Zealots, fractional_B, fractional_B_Zealots, \
-            fractional_Moderates, initial_workforce, final_workforce 
+            fractional_Moderates, initial_TOPP, final_TOPP, initial_character, final_character 
 
 #mainly SR and ASR modes
 
@@ -207,27 +210,36 @@ def plot_all(D, SR, ASR):
     
     plt.show()
     pass 
-
+'''
 def get_TOPP_dists(initial_workforce, final_workforce):  
     #look at this fucking list compression. Booyakasha. 
     initial_dist = [worker.TOPP for worker in initial_workforce]
+    initial_worldview = [worker.Worldview for worker in initial_workforce]
+    initial_character = {initial_worldview[i] + str(i) : initial_dist[i] for i in range(len(initial_dist))}
+    
     final_dist = [worker.TOPP for worker in final_workforce]
-   
-    if initial_dist == final_dist: 
+    final_worldview = [worker.Worldview for worker in final_workforce]
+    final_character = {final_worldview[i] + str(i) : final_dist[i] for i in range(len(final_dist))}
+    
+    #for some reason, initial_workforce is not changing to final_workforce 
+    #
+    if initial_workforce == final_workforce: 
         print("TOPP not changed")
+        print("Initial Character: ", initial_character)
+        print("\nFinal Character: ", final_character)
     else: 
         print("TOPP changed")
         changes = [final_dist[i] for i in range(len(final_dist)) if final_dist[i] != initial_dist[i]]
 
     return initial_dist, final_dist  
-
-def plot_TOPP_dist(initial_workforce, final_workforce):
+'''
+def plot_TOPP_dist(initial_TOPP, final_TOPP):
     #getting TOPP values before and after simulation 
     #Note that before should look normal 
-    initial_dist, final_dist = get_TOPP_dists(initial_workforce, final_workforce) 
+    #initial_dist, final_dist = get_TOPP_dists(initial_workforce, final_workforce) 
 
     # plt.plot(1,1,1)
-    plt.hist([initial_dist, final_dist], 100, label = ['initial', 'final'])
+    plt.hist([initial_TOPP, final_TOPP], 100, label = ['initial', 'final'])
     #plt.hist(initial_dist, 100, density = True, label = 'initial')
     #plt.hist(final_dist, 100, density = True, label = 'final')
     plt.legend(loc = 'upper right') 
@@ -235,49 +247,44 @@ def plot_TOPP_dist(initial_workforce, final_workforce):
     plt.ylabel("Number of Individuals") 
     plt.title("TOPP Distribution in Workforce") 
     
-    '''
-    plt.plt(1,2,1) 
-    final_n, final_bins, final_patchs = plt.hist(final_dist, 100, density = True, facebolor = 'b') 
-    plt.xlabel("TOPP")
-    plt.ylabel("Number of Individuals") 
-    plt.title("TOPP Distribution in Workforce") 
-    '''  
     plt.show() 
    
 def plot_all_TOPP_dists(D, SR, ASR): 
+    #Now that we get TOPP values in the get_statistics function, we can 
+    #plot TOPP directly 
+    
     #getting information for all modes to plot 
-    D_initial_wf = D[6]
-    D_final_wf = D[7] 
-    D_initial_dist, D_final_dist = get_TOPP_dists(D_initial_wf, D_final_wf)  
+    D_initial_TOPP = D[6]
+    D_final_TOPP = D[7] 
+    #D_initial_dist, D_final_dist = get_TOPP_dists(D_initial_wf, D_final_wf)  
 
-    SR_initial_wf = SR[6]
-    SR_final_wf = SR[7] 
-    SR_initial_dist, SR_final_dist = get_TOPP_dists(SR_initial_wf, SR_final_wf) 
+    SR_initial_TOPP = SR[6]
+    SR_final_TOPP = SR[7] 
+    #SR_initial_dist, SR_final_dist = get_TOPP_dists(SR_initial_wf, SR_final_wf) 
 
-    ASR_initial_wf = ASR[6] 
-    ASR_final_wf = ASR[7] 
-    ASR_initial_dist, ASR_final_dist = get_TOPP_dists(ASR_initial_wf, ASR_final_wf) 
+    ASR_initial_TOPP = ASR[6] 
+    ASR_final_TOPP = ASR[7] 
+    #ASR_initial_dist, ASR_final_dist = get_TOPP_dists(ASR_initial_wf, ASR_final_wf) 
     
     #creating 3 subplots and immediately unpacking output data 
     fig, (ax1, ax2, ax3) = plt.subplots(3,1, sharey=True) 
     
     #default plot  
-    ax1.hist([D_initial_dist, D_final_dist], 100, density = True, facecolor = ['g','b']) 
+    ax1.hist([D_initial_TOPP, D_final_TOPP], 100, density = True, facecolor = ['g','b']) 
     #ax1.hist(D_final_dist, 100, density = True, facecolor = 'b') 
     ax1.title("TOPP Distribution in Workforce") 
     #SR plot 
-    ax2.hist([SR_initial_dist, SR_final_dist], 100, density = True, facecolor = ['g','b']) 
+    ax2.hist([SR_initial_TOPP, SR_final_TOPP], 100, density = True, facecolor = ['g','b']) 
     #ax2.hist(SR_final_dist, 100, density = True, facecolor = 'b') 
     ax2.ylabel("Number of Individuals")
     #ASR plot 
-    ax3.hist([ASR_initial_dist, ASR_final_dist], 100, density = True, facecolor = ['g','b']) 
+    ax3.hist([ASR_initial_TOPP, ASR_final_TOPP], 100, density = True, facecolor = ['g','b']) 
     #ax3.hist(ASR_final_dist, 100, density = True, facecolor = 'b') 
     ax3.xlabel("TOPP") 
 
     plt.show() 
 def test_hiring_effort():
     pass
-
 
 def main(): 
     #The purpose here is be able to run simulations from the command line 
@@ -327,7 +334,7 @@ def main():
     Leader_worldview = input("Worldview of leader: ") 
    
     if args.default:
-        #set organization params 
+        #set initial conditions 
         Org = set_initial_conditions(Org_size, HP_size, config_A, config_B, config_AB, A_config, \
                 B_config, Hconfig_A, Hconfig_B, Hconfig_AB, A_HPconfig, B_HPconfig, Leader_worldview)
         Org.Mode = "D"
@@ -335,14 +342,17 @@ def main():
 
         #run simulation 
         polarization_vals, fractional_A, fractional_A_Zealots, fractional_B, fractional_B_Zealots, \
-                fractional_Moderates, initial_workforce, final_workforce = run_simulation(Org, epochs)
+                fractional_Moderates, initial_TOPP, final_TOPP, initial_character, final_character \
+                = run_simulation(Org, epochs)
 
         #get info 
         if args.info == "Subpopulations": #default 
             plot_single(polarization_vals, fractional_A, fractional_A_Zealots, fractional_B, \
                     fractional_B_Zealots, fractional_Moderates)
         elif args.info == "TOPP":
-            plot_TOPP_dist(initial_workforce, final_workforce)
+            print("INITIAL CHARACTER: ", initial_character) 
+            print("\nFINAL CHARACTER: ", final_character) 
+            plot_TOPP_dist(initial_TOPP, final_TOPP)
         pass 
     elif args.replication:
         #set org params 
