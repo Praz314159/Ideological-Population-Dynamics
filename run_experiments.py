@@ -239,7 +239,7 @@ def plot_TOPP_dist(initial_TOPP, final_TOPP):
     #initial_dist, final_dist = get_TOPP_dists(initial_workforce, final_workforce) 
 
     # plt.plot(1,1,1)
-    plt.hist([initial_TOPP, final_TOPP], 100, label = ['initial', 'final'])
+    plt.hist([initial_TOPP, final_TOPP], 100, label = ['initial', 'final'], facecolor = ['g','b'])
     #plt.hist(initial_dist, 100, density = True, label = 'initial')
     #plt.hist(final_dist, 100, density = True, label = 'final')
     plt.legend(loc = 'upper right') 
@@ -249,38 +249,27 @@ def plot_TOPP_dist(initial_TOPP, final_TOPP):
     
     plt.show() 
    
-def plot_all_TOPP_dists(D, SR, ASR): 
-    #Now that we get TOPP values in the get_statistics function, we can 
-    #plot TOPP directly 
-    
+def plot_all_TOPP_dists(D, SR, ASR):   
     #getting information for all modes to plot 
     D_initial_TOPP = D[6]
     D_final_TOPP = D[7] 
-    #D_initial_dist, D_final_dist = get_TOPP_dists(D_initial_wf, D_final_wf)  
-
     SR_initial_TOPP = SR[6]
     SR_final_TOPP = SR[7] 
-    #SR_initial_dist, SR_final_dist = get_TOPP_dists(SR_initial_wf, SR_final_wf) 
-
     ASR_initial_TOPP = ASR[6] 
     ASR_final_TOPP = ASR[7] 
-    #ASR_initial_dist, ASR_final_dist = get_TOPP_dists(ASR_initial_wf, ASR_final_wf) 
-    
+
     #creating 3 subplots and immediately unpacking output data 
     fig, (ax1, ax2, ax3) = plt.subplots(3,1, sharey=True) 
+    fig.suptitle("TOPP Distribution in Workforce")
     
     #default plot  
-    ax1.hist([D_initial_TOPP, D_final_TOPP], 100, density = True, facecolor = ['g','b']) 
-    #ax1.hist(D_final_dist, 100, density = True, facecolor = 'b') 
-    ax1.title("TOPP Distribution in Workforce") 
+    ax1.hist([D_initial_TOPP, D_final_TOPP], 100, density = True)#, facecolor = ['g','b']) 
     #SR plot 
-    ax2.hist([SR_initial_TOPP, SR_final_TOPP], 100, density = True, facecolor = ['g','b']) 
-    #ax2.hist(SR_final_dist, 100, density = True, facecolor = 'b') 
-    ax2.ylabel("Number of Individuals")
+    ax2.hist([SR_initial_TOPP, SR_final_TOPP], 100, density = True)#, facecolor = ['g','b']) 
+    ax2.set(ylabel = "Number of Individuals")
     #ASR plot 
-    ax3.hist([ASR_initial_TOPP, ASR_final_TOPP], 100, density = True, facecolor = ['g','b']) 
-    #ax3.hist(ASR_final_dist, 100, density = True, facecolor = 'b') 
-    ax3.xlabel("TOPP") 
+    ax3.hist([ASR_initial_TOPP, ASR_final_TOPP], 100, density = True)#, facecolor = ['g','b']) 
+    ax3.set(xlabel = "TOPP") 
 
     plt.show() 
 def test_hiring_effort():

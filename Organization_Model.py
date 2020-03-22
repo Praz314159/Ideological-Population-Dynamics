@@ -1,66 +1,8 @@
 '''
 Organizational population dynamics model in python 
-This is a matlab model meant to demonstrate how hiring can be used as a mechanism to mitigate 
+This is a python model meant to demonstrate how hiring can be used as a mechanism to mitigate 
 ideological homogeneity within an organization and, conversely, how it can be used as a mechanism
 to create an organization full of zealots. TY SEEDS OF PEACE!!!! 
-
-Model Assumptions Assumptions: 
-
-1. No correlation between incompetency and ideology 
-2. 3 basic hiring modes: Default (D), Leadership Self-Replication (SR), Anti Leadership Self-Replication (ASR)
-3. Individuals change their mind through speaker-listener interactions 
-4. When an individual engages in an interaction as a listener, they only move one position in the direction of the 
-   speaker.
-5. Every individual within the organization has complete knowledge of the organization state -- that is, what everybody 
-   thinks at any given point in time. This is perhaps the most unrealistic assumption, since  
-
-PREFERENCE FALSIFICATION!!!! 
-
-Model Functionality:  
-
- 1. We have the following general rules: 
- A,A' |  B  |  AB
- A,A' |  AB |  A
- B    |  A  |  AB
- B    |  AB |  B
-
- 2. Each individual has 2 threshold values
-    1. TOPP --> this is the percentage of the organization that is of the opposite ideology of the individual at 
-                which the individual resigns. TOPP is a measure of an individual's tolerance for being in the
-                minority. 
-    2. THOM --> this is the percentage of the organization that is of the same ideology of the individual at which
-                the individual resigns. THOM is a measure of an individual's absolute tolerance for ideological 
-                homogeneity 
-    Notice that THOM = 1 - TOPP. We make this reasonable simplifying assumption 
-
-3. Any organization will have a natural steady turn over rate. We assume that individuals won't be fired for 
-  ideological reasons unless the leader is a zealot. In the normal case, once an individual leaves the organization
-  (incompetence, surpassed threshold), they are replaced by someone from the hiring pool. Here are some factors to 
-  consider: 
-    1. The HP might be ideologically biased --> note that unbiased hring (D mode) will select for this bias 
-    2. If in SR mode, then bias of leader compounds the HP bias 
-    3. If in ASR mode, then bias of leader will counteract HP bias 
-
-4. We have a global scaling of probabilities with which A --> A' and B --> B' that is based on the % of the 
-   organization that is either A or B. The idea here is that the more homogenous the organization, the less 
-   of a social cost there is for being a zealot; in fact, one may even be able to accrue social capital by 
-   becoming a zealot. 
-    1. Bias = <B_1, B_2, .... ,B_n> <==> Probs = <P_1, P_2, ... ,P_n>
-    2. This type of switch will only occur when the speaker is a zealot and the listener is a non-zealot with 
-       the same worldview 
-
-    The function mapping degree of homogeneity to probability of switching from non-zealot to zealot will
-    be the same for both cases, A --> A' and B --> B'. How should this mapping behave be structured. First, 
-    it seems reasonable that there would be a long leading tail. It will only become advantageous, either 
-    to accrue social capital or to avoid social destruction, to become a zealot if the organization is highly
-    homogenous with respect to your worldview (>80%?). 
-
-    People with high thresholds for homogeneity will likely end up as zealots if the organization tends 
-    towards homogeneity in their worldview. 
-
-    We have buckets <5, 10, 15, 20, 25, 30, 35, 40, 45, 50 ... >. These are associated with the following
-    probabilities: <.01, .02, .05, .07, .1, .135, .17, .205, .4, .45, .51, .58, .66, .75, .85, .95, .96, .97, .98. .99> 
-
 ''' 
 import math 
 import numpy as np
@@ -75,12 +17,10 @@ class Individual:
         self.Worldview = "A" #ideology of the individual 
         self.Zealot = False #boolean indicating if the the individual is a zealot or not 
         self.Leader = False #boolean indicating if the individual is a leader in the organization (may have multiple
-                 #leaders) and thus has hiring power  
+                      #leaders) and thus has hiring power  
         self.TOPP = .5 #percentage of org of opp ideology at which individual resigns 
-        #self.Zealot_resistance_buckets = [.05, .1, .15, .2, .25, .3, .35, .4, .45., .5, .55, .6, .65, .7,. 75, .8, .85, .9 \
-        #        .95, 1]
-        self.Zealot_resistance_probabilities =  [.01, .03, .05, .07, .1, .135, .17, .205, .4, .45, .51, .58, .66, .75, .85,\
-                .95, .96, .97, .98, .99]
+        self.Zealot_resistance_probabilities =  [.01, .03, .05, .07, .1, .135, .17, .205, .4, .45, .51, .58, .66, .75,\
+                .85,.95, .96, .97, .98, .99]
 
         #Org parameters 
         self.Organization = None #organization that individual belongs to  
@@ -92,54 +32,30 @@ class Individual:
         if self.Worldview == "A":
             if 1- (n.get("n_A") + n.get("n_A2")) > self.TOPP:
                 empty_pos = self.Organization.accept_resignation(self) 
-            #elif n.get("n_B") + n.get("n_B2") > self.TOPP: 
-            #    empty_pos = self.Organization.accept_resignation(self)
-        elif self.Worldview == "AB":
+       elif self.Worldview == "AB":
             if 1-n.get("n_AB") > self.TOPP:
                 empty_pos = self.Organization.accept_resignation(self) 
-            #elif n.get("n_AB") > self.THOM: 
-            #    empty_pos = self.Organization.accept_resignation(self)  
-        elif self.Worldview == "B": 
+       elif self.Worldview == "B": 
             if 1-(n.get("n_B") + n.get("n_B2")) > self.TOPP:
                 empty_pos = self.Organization.accept_resignation(self)
-            #elif n.get("n_B") + n.get("n_B2") > self.TOPP: 
-            #    empty_pos = self.Organization.accept_resignation(self) 
-        
+       
         return empty_pos 
 
     def listen(self, speaker):
-        '''
-        Consider what happens when an individual is the listener in an interaction. We have various scenarios. 
-        Each of these scenarios must be hardcoded:
-            1. If speaker is A and listener is B, then the listener is converted to AB 
-            2. If speaker is A' and listener is B, then the listener is subject to preference falsification, 
-               meaning that they may lie about being a B. That is, they will pretend to be closer to worldview A. 
-               We assume that this means that B is acting as an AB, and will therefore be converted to an A. 
-            3. If speaker is B' and listener is A, then then, similarly, the listener will lie about being a true 
-               A and will pretend to be an AB in the interaction. They will subsequently be converted to a B.
-            4. If speaker is A' and listener is A, then the listener will change to A' if the global state of the 
-               organization is such that a particular 
-
-            depending on how homogenous in A the organization is, A will turn to A'. It shouldn't 
-            be advantageous to switch until the organization is very homogenous in A. There is also
-            a question about when it becomes socially |unacceptable| to not be a zealot. There is 
-            some interesting dynamics between people leaving because the organization is too 
-            homogenous and other people staying because there is social benefit to becoming
-            a zealot, or, if the organization is extremely homogenous, social cost to not becoming one
-        '''    
         n = self.Organization.get_statistics()[1]
         N = self.Organization.get_statistics()[0]
 
         if (speaker.Worldview == "A" and speaker.Zealot == False and self.Worldview == "B" and self.Zealot == False ) \
-                or (speaker.Worldview == "B" and speaker.Zealot == False and self.Worldview == "A" and self.Zealot == False): 
+                or (speaker.Worldview == "B" and speaker.Zealot == False and self.Worldview == "A" and self.Zealot ==\
+                False): 
             self.Worldview = "AB" 
-        elif ((speaker.Worldview == "A" and speaker.Zealot == True) and ((self.Worldview == "B" or self.Worldview == "AB") and \
-                self.Zealot == False)) or (speaker.Worldview == "A" and speaker.Zealot == False and self.Worldview == "AB" \
-                and self.Zealot == False):
+        elif ((speaker.Worldview == "A" and speaker.Zealot == True) and ((self.Worldview == "B" or self.Worldview ==\
+                "AB") and self.Zealot == False)) or (speaker.Worldview == "A" and speaker.Zealot == False and\
+                self.Worldview == "AB" and self.Zealot == False):
             self.Worldview = "A" 
-        elif ((speaker.Worldview == "B" and speaker.Zealot == True) and ((self.Worldview == "A" or self.Worldview == "AB")\
-                and self.Zealot == False)) or (speaker.Worldview == "B" and speaker.Zealot == False and self.Worldview == "AB"\
-                and self.Zealot == False): 
+        elif ((speaker.Worldview == "B" and speaker.Zealot == True) and ((self.Worldview == "A" or self.Worldview ==\
+                "AB") and self.Zealot == False)) or (speaker.Worldview == "B" and speaker.Zealot == False and\
+                self.Worldview == "AB" and self.Zealot == False): 
             self.Worldview == "B"
         elif speaker.Worldview == "A" and speaker.Zealot == True and self.Worldview == "A" and self.Zealot == False:
             #the key is that we have access to the global state of the organization, which means that we 
@@ -149,16 +65,7 @@ class Individual:
                 bucket = 0
             else: 
                 bucket = math.floor((n.get("n_A") + n.get("n_A2"))/.05) - 1  
-            '''     
-            print("\nSpeaker: ", speaker.Worldview, " Listener: ", self.Worldview)
-            print("Bucket: ", bucket)
-            
-            print("A: ", N.get("N_A"))
-            print("A Zealots: ", N.get("N_A2")) 
-            print("B: ", N.get("N_B"))
-            print("B Zealots: ", N.get("N_B2")) 
-            print("Total Moderates: ", N.get("N_AB"))
-            '''
+    
             #getting likelhood that A --> A' 
             prob_switch = self.Zealot_resistance_probabilities[bucket]
 
@@ -170,16 +77,6 @@ class Individual:
                 bucket = 0
             else: 
                 bucket = math.floor((n.get("n_B") + n.get("n_B2"))/.05) - 1
-            '''
-            print("\nSpeaker: ", speaker.Worldview, " Listener: ", self.Worldview)
-            print("Bucket: ", bucket)
-            
-            print("A: ", N.get("N_A"))
-            print("A Zealots: ", N.get("N_A2")) 
-            print("B: ", N.get("N_B"))
-            print("B Zealots: ", N.get("N_B2")) 
-            print("Total Moderates: ", N.get("N_AB"))
-            '''
            
             #getting likelhood that B --> B' 
             prob_switch = self.Zealot_resistance_probabilities[bucket]
@@ -191,8 +88,6 @@ class Individual:
             pass 
 
         return 
-
-    #think about what other functionality I might want to give individuals 
 
 class Organization: 
     def __init__(self):
@@ -215,10 +110,9 @@ class Organization:
         self.HP = []
         self.Leader = None 
         self.num_interactions = 0
-        #self.polarization = self.n_A + self.n_A2 + self.n_B + self.n_B2 
-       
+      
     def populate_org(self):
-        #Here, we want to populate the organization with individuals 
+        #Populate the organization with individuals 
 
         for i in range(self.Org_size): 
             self.Workforce.append(Individual())
@@ -273,31 +167,19 @@ class Organization:
         #randomnly select two individuals from the workforce 
         listener = self.Workforce[random.randint(1, self.Org_size-1)]
         speaker = self.Workforce[random.randint(1, self.Org_size-1)] 
-        
-        #print("LISTENER: ", listener.Worldview, " SPEAKER: ", speaker.Worldview) 
- 
+
         listener.listen(speaker)
-        self.num_interactions += 1
-        '''
-        N = self.get_statistics()[0]
-        print("A: ", N.get("N_A"))
-        print("A Zealots: ", N.get("N_A2")) 
-        print("B: ", N.get("N_B"))
-        print("B Zealots: ", N.get("N_B2")) 
-        print("Total Moderates: ", N.get("N_AB"))
-        '''            
+        self.num_interactions += 1          
         return 
     
+    #no screening for tolerance
+    def hire_with_probability_no_screen(self, new_hire_ position, probability): 
+        pass 
+
+    #screening for tolerance 
     def hire_with_probability(self, new_hire, position, probability):
         hired = False 
         if random.random() < probability:
-            '''
-            hired = True 
-            self.Workforce[position] = new_hire 
-            new_hire.Org_pos = position
-            new_hire.Organization = self
-            
-            '''
             n = self.get_statistics()[1]
             # only hire if candidate can handle the current org state 
             if new_hire.Worldview == "A":     
@@ -318,54 +200,18 @@ class Organization:
                     self.Workforce[position] = new_hire 
                     new_hire.Org_pos = position
                     new_hire.Organization = self
-            
-            #N = self.get_statistics()[0]
-            #print("Hiring: ", new_hire.Worldview, " Hiring for Position: ", position, "\n") 
-            #print("A: ", N.get("N_A"))
-            #print("A Zealots: ", N.get("N_A2")) 
-            #print("B: ", N.get("N_B"))
-            #print("B Zealots: ", N.get("N_B2")) 
-            #print("Total Moderates: ", N.get("N_AB"))
-            
         return hired
         
     def fire(self): 
         empty_pos = random.randint(1, self.Org_size-1)
         new_fire = self.Workforce[empty_pos]
-        '''
-        N = self.get_statistics()[0]
-        print("\nFiring: ", new_fire.Worldview, " Firing for Position: ", empty_pos)
-        print("A: ", N.get("N_A"))
-        print("A Zealots: ", N.get("N_A2")) 
-        print("B: ", N.get("N_B"))
-        print("B Zealots: ", N.get("N_B2")) 
-        print("Total Moderates: ", N.get("N_AB"))
-        ''' 
-        
         return empty_pos 
    
     def accept_resignation(self, new_resignation): 
         empty_pos = new_resignation.Org_pos 
-        '''
-        N = self.get_statistics()[0]
-        print("\nResignation: ", new_resignation.Worldview, " Firing for Position: ", empty_pos)
-        print("A: ", N.get("N_A"))
-        print("A Zealots: ", N.get("N_A2")) 
-        print("B: ", N.get("N_B"))
-        print("B Zealots: ", N.get("N_B2")) 
-        print("Total Moderates: ", N.get("N_AB"))
-        ''' 
         return empty_pos
 
     def hire(self, empty_pos):
-        #depends on mode of hiring (D, SR, ASR) and, therefore, also
-        #on the worldveiw of the leader. We have two major assumptions: 
-        #1. leader can't distinguish between zealots and non-zealots. This 
-        #means that if in SR mode, the leader is as likely to hire a 
-        #non-zealot and zealot of the same worldview. 
-        #2. hiring pool is pre-filtered for competence 
-        #3. hiring only takes place when someone has been fired 
-        
         #Default hiring mode: selecting for pre-existing bias in hiring pool 
         if self.Mode == "D":
             new_hire = self.HP[random.randint(0, self.HP_size-1)]
@@ -465,15 +311,11 @@ class Organization:
                 candidates.append(self.HP[random.randint(0, self.HP_size-1)])
                 if candidates[i].Worldview == "AB":
                     has_moderate = True 
-            #print("HAS MODERATE: ", has_moderate)
+
             n = self.get_statistics()[1]
             N = self.get_statistics()[0]
             polarization = self.get_statistics()[2] 
             
-            #print("HAS MODERATE: ", has_moderate) 
-            #print("ASR HIRING: ", polarization >= .6)
-            #print("POLARIZATION: ", polarization)
-            #polarization threshold set to .75
             if polarization < .5:
                 #if the polarization is tolerable, choose random 
                 new_hire = self.HP[random.randint(0, self.HP_size-1)] 
@@ -481,7 +323,6 @@ class Organization:
             else:
                 if has_moderate == True:
                     for candidate in candidates:
-                        #print("CANDIDATE ", candidates.index(candidate), " Worldview: ", candidate.Worldview)
                         if candidate.Worldview == "AB": 
                             self.hire_with_probability(candidate, empty_pos, 1) 
                             break
@@ -489,7 +330,6 @@ class Organization:
                             pass
                 else:
                     for candidate in candidates:
-                        #print("CANDIDATE ", candidates.index(candidate), " Worldview: ", candidate.Worldview)
                         if n.get("n_A") + n.get("n_A2") > n.get("n_B") + n.get("n_B2") and candidate.Worldview == "B":
                             self.hire_with_probability(candidate, empty_pos, 1)
                             break 
@@ -528,9 +368,6 @@ class Organization:
         n = {"n_A": N.get("N_A")/self.Org_size, "n_A2": N.get("N_A2")/self.Org_size, "n_B": N.get("N_B")/self.Org_size,\
                 "n_B2": N.get("N_B2")/self.Org_size, "n_AB": N.get("N_AB")/self.Org_size}
         
-        #print("n dict: ", n)
-        #polarization = #n.get("n_AB")/
-        
         n_A = n.get("n_A") + n.get("n_A2")
         n_B = n.get("n_B") + n.get("n_B2") 
         n_AB = n.get("n_AB")
@@ -556,53 +393,3 @@ class Organization:
         character = {Worldviews[i] + str(i): TOPP[i] for i in range(len(Worldviews))}
 
         return N, n, polarization, TOPP, character 
-
-'''
-TO DO: 
-    1. Think more carefully about methods of Individual and Organization. The ones included now are preliminary.
-    2. Code the actual behavior of the model --> how does the model evolve? EPOCHs? 
-
-Parameters at disposal of simulation runner:  
-    1. List of fractional representations fore each of the worldviews 
-    2. Distribution of TOPP in the org
-    3. Distribution of THOM in the org 
-    4.  
-
-TOPP vs THOM: 
-
-It makes sense that for an individual, they are much less likely to quit if
-they are in a community in which they are not the ideological majority than if they are in the ideological
-minority. That is, that they are able to tolerate homogeneity more than opposition. So, it makes sense that
-THOM >= TOPP. At the same time, however, if THOM = .05 for individual X, then that means if 5% of the 
-community has the same worldview as X, then X will resign. This also means, however, by definition, that 
-if TOPP = .95. That is, if 95% of the community has the opposite worldview of X, then X will resign. So, 
-THOM(X) = .05 --> THOM(X) = .95 --> if X resigns, then (A + A')/N >= .95 or (B + B')/N >= .95, where 
-N = Org_Size. Note that this can only happy during extreme polarization. The moderates, therefore, 
-act as a cohesive binding that keeps the community from fraying at the edges.
-
-Now, there is the question of what distribtuio
-
-SR Mode: 
-
-what does being in self_replication mode mean? It means that the leader is much more likely to hire someone 
-who thinks like him. But, how much more likely? Certainly, they will never hire a zealot with the opposite 
-worldview because they would be more outspoken and the interaction would spoil. Might hire AB or non-zealot 
-opp, but is most likley to hire someone with the same worldview. What scheme can this be reflected by? 
-The most straightforward way to do this is to change the likelhoods associated with choosing each 
-worldview (i.e, a different "H_config" when in SR mode). The other way to do this is to set up "interviews"
-in which candidates are randomly chosen from the hiring pool, but the likleyhood that worldviews are selected
-are different. What should these probabilities be!!? Let's try P(Opp_z) = .05, P(Opp_nz) = .1, P(AB) = .3, 
-P(Same) = .75
-
-ASR Mode: 
-
-What does being in anti self-replication mode mean? It means that the leader is trying to maintain ideological
-diversity within the organization. This means that we need a way to measure the polarization in the organization. 
-If the polarization is above a certain threshold, then ASR moves from hiring in a default behavior to counter-acting
-the polarization by hiring individuals that will move the configuration of the organization towards a uniform 
-distribution. The key questions here are: 
-    1. How will polarization be measured
-    2. What threshold must be exceeded in order for ASR mode to counteract the polarization 
-''' 
-
-
