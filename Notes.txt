@@ -116,6 +116,6 @@ gives a good visualization of how the different hiring strategies affect the ide
 simulation running in order to accomodate this. But, for some reason -- I'm not sure why yet -- the TOPP 
 distribution isn't showing any change between the intitial workforce and the final workforce. What's going on??!! 
 
- 
+3/21/20: F
 
 

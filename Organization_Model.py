@@ -301,19 +301,19 @@ class Organization:
             n = self.get_statistics()[1]
             # only hire if candidate can handle the current org state 
             if new_hire.Worldview == "A":     
-                if n.get("n_B") + n.get("n_B2") > new_hire.TOPP: 
+                if 1 - (n.get("n_A") + n.get("n_A2")) <= new_hire.TOPP: 
                     hired = True 
                     self.Workforce[position] = new_hire 
                     new_hire.Org_pos = position
                     new_hire.Organization = self
             elif new_hire.Worldview == "AB":
-                if n.get("n_AB") > new_hire.TOPP:
+                if 1 - n.get("n_AB") <= new_hire.TOPP:
                     hired = True 
                     self.Workforce[position] = new_hire 
                     new_hire.Org_pos = position
                     new_hire.Organization = self
             elif new_hire.Worldview == "B": 
-                if n.get("n_B") + n.get("n_B2") > new_hire.TOPP: 
+                if 1 - (n.get("n_B") + n.get("n_B2")) <= new_hire.TOPP: 
                     hired = True 
                     self.Workforce[position] = new_hire 
                     new_hire.Org_pos = position
