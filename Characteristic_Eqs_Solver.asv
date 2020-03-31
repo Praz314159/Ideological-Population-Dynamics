@@ -42,7 +42,6 @@ buckets = [0, .05, .1, .15, .2, .25, .3, .35, .4, .45, .5, .55, .6, .65,...
 zealot_resistence = [.01, .03, .05, .07, .1, .135, .17, .205, .4, .45, ...
     .51, .58, .66, .75, .85, .95, .96, .97, .98, .99];
 
-%TOPP distribution 
 
 
 syms n_A(t) n_A_z(t) n_AB(t) n_B(t) n_B_z(t)
@@ -55,15 +54,11 @@ function output = rho_A(n_A, n_A_z, buckets, zealot_resistences)
 %this is just a mapping to probability values fomr [0,1] --> [0,1]
 n_A_total = n_A + n_A_z
 %we want the the space index of 
-if n_A_total == 1
+if n_A_total == 1;
 
 end
 
 output = 1; 
-end
 
-function output = resign(n_w)
-
-end 
 
 
