@@ -61,8 +61,6 @@ ode5 = diff(n_AB) == 1 - (n_A + n_A_z + n_B + n_B_z);
 odes = [ode1; ode2; ode3; ode4; ode5]; 
 S = dsolve(odes);  
 
-%need to set initial conditions 
-
 %helper functions 
 %mapps probability values to organization states 
 function output = rho(n_w, n_w_z, zealot_resistences) 
