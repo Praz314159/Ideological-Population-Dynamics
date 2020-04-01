@@ -59,7 +59,20 @@ ode4 = diff(n_B_z) == rho(n_B, n_B_z, zealot_resistences)*n_B*n_B_z - ...
 ode5 = diff(n_AB) == 1 - (n_A + n_A_z + n_B + n_B_z); 
 
 odes = [ode1; ode2; ode3; ode4; ode5]; 
-S = dsolve(odes);  
+%S = dsolve(odes);  
+%need to set initial conditions
+A_config = .5; 
+B_config = .5;
+A_t = .33; 
+B_t = .33; 
+cond1 = n_A(0) == A_t*A_config;   
+cond2 = n_A_z(0) == A_t*(1-A_config); 
+cond3 = n_B(0) == B_t*B_config; 
+cond4 = n_B_z(0) == B_t*(1-B_config); 
+cond5 = n_AB(0) == .34; 
+conds = [cond1; cond2; cond3; cond4; cond5];
+
+[n_Asol(t), n_A_zsol(t), n_ABsol(t), n_Bsol(t), n_B_zsol(t)] = dsolve(odes, conds);
 
 %helper functions 
 %mapps probability values to organization states 
