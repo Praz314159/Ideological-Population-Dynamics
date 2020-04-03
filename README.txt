@@ -30,12 +30,15 @@ The files/folders in this repository are as follows:
 
 1. Organization_model.py --> This is contains the two major classes that comprise the model, namely, "Individual" and
    "Organization", which is composed of individuals. 
-2. run_simulations.py --> This is the command line interface that allows one to easily run simulations that test various
+2. run_experiments.py --> This is the command line interface that allows one to easily run simulations that test various
    parameters. 
-3. Characteristic_Equations.m --> This is a MatLab script meant to solve, for various initial conditions, the system of 
+3. Characteristic_Eqs_Solver.m --> This is a MatLab script meant to solve, for various initial conditions, the system of 
    differential equations that fully characterizes the ideological population dynamics of an organization. 
-4. 
-
+4. "Mathematical Characterization of System" --> This is a PDF that contains a more rigorous mathematical description of the
+   model. This document is currently in progress. 
+5. Reference Papers --> This folder contains academic literature that has informed this research. 
+6. Resultes-Figures --> This folder contains various plots that have been generated from simulations over the course of this project. 
+7. Notes.txt --> This document is a "progress journal" of sorts, that contains my thoughts during development. 
 
 Here is a rough description of the model:  
 
