@@ -14,7 +14,7 @@ import statistics
 class Individual: 
     def __init__(self):
         #Personal Parameters
-        self.Worldview = "A" #ideology of the individual 
+        self.Worldview = None #ideology of the individual 
         self.Zealot = False #boolean indicating if the the individual is a zealot or not 
         self.Leader = False #boolean indicating if the individual is a leader in the organization (may have multiple
                       #leaders) and thus has hiring power  
@@ -32,32 +32,54 @@ class Individual:
         if self.Worldview == "A":
             if 1- (n.get("n_A") + n.get("n_A2")) > self.TOPP:
                 empty_pos = self.Organization.accept_resignation(self) 
-       elif self.Worldview == "AB":
+        elif self.Worldview == "AB":
             if 1-n.get("n_AB") > self.TOPP:
                 empty_pos = self.Organization.accept_resignation(self) 
-       elif self.Worldview == "B": 
+        elif self.Worldview == "B": 
             if 1-(n.get("n_B") + n.get("n_B2")) > self.TOPP:
                 empty_pos = self.Organization.accept_resignation(self)
        
         return empty_pos 
 
     def listen(self, speaker):
+        preference_falsification = False 
         n = self.Organization.get_statistics()[1]
         N = self.Organization.get_statistics()[0]
-
+        '''
         if (speaker.Worldview == "A" and speaker.Zealot == False and self.Worldview == "B" and self.Zealot == False ) \
                 or (speaker.Worldview == "B" and speaker.Zealot == False and self.Worldview == "A" and self.Zealot ==\
                 False): 
-            self.Worldview = "AB" 
+                    self.Worldview = "AB" 
+
         elif ((speaker.Worldview == "A" and speaker.Zealot == True) and ((self.Worldview == "B" or self.Worldview ==\
                 "AB") and self.Zealot == False)) or (speaker.Worldview == "A" and speaker.Zealot == False and\
                 self.Worldview == "AB" and self.Zealot == False):
-            self.Worldview = "A" 
+                    self.Worldview = "A"
+
         elif ((speaker.Worldview == "B" and speaker.Zealot == True) and ((self.Worldview == "A" or self.Worldview ==\
                 "AB") and self.Zealot == False)) or (speaker.Worldview == "B" and speaker.Zealot == False and\
                 self.Worldview == "AB" and self.Zealot == False): 
+                    self.Worldview == "B"
+        ''' 
+        if (speaker.Worldview == "A" and speaker.Zealot == False) and (self.Worldview == "AB"): 
+            self.Worldview = "A" 
+        elif (speaker.Worldview == "A" and speaker.Zealot == False) and (self.Worldview == "B" and self.Zealot == False): 
+            self.Worldview = "AB"
+        elif (speaker.Worldview == "B" and speaker.Zealot == False) and (self.Worldview == "A" and self.Zealot == False): 
+            self.Worldview = "AB"
+        elif (speaker.Worldview == "B" and speaker.Zealot == False) and (self.Worldview == "AB"): 
             self.Worldview == "B"
-        elif speaker.Worldview == "A" and speaker.Zealot == True and self.Worldview == "A" and self.Zealot == False:
+        elif (speaker.Worldview == "B" and speaker.Zealot == True) and (self.Worldview == "A" and self.Zealot == False): 
+            self.Worldview = "B"
+            preference_falsification = True 
+        elif (speaker.Worldview == "B" and speaker.Zealot == True) and (self.Worldview == "AB"): 
+            self.Worldview = "B"
+        elif (speaker.Worldview == "A" and speaker.Zealot == True) and (self.Worldview == "AB"): 
+            self.Worldview = "A" 
+        elif (speaker.Worldview == "A" and speaker.Zealot == True) and (self.Worldview == "B" and self.Zealot == False): 
+            self.Worldview = "A" 
+            preference_falsification = True 
+        elif (speaker.Worldview == "A" and speaker.Zealot == True) and (self.Worldview == "A" and self.Zealot == False):
             #the key is that we have access to the global state of the organization, which means that we 
             #do indeed know how homogenous the organization is in A, for example. 
             #bucket = math.floor((n.get("n_A") + n.get("n_A2"))/.05) 
@@ -72,7 +94,7 @@ class Individual:
             #A --> A' with assigned probability 
             if random.random() < prob_switch:
                 self.Zealot == True 
-        elif speaker.Worldview == "B" and speaker.Zealot == True and self.Worldview == "B" and self.Zealot == False:
+        elif (speaker.Worldview == "B" and speaker.Zealot == True) and (self.Worldview == "B" and self.Zealot == False):
             if math.floor((n.get("n_B") + n.get("n_B2"))/.05) == 0: 
                 bucket = 0
             else: 
@@ -87,7 +109,7 @@ class Individual:
         else: 
             pass 
 
-        return 
+        return preference_falsification
 
 class Organization: 
     def __init__(self):
@@ -115,15 +137,13 @@ class Organization:
         #Populate the organization with individuals 
 
         for i in range(self.Org_size): 
-            self.Workforce.append(Individual())
-            self.Workforce[i].Org_pos = i 
-            self.Workforce[i].Organization = self
+            self.Workforce.append(Individual()) #creates employee
+            self.Workforce[i].Org_pos = i #sets position of employee in organization 
+            self.Workforce[i].Organization = self #sets organization of employee to organization 
             
             #draw TOPP and THOM from normal distribution, but set THOM at least as high as TOPP 
             self.Workforce[i].TOPP = np.random.normal(0.5, .1) #choose normal distribution 
-            #self.Workforce[i].THOM = np.random.uniform(self.Workforce[i].TOPP,1) 
-            #does choosing uniformly greater than points drawn from normal distribution give a normal distribution? 
-
+           
             #set individual's worldview based on organization config 
             self.Workforce[i].Worldview = np.random.choice(self.Worldviews, 1, p = self.Config)[0]
             
@@ -164,51 +184,93 @@ class Organization:
         return 
   
     def interact(self):
-        #randomnly select two individuals from the workforce 
+        #randomnly select two individuals from the workforce
         listener = self.Workforce[random.randint(1, self.Org_size-1)]
         speaker = self.Workforce[random.randint(1, self.Org_size-1)] 
-
-        listener.listen(speaker)
+        
+        print("Speaker Worldview: ", speaker.Worldview)
+        print("Speaker Zealot: ", speaker.Zealot) 
+        print("Initial Listener Worldview: ", listener.Worldview)
+        print("Listener Zealot: ", listener.Zealot)
+        
+        preference_falsification = listener.listen(speaker)
+        print("Final Listener Worldview: ", listener.Worldview)
+        print("Preference Falsification: ", preference_falsification) 
         self.num_interactions += 1          
         return 
     
     #no screening for tolerance
-    def hire_with_probability_no_screen(self, new_hire_ position, probability): 
-        pass 
+    def hire_with_probability_no_screen(self, new_hire, position, probability):
+        hired = False
+        if random.random() < probability: 
+            hired = True 
+            self.Workforce[position] = new_hire 
+            new_hire.Org_pos = position 
+            new_hire.Organization = self 
+            
+            print("\nNEW HIRE") 
+            print("Position: ", position)
+            print("Worldview: ", new_hire.Worldview) 
+
+        return hired 
 
     #screening for tolerance 
     def hire_with_probability(self, new_hire, position, probability):
         hired = False 
         if random.random() < probability:
             n = self.get_statistics()[1]
-            # only hire if candidate can handle the current org state 
+            # only hire if candidate can handle the current org state
+            # the problem here is that in default mode, the probability that random candidate
+            # from hiring pool will be hired is 1. But, what happens if they can't handle the 
+            # org state? Then we have to look for another candidate to hire ... how is this 
+            # dealt with? For now, when we are in default mode, we use hire_with_no_screen 
             if new_hire.Worldview == "A":     
                 if 1 - (n.get("n_A") + n.get("n_A2")) <= new_hire.TOPP: 
                     hired = True 
                     self.Workforce[position] = new_hire 
                     new_hire.Org_pos = position
                     new_hire.Organization = self
+                    print("\nNEW HIRE") 
+                    print("Position: ", position)
+                    print("Worldview: ", new_hire.Worldview) 
+
             elif new_hire.Worldview == "AB":
                 if 1 - n.get("n_AB") <= new_hire.TOPP:
                     hired = True 
                     self.Workforce[position] = new_hire 
                     new_hire.Org_pos = position
                     new_hire.Organization = self
+                    print("\nNEW HIRE") 
+                    print("Position: ", position)
+                    print("Worldview: ", new_hire.Worldview) 
+
             elif new_hire.Worldview == "B": 
                 if 1 - (n.get("n_B") + n.get("n_B2")) <= new_hire.TOPP: 
                     hired = True 
                     self.Workforce[position] = new_hire 
                     new_hire.Org_pos = position
                     new_hire.Organization = self
+                    print("\nNEW HIRE") 
+                    print("Position: ", position)
+                    print("Worldview: ", new_hire.Worldview) 
+
         return hired
         
     def fire(self): 
         empty_pos = random.randint(1, self.Org_size-1)
         new_fire = self.Workforce[empty_pos]
+        
+        print("\nFIRING") 
+        print("Position: ", empty_pos) 
+        print("Worldview: ", new_fire.Worldview) 
         return empty_pos 
    
     def accept_resignation(self, new_resignation): 
         empty_pos = new_resignation.Org_pos 
+        
+        print("\nRESIGNATION")
+        print("Position: ", empty_pos) 
+        print("Worldview: ", new_resignation.Worldview) 
         return empty_pos
 
     def hire(self, empty_pos):
@@ -234,7 +296,6 @@ class Organization:
                             continue 
                     elif candidate.Worldview == "B": 
                         if candidate.Zealot == True:
-                            #print("\n\n\nBEING A BITCH")
                             if self.hire_with_probability(candidate, empty_pos, .05) == True:
                                 break
                             else:
@@ -245,7 +306,6 @@ class Organization:
                             else:
                                 continue 
                     elif candidate.Worldview == "AB":
-                        #print("\n\n\nBEING A BITCH")
                         if self.hire_with_probability(candidate, empty_pos, .3) == True:
                             break
                         else:
@@ -255,25 +315,21 @@ class Organization:
                 elif self.Leader.Worldview == "B":
                     if candidate.Worldview == "A": 
                         if candidate.Zealot == True:
-                            #print("\n\n\nBEING A BITCH")
                             if self.hire_with_probability(candidate, empty_pos, .05) == True:
                                 break
                             else:
                                 continue
                         else:
-                            #print("\n\n\nBEING A BITCH")
                             if self.hire_with_probability(candidate, empty_pos, .1) == True:
                                 break
                             else:
                                 continue
                     elif candidate.Worldview == "B":
-                        #print("\n\n\nBEING A BITCH")
                         if self.hire_with_probability(candidate, empty_pos, .75) == True:
                             break
                         else:
                             continue
                     elif candidate.Worldview == "AB":
-                        #print("\n\n\nBEING A BITCH")
                         if self.hire_with_probability(candidate, empty_pos, .3) == True:
                             break
                         else:
@@ -282,19 +338,16 @@ class Organization:
                 # [.3, .5, .3]
                 elif self.Leader.Worldview == "AB":
                     if candidate.Worldview == "A":
-                        #print("\n\n\nBEING A BITCH")
                         if self.hire_with_probability(candidate, empty_pos, .3)  == True: 
                             break
                         else:
                             continue 
                     elif candidate.Worldview == "B":
-                        #print("\n\n\nBEING A BITCH")
                         if self.hire_with_probability(candidate, empty_pos, .3)  == True: 
                             break
                         else:
                             continue 
                     elif candidate.Worldview == "AB":
-                        #print("\n\n\nBEING A BITCH")
                         if self.hire_with_probability(candidate, empty_pos, .5)  == True: 
                             break
                         else:

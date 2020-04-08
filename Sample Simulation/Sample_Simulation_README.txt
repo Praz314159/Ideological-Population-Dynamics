@@ -1,0 +1,5 @@
+This project attempts to model the "ideological population dynamics" of an organization. Broadly, an organization is made up of individuals with different worldviews. These individuals interact within the organization. Through these interactions, individuals may or may not change their minds. Further, individuals are resign, are fired, and are hired. Rules regarding interaction, hiring, firing, and resignation determine the ideological population dynamics of the organization.
+
+In the model I've developed, there are three worldviews: A, B, and AB. The A and B populations are refined into "Zealot" and "Non-Zealot" sub-populations. A component-separation metric is used as a proxy for the level of polarization in the organization. I have attempted to implement known psychological phenomena such as preference falsification. 
+
+I have attached output from a simulation in with worldviews are uniformly distributed in hiring pool and the initial configuration of the organization. Further, I have attached a plot of the organization's configuration and it's polarization over the course of 500 interactions. 

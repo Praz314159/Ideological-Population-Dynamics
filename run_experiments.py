@@ -57,21 +57,15 @@ def run_simulation(Org, epochs):
     fractional_B_Zealots  = []
     fractional_Moderates = [] 
 
-    #initial_TOPP = Org.Workforce
-    '''
+    initial_workforce = Org.Workforce
     initial_worldviews = []
     for worker in initial_workforce:
         if worker.Zealot == True: 
             initial_worldviews.append(worker.Worldview + " Zealot")
         else:
             initial_worldviews.append(worker.Worldview)
-    '''
-    initial_N, initial_n, initial_polarization, initial_TOPP, initial_character = Org.get_statistics()
-    #initial_N = Org.get_statistics()[0]
-    #initial_polarization = Org.get_statistics()[2]
-    #initial_TOPP = Org.get_statistics()[3]
     
-    #print("initial n: ", initial_n)
+    initial_N, initial_n, initial_polarization, initial_TOPP, initial_character = Org.get_statistics()
     #checking configuration before evolution
     print("\nINITIAL STATE: ")
     print("Hiring Mode: ", Org.Mode)
@@ -104,15 +98,15 @@ def run_simulation(Org, epochs):
         
         #anyone who wants to resign can resign 
         for employee in Org.Workforce: 
-            open_position = employee.resign()
+            open_position = employee.resign() #print worldview resigning, print position of resignee
             #print("POSITION RESIGNED: ", open_position) 
             if open_position != -1: 
                 #print("POSITION RESIGNED: ", open_position) 
-                Org.hire(open_position)
+                Org.hire(open_position) #print worldview of hire, print position of hiree 
         
         #interaction 
-        print("INTERACTION: ", interaction) 
-        Org.interact()
+        print("\nINTERACTION: ", interaction) 
+        Org.interact() #print the speaker, print the listener pre-interaction, print the listener post-interaction
         
         #Firing 
         if Org.num_interactions % 5 == 0:
@@ -120,26 +114,15 @@ def run_simulation(Org, epochs):
             #print("POSITION FIRED: ", pos_to_fill)
             Org.hire(pos_to_fill)
  
-    #final_workforce = Org.Workforce
-    
-    '''
+    final_workforce = Org.Workforce
     final_worldviews = []
-
     for worker in final_workforce:
         if worker.Zealot == True:
             final_worldviews.append(worker.Worldview + " Zealot")
         else:
             final_worldviews.append(worker.Worldview)
-    '''
-    #print("INITIAL WORLDVIEWS: ", initial_worldviews)
-    #print("\nFINAL WORLDVIEWS: ", final_worldviews)
     
     final_N, final_n, final_polarization, final_TOPP, final_character = Org.get_statistics()
-    #final_n = Org.get_statistics()[1]
-    #final_polarization = Org.get_statistics()[2]
-    #final_TOPP = Org.get_statistics()[3]
-    #final_character = Org.get_statistics[4]
-
     #checking configuration after evolution
     print("\nFINAL STATE: ")
     print("Hiring Mode: ", Org.Mode)
@@ -155,6 +138,9 @@ def run_simulation(Org, epochs):
     print("Total Moderates: ", final_N.get("N_AB")) 
     print("Leader :", Org.Leader.Worldview)
     print("Polarization: ", final_polarization)
+
+    print("\nINITIAL WORLDVIEWS: ", initial_worldviews)
+    print("\nFINAL WORLDVIEWS: ", final_worldviews)
     
     return polarization_vals, fractional_A, fractional_A_Zealots, fractional_B, fractional_B_Zealots, \
             fractional_Moderates, initial_TOPP, final_TOPP, initial_character, final_character 
@@ -210,7 +196,7 @@ def plot_all(D, SR, ASR):
     
     plt.show()
     pass 
-'''
+
 def get_TOPP_dists(initial_workforce, final_workforce):  
     #look at this fucking list compression. Booyakasha. 
     initial_dist = [worker.TOPP for worker in initial_workforce]
@@ -232,7 +218,7 @@ def get_TOPP_dists(initial_workforce, final_workforce):
         changes = [final_dist[i] for i in range(len(final_dist)) if final_dist[i] != initial_dist[i]]
 
     return initial_dist, final_dist  
-'''
+
 def plot_TOPP_dist(initial_TOPP, final_TOPP):
     #getting TOPP values before and after simulation 
     #Note that before should look normal 
@@ -270,8 +256,8 @@ def plot_all_TOPP_dists(D, SR, ASR):
     #ASR plot 
     ax3.hist([ASR_initial_TOPP, ASR_final_TOPP], 100, density = True)#, facecolor = ['g','b']) 
     ax3.set(xlabel = "TOPP") 
-
     plt.show() 
+
 def test_hiring_effort():
     pass
 
