@@ -28,15 +28,16 @@ class Individual:
         
     def resign(self): 
         empty_pos = -1
-        n = self.Organization.get_statistics()[1] 
+        n = self.Organization.get_statistics()[1]
+        polarization = self.Organization.get_statistics()[2]
         if self.Worldview == "A":
-            if 1- (n.get("n_A") + n.get("n_A2")) > self.TOPP:
+            if n.get("n_B") + n.get("n_B2") > self.TOPP:
                 empty_pos = self.Organization.accept_resignation(self) 
         elif self.Worldview == "AB":
-            if 1-n.get("n_AB") > self.TOPP:
+            if polarization > self.TOPP:
                 empty_pos = self.Organization.accept_resignation(self) 
         elif self.Worldview == "B": 
-            if 1-(n.get("n_B") + n.get("n_B2")) > self.TOPP:
+            if n.get("n_A") + n.get("n_A2") > self.TOPP:
                 empty_pos = self.Organization.accept_resignation(self)
        
         return empty_pos 
@@ -142,7 +143,7 @@ class Organization:
             self.Workforce[i].Organization = self #sets organization of employee to organization 
             
             #draw TOPP and THOM from normal distribution, but set THOM at least as high as TOPP 
-            self.Workforce[i].TOPP = np.random.normal(0.5, .1) #choose normal distribution 
+            self.Workforce[i].TOPP = np.random.beta(4,1) #choose normal distribution 
            
             #set individual's worldview based on organization config 
             self.Workforce[i].Worldview = np.random.choice(self.Worldviews, 1, p = self.Config)[0]
@@ -167,9 +168,9 @@ class Organization:
             self.HP.append(Individual())
             self.HP[i].Org_pos = i 
 
-            #draw TOPP and THOM from random distribution, but set THOM at least as high as TOPP 
-            self.HP[i].TOPP = np.random.uniform(0.5,1)
-            #self.HP[i].THOM = np.random.uniform(self.HP[i].TOPP,1)
+            #draw TOPP from some distribution  
+            self.HP[i].TOPP = np.random.beta(4,1) # using beta distribution instead of normal dist w mean .5 and std .1 
+            #self.HP[i].THOM = np.random.uniform(.5, .1)
 
             #set individual's worldview based on organization config 
             self.HP[i].Worldview = np.random.choice(self.Worldviews, 1, p = self.H_config)[0]
@@ -211,6 +212,16 @@ class Organization:
             print("\nNEW HIRE") 
             print("Position: ", position)
             print("Worldview: ", new_hire.Worldview) 
+
+            #we also want the TOPP and how homogenous the organization is in opposition to
+            #worldview of the new hire 
+            n = self.get_statistics()[1]
+            if new_hire.Worldview != "AB":
+                print("Opposition: ", 1 - (n.get("n_" + new_hire.Worldview) + n.get("n_" + new_hire.Worldview + "2")))
+            else: 
+                print("Opposition: ", 1 - (n.get("n_" + new_hire.Worldview))) 
+
+            print("TOPP: ", new_hire.TOPP) 
 
         return hired 
 
@@ -268,16 +279,25 @@ class Organization:
     def accept_resignation(self, new_resignation): 
         empty_pos = new_resignation.Org_pos 
         
+        n = self.get_statistics()[1] 
         print("\nRESIGNATION")
         print("Position: ", empty_pos) 
-        print("Worldview: ", new_resignation.Worldview) 
+        print("Worldview: ", new_resignation.Worldview)
+
+        if new_resignation.Worldview != "AB": 
+            print("Opposition: ", 1 - (n.get("n_" + new_resignation.Worldview) + n.get("n_" + new_resignation.Worldview + "2")))
+        else: 
+            print("Opposition: ", 1 - (n.get("n_" + new_resignation.Worldview)))
+
+        print("TOPP: ", new_resignation.TOPP) 
         return empty_pos
 
     def hire(self, empty_pos):
         #Default hiring mode: selecting for pre-existing bias in hiring pool 
         if self.Mode == "D":
             new_hire = self.HP[random.randint(0, self.HP_size-1)]
-            self.hire_with_probability(new_hire, empty_pos, 1) 
+            while self.hire_with_probability(new_hire, empty_pos, 1) == False:
+                new_hire = self.HP[random.randint(0, self.HP_size-1)] 
 
         #Self Replication hiring mode: selects for bias of the leader 
         elif self.Mode == "SR":
