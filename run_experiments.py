@@ -225,7 +225,7 @@ def plot_TOPP_dist(initial_TOPP, final_TOPP):
     #initial_dist, final_dist = get_TOPP_dists(initial_workforce, final_workforce) 
 
     # plt.plot(1,1,1)
-    plt.hist([initial_TOPP, final_TOPP], 100, label = ['initial', 'final'], facecolor = ['g','b'])
+    plt.hist([initial_TOPP, final_TOPP], 100, label = ['initial', 'final'])#, facecolor = ['g','b'])
     #plt.hist(initial_dist, 100, density = True, label = 'initial')
     #plt.hist(final_dist, 100, density = True, label = 'final')
     plt.legend(loc = 'upper right') 

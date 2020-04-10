@@ -143,7 +143,7 @@ class Organization:
             self.Workforce[i].Organization = self #sets organization of employee to organization 
             
             #draw TOPP and THOM from normal distribution, but set THOM at least as high as TOPP 
-            self.Workforce[i].TOPP = np.random.beta(4,1) #choose normal distribution 
+            self.Workforce[i].TOPP = np.random.beta(6,2) #choose normal distribution 
            
             #set individual's worldview based on organization config 
             self.Workforce[i].Worldview = np.random.choice(self.Worldviews, 1, p = self.Config)[0]
@@ -169,7 +169,7 @@ class Organization:
             self.HP[i].Org_pos = i 
 
             #draw TOPP from some distribution  
-            self.HP[i].TOPP = np.random.beta(4,1) # using beta distribution instead of normal dist w mean .5 and std .1 
+            self.HP[i].TOPP = np.random.beta(6,6) # using beta distribution instead of normal dist w mean .5 and std .1 
             #self.HP[i].THOM = np.random.uniform(.5, .1)
 
             #set individual's worldview based on organization config 
