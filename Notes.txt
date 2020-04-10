@@ -116,8 +116,32 @@ gives a good visualization of how the different hiring strategies affect the ide
 simulation running in order to accomodate this. But, for some reason -- I'm not sure why yet -- the TOPP 
 distribution isn't showing any change between the intitial workforce and the final workforce. What's going on??!! 
 
-3/21/20: 
+4/8/20: I feel like I'm now making some serious progress. I made a number of refinements that make the model
+more "up-to-date". They are: 
 
-4/1/20: What if there are people who will actually attack you for your world view.
+1. Making the interaction rules explicit 
+2. Changin the default hiring schem to guarantee that a candidate is hired. Previously, with the tolerance check,
+there was no guarantee that a single candidate randomly selected would pass the tolerance check. Now, the hirer
+continuously screens candidates until a candidate that passes the tolerance check is found. The first candidate 
+that passes the tolerance check is hired. 
+3. The TOPP distribution is changed from a normal distribution with mean .5 and std .1 to a beta distribution 
+with alpha = 1  and beta = 4. This is, intuitively, a bit more realistic.
+4. Resignation rules are changed. "A"s and "B"s no longer consider "AB"s as "opposition". Further, "AB"s only
+resign in response to polarization levels. This along with the change in distribution drasitcally reduced 
+the number of resignations.  
+
+More importantly, though, my conversation with Jonathan Haidt, along with my dive into statistical physics models 
+for belief propagation has inspired the next steps for this project. Firstly, my conception of zealots has been 
+incorrect. I have been conceptualizing, until this point, zealots as individuals whose minds will not change. This
+is, in fact, not the case. Zealots and individuals who make life difficult for those who disagree with them. They
+cause those who disagree with them to either go into hiding or to leave the organization. I somehow need to find a
+way for this to be manifested in my model. When do individuals go into hiding and when will they leave the org? 
+Does this depend on the state of the organization? How does this play out when there are two zealot populations 
+that are in conflict with one another? 
+
+The other important step I'd like to take is underlaying the organization with a network topology that determines
+the structure of interactions. Clearly, not all organizations are densely connected. They may have densely 
+connected components such as teams, but only is small non-profits or like organizations will this be the case. 
+
 
 

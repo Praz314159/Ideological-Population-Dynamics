@@ -165,9 +165,9 @@ def plot_single(polarization_vals, fractional_A, fractional_A_Zealots, fractiona
 
 def plot_all(D, SR, ASR):
     
-    fig, axs = plt.subplots(3) 
+    fig, axs = plt.subplots(4) 
     fig.suptitle("D, SR, ASR") 
-    axs[0].plot(D[0], label = "Polarization") 
+    #axs[0].plot(D[0], label = "Polarization") 
     axs[0].plot(D[1], label = "A")
     axs[0].plot(D[2], label = "A Zealots") 
     axs[0].plot(D[3], label = "B")
@@ -176,7 +176,7 @@ def plot_all(D, SR, ASR):
     #axs[0].set(xlabel = "Number of Interactions", ylabel = "Fractional Representation in the Organization")
     axs[0].legend()
     
-    axs[1].plot(SR[0], label = "Polarization") 
+    #axs[1].plot(SR[0], label = "Polarization") 
     axs[1].plot(SR[1], label = "A")
     axs[1].plot(SR[2], label = "A Zealots") 
     axs[1].plot(SR[3], label = "B")
@@ -185,15 +185,21 @@ def plot_all(D, SR, ASR):
     axs[1].set(ylabel = "Fractional Representation in the Organization")
     #axs[1].legend()
     
-    axs[2].plot(ASR[0], label = "Polarization") 
+    #axs[2].plot(ASR[0], label = "Polarization") 
     axs[2].plot(ASR[1], label = "A")
     axs[2].plot(ASR[2], label = "A Zealots") 
     axs[2].plot(ASR[3], label = "B")
     axs[2].plot(ASR[4], label = "B Zealots") 
     axs[2].plot(ASR[5], label = "Moderates") 
-    axs[2].set(xlabel = "Number of Interactions")
+    #axs[2].set(xlabel = "Number of Interactions")
     #axs[2].legend()   
     
+    axs[3].plot(D[0], label = "D Polarization")
+    axs[3].plot(SR[0], label = "SR Polarization") 
+    axs[3].plot(ASR[0], label = "ASR Polarization")
+    axs[3].set(xlabel = "Number of Interactions") 
+    axs[3].legend() 
+
     plt.show()
     pass 
 
