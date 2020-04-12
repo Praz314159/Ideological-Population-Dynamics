@@ -7,6 +7,11 @@ structure of the organization.
 
 We will use networkX in order to build these topologies. However, 
 ''' 
+import matplotlib.pyplot as plt 
+import networkx 
+
+
+
 
 
 

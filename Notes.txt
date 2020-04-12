@@ -143,5 +143,41 @@ The other important step I'd like to take is underlaying the organization with a
 the structure of interactions. Clearly, not all organizations are densely connected. They may have densely 
 connected components such as teams, but only is small non-profits or like organizations will this be the case. 
 
+4/11/20: Reading about different network topologies: 
+
+1. Dunbar's Number: This is the number of close social relationships that humans can maintain at a given point.
+Number was extrapolated by anthropologist Robin Dunbar (British) in the 1990s from the results obtained through 
+study of other primates. Correlation was noticed between primate brain size and average social group size. Number
+was determined to be 150 stable relationships for humans. 
+
+https://en.wikipedia.org/wiki/Dunbar%27s_number
+
+2. Percolation Theory: Simple analogy is that percolation theory describes the behavior of water flowing through a
+structure. Really, it's the mathematical theory regarding the behavior of connected clusters in a random graph. 
+Given an infinite lattice, ther percolation threshold p_c is defined as the concentration (occupation
+probability) p at which an infinite cluster appears. That is a cluster that "percolates" from one boundary of the 
+lattice to another. Various lattice structures have different percolation thresholds. Does rate of homogenization
+vary with percolation threshold? See Christensen refference text (Imperial College). Site percolation problem vs bond percolation problem. Consider conditions on the 1d lattice (p_c = 1) --> simple conditions, maybe some clues here about organizational
+structure?   
+
+https://en.wikipedia.org/wiki/Percolation_theory
+http://web.mit.edu/ceder/publications/Percolation.pdf
+
+3. Small World Network (Watts and Strogatz): characterized by small average path length, triadic closures, 
+local clustering, and hubs. (Triadic closures is a concept in social network theory, first suggested by German 
+sociologist Georg Simmel --> if a strong ties A-B and A-C exist, then there is a strong tie B-C. The concept 
+was later popularized by Mark Granovetter). Strogatz model accounts for clustering while retaining the short average 
+path lengths of the Erdos-Renyi model. This is done by interpolating between randomized structure close to ER graphs
+and regular ring lattice. Although the Strogatz model produces a reasonable description of many networks, it produces 
+an unrealistic degree distribution. Real networks are often "scale free" (degree distribution follows power law)
+and inhomogenious in degree (hubs and scale-free distribution).
+
+Small world network is characterized   
+ 
+https://en.wikipedia.org/wiki/Small-world_network#Properties_of_small-world_networks
+https://en.wikipedia.org/wiki/Triadic_closure
+https://en.wikipedia.org/wiki/Watts%E2%80%93Strogatz_model
+https://en.wikipedia.org/wiki/Scale-free_network
+https://www.springer.com/journal/10588 --> journal to possibly publish in 
 
 
