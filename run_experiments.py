@@ -5,23 +5,24 @@ The variables that should be controllable with this testing tool are:
     2. initial org size, configuration 
     3. hiring pool size, configuration 
     4. num candidates during hiring 
-    5. THOM, TOPP probability distributions 
-    6. 
-    7.
-    8.
-    9.
-    10.
+    5. TOPP probability distributions
 '''
 from Organization_Model import Individual
 from Organization_Model import Organization 
-import matplotlib.pyplot as plt
+from Organization_Topo_Model import Individual as Individual_Topo
+from Organization_Topo_Model import Organization as Organization_Topo
+import matplotlib.pyplot as plt 
 import argparse 
 
-def set_initial_conditions(Org_size, HP_size, config_A, config_B, config_AB, A_config, B_config,\
+
+def set_initial_conditions(topology, Org_size, HP_size, config_A, config_B, config_AB, A_config, B_config,\
         Hconfig_A, Hconfig_B, Hconfig_AB, A_HPconfig, B_HPconfig, Leader_worldview): 
 
     #initialize organization
-    Org = Organization() 
+    if topology == "empty_topology":
+        Org = Organization() 
+    elif topology == "topology": 
+        Org = Organization_Topo() 
     
     #set parameters to user input 
     Org.Org_size = Org_size
@@ -276,10 +277,14 @@ def main():
     
     parser = argparse.ArgumentParser() 
     
-    #This is the argument that 
+    #this lets the user decide what type of topology he wants the organization to be endowed with 
+    parser.add_argument("--type", default = "empty_topology", type = str, choices = ["empty_topology", "topology"], \
+            required = True, help = "This is the network topology you'd like the organization to be endowed with") 
+
+    #This argument tells the program what information to display (i.e, what experiment is being run)  
     parser.add_argument("--info", default = "Subpopulations", type = str, choices = ["TOPP", "Subpopulations"],\
             required = True, help = "This is the type of information you'd like to gather from the experiment.")
-
+    
     hiring_mode = parser.add_mutually_exclusive_group(required = True) 
     hiring_mode.add_argument("-d", "--default", nargs = 1, type = int, help = "This is the default hiring mode.\
             When in this mode, the leader of the organization himself has no bias. However, because \
@@ -315,8 +320,8 @@ def main():
     Leader_worldview = input("Worldview of leader: ") 
    
     if args.default:
-        #set initial conditions 
-        Org = set_initial_conditions(Org_size, HP_size, config_A, config_B, config_AB, A_config, \
+        #set initial conditions
+        Org = set_initial_conditions(args.type, Org_size, HP_size, config_A, config_B, config_AB, A_config, \
                 B_config, Hconfig_A, Hconfig_B, Hconfig_AB, A_HPconfig, B_HPconfig, Leader_worldview)
         Org.Mode = "D"
         epochs = args.default[0]
@@ -337,7 +342,7 @@ def main():
         pass 
     elif args.replication:
         #set org params 
-        Org = set_initial_conditions(Org_size, HP_size, config_A, config_B, config_AB, A_config, \
+        Org = set_initial_conditions(args.type, Org_size, HP_size, config_A, config_B, config_AB, A_config, \
                 B_config, Hconfig_A, Hconfig_B, Hconfig_AB, A_HPconfig, B_HPconfig, Leader_worldview)
         Org.Mode = "SR" 
         epochs = args.default[0] 
@@ -356,7 +361,7 @@ def main():
         pass 
     elif args.anti_replication:
         #set params 
-        Org = set_initial_conditions(Org_size, HP_size, config_A, config_B, config_AB, A_config, \
+        Org = set_initial_conditions(args.type, Org_size, HP_size, config_A, config_B, config_AB, A_config, \
                 B_config, Hconfig_A, Hconfig_B, Hconfig_AB, A_HPconfig, B_HPconfig, Leader_worldview)
         Org.Mode = "ASR" 
         epochs = args.default[0] 
@@ -379,7 +384,7 @@ def main():
         SR = []
         ASR = []
         for mode in Modes:
-            Org = set_initial_conditions(Org_size, HP_size, config_A, config_B, config_AB, A_config, \
+            Org = set_initial_conditions(args.type, Org_size, HP_size, config_A, config_B, config_AB, A_config, \
                     B_config, Hconfig_A, Hconfig_B, Hconfig_AB, A_HPconfig, B_HPconfig, Leader_worldview)
             Org.Mode = mode
             if mode == "D": 

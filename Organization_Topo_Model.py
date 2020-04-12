@@ -10,7 +10,7 @@ import random
 import argparse 
 from matplotlib import pyplot as plt 
 import statistics 
-import nextworkx as nx 
+import networkx as nx 
 
 class Individual: 
     def __init__(self):
@@ -109,7 +109,7 @@ class Organization:
         self.B_config = .1 
         
         #organization topology; default set to small world watts/strogatz graph 
-        topology = nx.watts_strogatz(self.Org_size, 3, .3, np.random.randint(1, self.Org_size))  
+        self.topology = nx.watts_strogatz_graph(self.Org_size, 15, .3, np.random.randint(1, self.Org_size))  
 
         #Fixed HP parameters
         self.H_config = [.33, .34, .33] #fractional rep in hiring pool 
@@ -142,11 +142,10 @@ class Organization:
             relationships = nx.to_numpy_matrix(self.topology) #getting adjacency matrix 
             relationships = relationships.astype("int32") #setting dtype to integer
 
-            #for each individual i, we want all individuals j such that relationships[i,j] = 1 
-            for i in range(self.Org_size): 
-                for j in range(self.Org_size): 
-                    if relationships[i,j] == 1: 
-                        self.Workforce[i].coworkers.append(j) 
+            #for each individual i, we want all individuals j such that relationships[i,j] = 1  
+            for coworker in range(self.Org_size): 
+                if relationships[i,coworker] == 1: 
+                    self.Workforce[i].coworkers.append(coworker) 
 
             #set leader first individual in list as 0
             if i == 0: 
@@ -186,17 +185,19 @@ class Organization:
         #randomnly select listener from the workforce
         listener = self.Workforce[random.randint(1, self.Org_size-1)]
         #randomly select speaker from listener coworker list 
-        speaker = self.Workforce[listener.coworkers[random.randint(0, len(listener.coworkers))]]   
+        if len(listener.coworkers) > 1:
+            speaker = self.Workforce[listener.coworkers[random.randint(0, len(listener.coworkers)-1)]]   
+            print("Speaker Worldview: ", speaker.Worldview)
+            print("Speaker Zealot: ", speaker.Zealot) 
+            print("Initial Listener Worldview: ", listener.Worldview)
+            print("Listener Zealot: ", listener.Zealot)
         
-        print("Speaker Worldview: ", speaker.Worldview)
-        print("Speaker Zealot: ", speaker.Zealot) 
-        print("Initial Listener Worldview: ", listener.Worldview)
-        print("Listener Zealot: ", listener.Zealot)
-        
-        preference_falsification = listener.listen(speaker)
-        print("Final Listener Worldview: ", listener.Worldview)
-        print("Preference Falsification: ", preference_falsification) 
-        self.num_interactions += 1          
+            preference_falsification = listener.listen(speaker)
+            print("Final Listener Worldview: ", listener.Worldview)
+            print("Preference Falsification: ", preference_falsification) 
+            self.num_interactions += 1
+        else: 
+            pass 
         return 
     
     #no screening for tolerance
@@ -468,8 +469,7 @@ class Organization:
 
 
 ''' 
-TO DO: 
-
+Difference from normal model: 
     1. add "coworkers" list as attribute for Individual 
     2. add "topology" graph as attribute for Organization 
     3. in populate_org() go through adjacency matrix for org topology and set each individual's coworker list 
