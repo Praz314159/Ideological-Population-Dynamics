@@ -1,3 +1,5 @@
+<h2>Motivation</h2> 
+
 After witnessing the attempted hostile ideological takeover of a prominent global non-profit, 
 I became interested in understanding how an organization might become ideologically homogenous,
 and, more importantly, how it might become overrun by zealots. This project is an attempt to model 
@@ -26,27 +28,28 @@ The main thrust of this research is to uncover effective strategies for countera
 polarization -- conceptualized here as "component separation", a recapitulation of entropy -- and protecting a culture of 
 institutionalized disconfirmation. 
 
+<h2>File Descriptions</h2>
+
 The files/folders in this repository are as follows: 
 
-1. Organization_model.py --> This is contains the two major classes that comprise the model, namely, "Individual" and
+1. **Organization_model.py**: This is contains the two major classes that comprise the model, namely, "Individual" and
    "Organization", which is composed of individuals. 
-2. run_experiments.py --> This is the command line interface that allows one to easily run simulations that test various
+2. **run_experiments.py**: This is the command line interface that allows one to easily run simulations that test various
    parameters. 
-3. Characteristic_Eqs_Solver.m --> This is a MatLab script meant to solve, for various initial conditions, the system of 
+3. **Characteristic_Eqs_Solver.m**: This is a MatLab script meant to solve, for various initial conditions, the system of 
    differential equations that fully characterizes the ideological population dynamics of an organization. 
-4. "Mathematical Characterization of System" --> This is a PDF that contains a more rigorous mathematical description of the
+4. **"Mathematical Characterization of System"**: This is a PDF that contains a more rigorous mathematical description of the
    model. This document is currently in progress. 
-5. Reference Papers --> This folder contains academic literature that has informed this research. 
-6. Resultes-Figures --> This folder contains various plots that have been generated from simulations over the course of this project. 
-7. Notes.txt --> This document is a "progress journal" of sorts, that contains my thoughts during development. 
+5. **Reference Papers**: This folder contains academic literature that has informed this research. 
+6. **Resultes-Figures**: This folder contains various plots that have been generated from simulations over the course of this project. 
+7. **Notes.txt**: This document is a "progress journal" of sorts, that contains my thoughts during development. 
 
-Here is a rough description of the model:  
+<h1> Model Description </h1>   
 
-MODEL ASSUMPTIONS: 
+<h2> Model Assumptions </h2>  
 
 1. No correlation between incompetency and ideology 
 2. 3 basic hiring modes: Default (D), Leadership Self-Replication (SR), Anti Leadership Self-Replication (ASR)
-3. Individuals change their mind through speaker-listener interactions. This is how the model is evolved.  
    
    SR Mode:  
 
@@ -61,11 +64,9 @@ MODEL ASSUMPTIONS:
    I've chosen P(Opp_z) = .05, P(Opp_nz) = .1, P(AB) = .3, P(Same) = .75, but these are slightly arbitrary. Is there
    a way to determine more realistic values? 
 
-   ASR Mode: 
-
-   What does being in anti self-replication mode mean? It means that the leader is trying to maintain ideological
-   diversity within the organization. We thus need a way to measure the polarization in the organization. The 
-   polarization metric will allow us to measure how well our anti-polarization ASR strategy is working. Ideally, 
+   **ASR Mode**: What does being in anti self-replication mode mean? It means that the leader is trying to maintain 
+   ideological diversity within the organization. We thus need a way to measure the polarization in the organization. 
+   The polarization metric will allow us to measure how well our anti-polarization ASR strategy is working. Ideally, 
    we'd like to test different strategies to see which hiring strategy is most effective in mitigating polarization.
    In general, ASR hiring mode kicks in once polarization has exceeded a certain critical threshold, at which point 
    hiring moves from default behavior to an anti-polarization strategy that, generally, hires individuals in such a 
@@ -78,7 +79,8 @@ MODEL ASSUMPTIONS:
            as likely to hire a non-zealot and zealot of the same worldview. 
         2. The hiring pool is pre-filtered for competence.  
         3. Hiring only takes place when someone has resigned or been fired. Thus the size of the organization stays constant.
-        
+ 
+3. Individuals change their mind through speaker-listener interactions. This is how the model is evolved.        
 4. When an individual engages in an interaction as a listener, they only move one position in the direction 
    of the speaker. 
 5. Every individual within the organization has complete knowledge of the organization state -- that is, 
@@ -88,10 +90,12 @@ MODEL FUNCTIONALITY
 
 1. We have the following general rules:
 
-    A,A' |  B  |  AB
-    A,A' |  AB |  A
-    B    |  A  |  AB
-    B    |  AB |  B
+  |Speaker|Listener|Final|
+  |-------|--------|-----|
+  |  A,A' |  B     |  AB |
+  |  A,A' |  AB    |  A  |
+  |  B    |  A     |  AB |
+  |  B    |  AB    |  B  |
 
     Note that this is modulated by preference falsification. Consider what happens when an individual is the 
     listener in an interaction. We have various scenarios:
@@ -147,6 +151,7 @@ MODEL FUNCTIONALITY
     ideological reasons unless the leader is a zealot. In the normal case, once an individual leaves the organization
     (incompetence, surpassed threshold), they are replaced by someone from the hiring pool. Here are some factors to 
     consider: 
+
         1. The hiring pool might be ideologically biased --> note that unbiased hring (D mode) will select for this bias 
         2. If in SR mode, then the bias of the leader will compound the hiring pool bias 
         3. If in ASR mode, then the bias of the leader will counteract the hiring pool bias 
