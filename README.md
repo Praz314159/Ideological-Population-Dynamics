@@ -139,8 +139,8 @@ MODEL FUNCTIONALITY
    probabilities: <.01, .02, .05, .07, .1, .135, .17, .205, .4, .45, .51, .58, .66, .75, .85, .95, .96, .97, 
    .98. .99>
 
-Although I'd have like to use a continuous map here, for the sake of convenience, I've used discretized
-buckets.  
+   Although I'd have like to use a continuous map here, for the sake of convenience, I've used discretized
+   buckets.  
 
 2. Each individual has TOPP, or "tolerance to opposition" value. This is the percentage of the organization that must
    be of a competing worldview for an individual to resigns. TOPP is a measure of an individual's tolerance for being    
