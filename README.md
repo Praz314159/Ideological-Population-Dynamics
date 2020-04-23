@@ -90,15 +90,18 @@ MODEL FUNCTIONALITY
 
 1. We have the following general rules:
 
-  |Speaker|Listener|Final|
-  |-------|--------|-----|
-  |  A,A' |  B     |  AB |
-  |  A,A' |  AB    |  A  |
-  |  B    |  A     |  AB |
-  |  B    |  AB    |  B  |
+<center>
 
-  Note that this is modulated by preference falsification. Consider what happens when an individual is the 
-  listener in an interaction. We have various scenarios:
+   |Speaker|Listener|Final|
+   |-------|--------|-----|
+   |  A,A' |  B     |  AB |
+   |  A,A' |  AB    |  A  |
+   |  B    |  A     |  AB |
+   |  B    |  AB    |  B  |
+</center> 
+
+   Note that this is modulated by preference falsification. Consider what happens when an individual is the 
+   listener in an interaction. We have various scenarios:
 
      1. If speaker is A and listener is B, then the listener is converted to AB 
      2. If speaker is A' and listener is B, then the listener is subject to preference falsification, 
@@ -110,35 +113,35 @@ MODEL FUNCTIONALITY
      4. If speaker is A' and listener is A, then the listener will change to A' if the global state of the 
         organization is such that the cost of becoming a zealot is sufficiently reduced. 
 
-  We specify scendario 4 further. Depending on how homogenous in A the organization is, A will turn to A'. 
-  It shouldn't be advantageous to switch until the organization is very homogenous in A. There is also a 
-  question about when it becomes socially unacceptable to not be a zealot. There is some interesting dynamics 
-  between people leaving because the organization is too homogenous and other people staying because there is 
-  social benefit to becoming a zealot, or, if the organization is extremely homogenous, social cost to not becoming 
-  one.
+   We specify scendario 4 further. Depending on how homogenous in A the organization is, A will turn to A'. 
+   It shouldn't be advantageous to switch until the organization is very homogenous in A. There is also a 
+   question about when it becomes socially unacceptable to not be a zealot. There is some interesting dynamics 
+   between people leaving because the organization is too homogenous and other people staying because there is 
+   social benefit to becoming a zealot, or, if the organization is extremely homogenous, social cost to not becoming 
+   one.
 
-  We have a global scaling of probabilities with which A --> A' and B --> B' that is based on the % of the 
-  organization that is either A or B. The idea here is that the more homogenous the organization, the less 
-  of a social cost there is for being a zealot; in fact, one may even be able to accrue social capital by 
-  becoming a zealot:
+   We have a global scaling of probabilities with which A --> A' and B --> B' that is based on the % of the 
+   organization that is either A or B. The idea here is that the more homogenous the organization, the less 
+   of a social cost there is for being a zealot; in fact, one may even be able to accrue social capital by 
+   becoming a zealot:
  
       1. Bias = <B_1, B_2, .... ,B_n> <==> Probs = <P_1, P_2, ... ,P_n>
       2. This type of switch will only occur when the speaker is a zealot and the listener is a non-zealot with 
          the same worldview 
 
-  The function mapping degree of homogeneity to probability of switching from non-zealot to zealot will
-  be the same for both cases, A --> A' and B --> B'. How should this mapping behave? First, 
-  it seems reasonable that there would be a long leading tail. It will only become advantageous, either 
-  to accrue social capital or to avoid social destruction, to become a zealot if the organization is highly
-  homogenous with respect to your worldview (>80%?). People with high thresholds for homogeneity will likely 
-  end up as zealots if the organization tends towards homogeneity in their worldview. 
+   The function mapping degree of homogeneity to probability of switching from non-zealot to zealot will
+   be the same for both cases, A --> A' and B --> B'. How should this mapping behave? First, 
+   it seems reasonable that there would be a long leading tail. It will only become advantageous, either 
+   to accrue social capital or to avoid social destruction, to become a zealot if the organization is highly
+   homogenous with respect to your worldview (>80%?). People with high thresholds for homogeneity will likely 
+   end up as zealots if the organization tends towards homogeneity in their worldview. 
 
-  We have buckets <5, 10, 15, 20, 25, 30, 35, 40, 45, 50 ... >. These are associated with the following
-  probabilities: <.01, .02, .05, .07, .1, .135, .17, .205, .4, .45, .51, .58, .66, .75, .85, .95, .96, .97, 
-  .98. .99>
+   We have buckets <5, 10, 15, 20, 25, 30, 35, 40, 45, 50 ... >. These are associated with the following
+   probabilities: <.01, .02, .05, .07, .1, .135, .17, .205, .4, .45, .51, .58, .66, .75, .85, .95, .96, .97, 
+   .98. .99>
 
-  Although I'd have like to use a continuous map here, for the sake of convenience, I've used discretized
-  buckets.  
+   Although I'd have like to use a continuous map here, for the sake of convenience, I've used discretized
+   buckets.  
 
 2. Each individual has TOPP, or "tolerance to opposition" value. This is the percentage of the organization that must
    be of a competing worldview for an individual to resigns. TOPP is a measure of an individual's tolerance for being in the 
