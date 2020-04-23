@@ -74,14 +74,14 @@ The files/folders in this repository are as follows:
    behavior to an anti-polarization strategy that, generally, hires individuals in such a way that will move the 
    configuration of the organization towards a uniform distribution. The key questions here are: 
   
-   **Hiring Assumptions**:  
-        * The leader can't distinguish between zealots and non-zealots. This means that if in SR mode, the leader is
+   **Hiring Assumptions**:
+	* The leader can't distinguish between zealots and non-zealots. This means that if in SR mode, the leader is
           as likely to hire a non-zealot and zealot of the same worldview
 	* Either the leader knows the worldview and tolerance to opposition (see below) of every candidate he
           interviews or each candidate has full knowledge of the state of the organization. 
-        * The hiring pool is pre-filtered for competence.  
-        * Hiring only takes place when someone has resigned or been fired. Thus the size of the organization stays 
-           constant.
+	* The hiring pool is pre-filtered for competence. 
+	* Hiring only takes place when someone has resigned or been fired. Thus the size of the organization stays 
+          constant.
  
 3. Individuals change their mind through speaker-listener interactions. This is how the model is evolved.        
 4. Every individual within the organization has complete knowledge of the organization state. That is, 
@@ -102,15 +102,13 @@ The files/folders in this repository are as follows:
 
    Note that this is modulated by preference falsification. Consider what happens when an individual is the 
    listener in an interaction. We have various scenarios:
-
-     	* If speaker is A and listener is B, then the listener is converted to AB 
-     	* If speaker is A' and listener is B, then the listener is subject to preference falsification, 
-       	  meaning that they may lie about being a B. That is, they will pretend to be closer to worldview A. 
-       	  We assume that this means that B is acting as an AB, and will therefore be converted to an A by the
-          interaction. 
-     	* If speaker is B' and listener is A, then then, similarly, the listener will lie about being a true 
+	* If speaker is A and listener is B, then the listener is converted to AB 
+	* If speaker is A' and listener is B, then the listener is subject to preference falsification, meaning that
+	  they may lie about being a B. That is, they will pretend to be closer to worldview A. We assume that this 
+	  means that B is acting as an AB, and will therefore be converted to an A by the interaction. 
+	* If speaker is B' and listener is A, then then, similarly, the listener will lie about being a true 
           A and will pretend to be an AB in the interaction. They will subsequently be converted to a B.
-     	* If speaker is A' and listener is A, then the listener will change to A' if the global state of the 
+	* If speaker is A' and listener is A, then the listener will change to A' if the global state of the 
           organization is such that the cost of becoming a zealot is sufficiently reduced. 
 
    We specify scendario 4 further. Depending on how homogenous in A the organization is, A will turn to A'. 
@@ -124,9 +122,8 @@ The files/folders in this repository are as follows:
    organization that is either A or B. The idea here is that the more homogenous the organization, the less 
    of a social cost there is for being a zealot; in fact, one may even be able to accrue social capital by 
    becoming a zealot:
- 
-      	* Bias = <B_1, B_2, .... ,B_n> <==> Probs = <P_1, P_2, ... ,P_n>
-      	* This type of switch will only occur when the speaker is a zealot and the listener is a non-zealot with 
+	* Bias = <B_1, B_2, .... ,B_n> <==> Probs = <P_1, P_2, ... ,P_n>
+	* This type of switch will only occur when the speaker is a zealot and the listener is a non-zealot with 
           the same worldview 
 
    The function mapping degree of homogeneity to probability of switching from non-zealot to zealot will
@@ -153,8 +150,7 @@ The files/folders in this repository are as follows:
    ideological reasons unless the leader is a zealot. In the normal case, once an individual leaves the organization
    (incompetence, surpassed threshold), they are replaced by someone from the hiring pool. Here are some factors to 
    consider: 
-
-      	* The hiring pool might be ideologically biased. 
-      	* If in SR mode, then the bias of the leader will compound the hiring pool bias. 
-      	* If in ASR mode, then the bias of the leader will counteract the hiring pool bias. 
+	* The hiring pool might be ideologically biased. 
+	* If in SR mode, then the bias of the leader will compound the hiring pool bias. 
+	* If in ASR mode, then the bias of the leader will counteract the hiring pool bias. 
 
