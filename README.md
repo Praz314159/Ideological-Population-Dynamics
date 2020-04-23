@@ -1,15 +1,4 @@
 
-
-
-
-
-
-
-
-
-
-
-
 <h2>Motivation</h2> 
 
 After witnessing the attempted hostile ideological takeover of a prominent global non-profit, 
@@ -97,7 +86,7 @@ The files/folders in this repository are as follows:
 5. Every individual within the organization has complete knowledge of the organization state -- that is, 
    what everybody thinks at any given point in time.  
 
-MODEL FUNCTIONALITY  
+<h2>Model Functionality</h2>   
 
 1. <center>
 
