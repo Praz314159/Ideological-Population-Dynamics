@@ -1,3 +1,15 @@
+
+
+
+
+
+
+
+
+
+
+
+
 <h2>Motivation</h2> 
 
 After witnessing the attempted hostile ideological takeover of a prominent global non-profit, 
@@ -51,12 +63,11 @@ The files/folders in this repository are as follows:
 1. No correlation between incompetency and ideology 
 2. 3 basic hiring modes: Default (D), Leadership Self-Replication (SR), Anti Leadership Self-Replication (ASR)
    
-   SR Mode:  
-
-   what does being in self_replication mode mean? It means that the leader is much more likely to hire someone 
-   who thinks like him. But, how much more likely? Certainly, they will never hire a zealot with the opposite 
-   worldview because they would be more outspoken and their interaction would spoil. He might hire a moderate
-   or non-zealot with the opposite worldview, but is most likley to hire someone with the same worldview. What 
+   SR Mode: what does being in self_replication mode mean? It means that the leader is much more likely to hire 
+   someone who thinks like him. But, how much more likely? Certainly, they will never hire a zealot with the 
+   opposite worldview because they would be more outspoken and their interaction would spoil. He might hire a 
+   moderate or non-zealot with the opposite worldview, but is most likley to hire someone with the same worldview. 
+   What 
    scheme can this be reflected by? The most straightforward way to do this is to change the likelhoods associated 
    with choosing each worldview (i.e, a different "H_config" when in SR mode). The other way to do this is to set up 
    "interviews"in which candidates are randomly chosen from the hiring pool, but the likleyhood that a candidate with
