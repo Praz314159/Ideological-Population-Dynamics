@@ -20,7 +20,6 @@ of intellectual culture is known as "institutionalized disconfirmation." It is p
 has allows good quality research to flourish in institutions of higher education and it is also the norm
 that is most under threat. Interestingly, the ideological population dynamics of entire industries, which are 
 simply densely connected collections of organizations, can be simulated using the modelling framework I propose here. 
-
 Further, if one expands one's view of an "organization" to a democratic nation, it is possible (with some 
 modification) to model the effects of mass disinformation campaigns that flood the virtual public square with large 
 numbers of "zealots" posing as citizens. 
@@ -76,11 +75,12 @@ The files/folders in this repository are as follows:
    configuration of the organization towards a uniform distribution. The key questions here are: 
   
    **Hiring Assumptions**:  
-        1. The leader can't distinguish between zealots and non-zealots. This means that if in SR mode, the leader is
-           as likely to hire a non-zealot and zealot of the same worldview.
-	2. 
-        3. The hiring pool is pre-filtered for competence.  
-        4. Hiring only takes place when someone has resigned or been fired. Thus the size of the organization stays 
+        * The leader can't distinguish between zealots and non-zealots. This means that if in SR mode, the leader is
+          as likely to hire a non-zealot and zealot of the same worldview
+	* Either the leader knows the worldview and tolerance to opposition (see below) of every candidate he
+          interviews or each candidate has full knowledge of the state of the organization. 
+        * The hiring pool is pre-filtered for competence.  
+        * Hiring only takes place when someone has resigned or been fired. Thus the size of the organization stays 
            constant.
  
 3. Individuals change their mind through speaker-listener interactions. This is how the model is evolved.        
@@ -103,15 +103,15 @@ The files/folders in this repository are as follows:
    Note that this is modulated by preference falsification. Consider what happens when an individual is the 
    listener in an interaction. We have various scenarios:
 
-     1. If speaker is A and listener is B, then the listener is converted to AB 
-     2. If speaker is A' and listener is B, then the listener is subject to preference falsification, 
-        meaning that they may lie about being a B. That is, they will pretend to be closer to worldview A. 
-        We assume that this means that B is acting as an AB, and will therefore be converted to an A by the
-	interaction. 
-     3. If speaker is B' and listener is A, then then, similarly, the listener will lie about being a true 
-        A and will pretend to be an AB in the interaction. They will subsequently be converted to a B.
-     4. If speaker is A' and listener is A, then the listener will change to A' if the global state of the 
-        organization is such that the cost of becoming a zealot is sufficiently reduced. 
+     	* If speaker is A and listener is B, then the listener is converted to AB 
+     	* If speaker is A' and listener is B, then the listener is subject to preference falsification, 
+       	  meaning that they may lie about being a B. That is, they will pretend to be closer to worldview A. 
+       	  We assume that this means that B is acting as an AB, and will therefore be converted to an A by the
+          interaction. 
+     	* If speaker is B' and listener is A, then then, similarly, the listener will lie about being a true 
+          A and will pretend to be an AB in the interaction. They will subsequently be converted to a B.
+     	* If speaker is A' and listener is A, then the listener will change to A' if the global state of the 
+          organization is such that the cost of becoming a zealot is sufficiently reduced. 
 
    We specify scendario 4 further. Depending on how homogenous in A the organization is, A will turn to A'. 
    It shouldn't be advantageous to switch until the organization is very homogenous in A. There is also a 
@@ -125,9 +125,9 @@ The files/folders in this repository are as follows:
    of a social cost there is for being a zealot; in fact, one may even be able to accrue social capital by 
    becoming a zealot:
  
-      1. Bias = <B_1, B_2, .... ,B_n> <==> Probs = <P_1, P_2, ... ,P_n>
-      2. This type of switch will only occur when the speaker is a zealot and the listener is a non-zealot with 
-         the same worldview 
+      	* Bias = <B_1, B_2, .... ,B_n> <==> Probs = <P_1, P_2, ... ,P_n>
+      	* This type of switch will only occur when the speaker is a zealot and the listener is a non-zealot with 
+          the same worldview 
 
    The function mapping degree of homogeneity to probability of switching from non-zealot to zealot will
    be the same for both cases, A --> A' and B --> B'. How should this mapping behave? First, 
@@ -144,18 +144,17 @@ The files/folders in this repository are as follows:
    buckets.  
 
 2. Each individual has TOPP, or "tolerance to opposition" value. This is the percentage of the organization that must
-   be of a competing worldview for an individual to resigns. TOPP is a measure of an individual's tolerance for being    
-   in the minority. This can be conceptualized, in psychometric terms, as how "disagreeable" an individual is. I've given 
-   TOPP a normal distribution in the organization's workforce. However, the question of which distribution is the right one to 
-   use should be revisited. Intuition suggests that perhaps a beta distribution with carefully selected parameters is the 
-   better option. 
+   be of a competing worldview for an individual to resigns. TOPP is a measure of an individual's tolerance for being   in the minority. This can be conceptualized, in psychometric terms, as how "disagreeable" an individual is. I've 
+   given TOPP a normal distribution in the organization's workforce. However, the question of which distribution is 
+   the right one to use should be revisited. Intuition suggests that perhaps a beta distribution with carefully 
+   selected parameters is the better option. 
 
 3. Any organization will have a natural steady turn over rate. We assume that individuals won't be fired for 
    ideological reasons unless the leader is a zealot. In the normal case, once an individual leaves the organization
    (incompetence, surpassed threshold), they are replaced by someone from the hiring pool. Here are some factors to 
    consider: 
 
-      1. The hiring pool might be ideologically biased --> note that unbiased hring (D mode) will select for this bias 
-      2. If in SR mode, then the bias of the leader will compound the hiring pool bias 
-      3. If in ASR mode, then the bias of the leader will counteract the hiring pool bias 
+      	* The hiring pool might be ideologically biased. 
+      	* If in SR mode, then the bias of the leader will compound the hiring pool bias. 
+      	* If in ASR mode, then the bias of the leader will counteract the hiring pool bias. 
 
