@@ -1,0 +1,334 @@
+\PassOptionsToPackage{unicode=true}{hyperref} % options for packages loaded elsewhere
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provides euro and other symbols
+\else % if luatex or xelatex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage[]{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\usepackage{hyperref}
+\hypersetup{
+            pdfborder={0 0 0},
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\usepackage{longtable,booktabs}
+% Fix footnotes in tables (requires footnote package)
+\IfFileExists{footnote.sty}{\usepackage{footnote}\makesavenoteenv{longtable}}{}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{0}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+% set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+
+
+\date{}
+
+\begin{document}
+
+Motivation
+
+After witnessing the attempted hostile ideological takeover of a
+prominent global non-profit, I became interested in understanding how an
+organization might become ideologically homogenous, and, more
+importantly, how it might become overrun by zealots. This project is an
+attempt to model the ideological population dynamics of an organization
+in which individual are interacting, resigning, being fired, and being
+hired. The model I've developed is an extension of the model proposed by
+applied mathematician Steven Strogatz in his paper ``Encouraging
+Moderation.'' The paper is included in the ``Reference Papers'' folder.
+Although my model follows the same paradigm as Strogatz's, it does
+involve novel mathematical contributions such as, for example, a
+polarization metric that construes polarization as how ``separated'' the
+subpopulations (defined by worldview) comprising the organization are.
+
+The applications of this model, I realize now, are quite impactful.
+Increasingly, certain sectors such as tech, non-profit, and higher
+education, are becoming ideologically homogenous. However, ideological
+homogeneity is highly undesirable in an organization. Ideally, an
+organization will have a diversity of well-informed opinions so that new
+challenges can be approached from different perspectives that ``check''
+the biases of each other, allowing convergence upon the best or
+least-bad solution. Formally, this type of intellectual culture is known
+as ``institutionalized disconfirmation.'' It is precisely the norm that
+has allows good quality research to flourish in institutions of higher
+education and it is also the norm that is most under threat.
+Interestingly, the ideological population dynamics of entire industries,
+which are simply densely connected collections of organizations, can be
+simulated using the modelling framework I propose here.
+
+Further, if one expands one's view of an ``organization'' to a
+democratic nation, it is possible (with some modification) to model the
+effects of mass disinformation campaigns that flood the virtual public
+square with large numbers of ``zealots'' posing as citizens.
+
+The main thrust of this research is to uncover effective strategies for
+counteracting the general tendency towards polarization --
+conceptualized here as ``component separation'', a recapitulation of
+entropy -- and protecting a culture of institutionalized
+disconfirmation.
+
+File Descriptions
+
+The files/folders in this repository are as follows:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \textbf{Organization\_model.py}: This is contains the two major
+  classes that comprise the model, namely, ``Individual'' and
+  ``Organization'', which is composed of individuals.
+\item
+  \textbf{run\_experiments.py}: This is the command line interface that
+  allows one to easily run simulations that test various parameters.
+\item
+  \textbf{Characteristic\_Eqs\_Solver.m}: This is a MatLab script meant
+  to solve, for various initial conditions, the system of differential
+  equations that fully characterizes the ideological population dynamics
+  of an organization.
+\item
+  \textbf{``Mathematical Characterization of System''}: This is a PDF
+  that contains a more rigorous mathematical description of the model.
+  This document is currently in progress.
+\item
+  \textbf{Reference Papers}: This folder contains academic literature
+  that has informed this research.
+\item
+  \textbf{Resultes-Figures}: This folder contains various plots that
+  have been generated from simulations over the course of this project.
+\item
+  \textbf{Notes.txt}: This document is a ``progress journal'' of sorts,
+  that contains my thoughts during development.
+\end{enumerate}
+
+Model Description
+
+Model Assumptions
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  No correlation between incompetency and ideology
+\item
+  There are three basic hiring modes: Default (D), Leadership
+  Self-Replication (SR), Anti Leadership Self-Replication (ASR).
+
+  \textbf{D Mode}: The meaning of default mode should be fairly
+  self-evident. The leader has no bias in hiring, and will Therefore,
+  the leader will select candidate with exactly the same bias admitted
+  by the hiring pool.
+
+  \textbf{SR Mode}: In self-replication mode, the leader is much more
+  likely to hire a candidate that shares his worldview. How much more
+  likely, then, is the question at hand. The most straightforward way to
+  do this is to change the likelhoods associated with choosing each
+  worldview (i.e, a different ``H\_config'' when in SR mode). But this
+  requires actually modifying the hiring pool, which is both unrealistic
+  and computationally expensive. The other way to do this is to set up
+  ``interviews'', for which candidates are randomly chosen from the
+  hiring pool, but the likleyhood that a candidate with each worldview
+  is selected will be different. I've chosen P(Opp\_z) = .05, P(Opp\_nz)
+  = .1, P(AB) = .3, P(Same) = .75, but these are slightly arbitrary. Is
+  there a way to determine more realistic values? Notice that a possible
+  strategy for mitigating polarization is designating multiple leaders
+  with hiring power of different worldviews.
+
+  \textbf{ASR Mode}: In anti self-replication mode, the leader is trying
+  to maintain ideological diversity within the organization. We thus
+  need a way to measure the polarization in the organization. The
+  polarization metric will allow us to measure how well our
+  anti-polarization ASR strategy is working. Ideally, we'd like to test
+  different strategies to see which hiring strategy is most effective in
+  mitigating polarization. In general, ASR hiring mode kicks in once
+  polarization has exceeded a certain critical threshold, at which point
+  hiring moves from default behavior to an anti-polarization strategy
+  that, generally, hires individuals in such a way that will move the
+  configuration of the organization towards a uniform distribution. The
+  key questions here are:
+
+  \textbf{Hiring Assumptions}:\\
+  1. The leader can't distinguish between zealots and non-zealots. This
+  means that if in SR mode, the leader is as likely to hire a non-zealot
+  and zealot of the same worldview.
+
+  \begin{enumerate}
+  \def\labelenumii{\arabic{enumii}.}
+  \setcounter{enumii}{1}
+  \item
+    \begin{enumerate}
+    \def\labelenumiii{\arabic{enumiii}.}
+    \setcounter{enumiii}{2}
+    \tightlist
+    \item
+      The hiring pool is pre-filtered for competence.\\
+    \item
+      Hiring only takes place when someone has resigned or been fired.
+      Thus the size of the organization stays constant.
+    \end{enumerate}
+  \end{enumerate}
+\item
+  Individuals change their mind through speaker-listener interactions.
+  This is how the model is evolved.\\
+\item
+  Every individual within the organization has complete knowledge of the
+  organization state. That is, everybody knows what everyone else thinks
+  at any given point in time.
+\end{enumerate}
+
+Model Functionality
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  \begin{longtable}[]{@{}lll@{}}
+  \toprule
+  Speaker & Listener & Final\tabularnewline
+  \midrule
+  \endhead
+  A,A' & B & AB\tabularnewline
+  A,A' & AB & A\tabularnewline
+  B & A & AB\tabularnewline
+  B & AB & B\tabularnewline
+  \bottomrule
+  \end{longtable}
+
+  Note that this is modulated by preference falsification. Consider what
+  happens when an individual is the listener in an interaction. We have
+  various scenarios:
+
+  \begin{enumerate}
+  \def\labelenumii{\arabic{enumii}.}
+  \tightlist
+  \item
+    If speaker is A and listener is B, then the listener is converted to
+    AB
+  \item
+    If speaker is A' and listener is B, then the listener is subject to
+    preference falsification, meaning that they may lie about being a B.
+    That is, they will pretend to be closer to worldview A. We assume
+    that this means that B is acting as an AB, and will therefore be
+    converted to an A by the interaction.
+  \item
+    If speaker is B' and listener is A, then then, similarly, the
+    listener will lie about being a true A and will pretend to be an AB
+    in the interaction. They will subsequently be converted to a B.
+  \item
+    If speaker is A' and listener is A, then the listener will change to
+    A' if the global state of the organization is such that the cost of
+    becoming a zealot is sufficiently reduced.
+  \end{enumerate}
+
+  We specify scendario 4 further. Depending on how homogenous in A the
+  organization is, A will turn to A'. It shouldn't be advantageous to
+  switch until the organization is very homogenous in A. There is also a
+  question about when it becomes socially unacceptable to not be a
+  zealot. There is some interesting dynamics between people leaving
+  because the organization is too homogenous and other people staying
+  because there is social benefit to becoming a zealot, or, if the
+  organization is extremely homogenous, social cost to not becoming one.
+
+  We have a global scaling of probabilities with which A
+  --\textgreater{} A' and B --\textgreater{} B' that is based on the \%
+  of the organization that is either A or B. The idea here is that the
+  more homogenous the organization, the less of a social cost there is
+  for being a zealot; in fact, one may even be able to accrue social
+  capital by becoming a zealot:
+
+  \begin{enumerate}
+  \def\labelenumii{\arabic{enumii}.}
+  \tightlist
+  \item
+    Bias = \textless{}B\_1, B\_2, \ldots{}. ,B\_n\textgreater{}
+    \textless{}==\textgreater{} Probs = \textless{}P\_1, P\_2, \ldots{}
+    ,P\_n\textgreater{}
+  \item
+    This type of switch will only occur when the speaker is a zealot and
+    the listener is a non-zealot with the same worldview
+  \end{enumerate}
+
+  The function mapping degree of homogeneity to probability of switching
+  from non-zealot to zealot will be the same for both cases, A
+  --\textgreater{} A' and B --\textgreater{} B'. How should this mapping
+  behave? First, it seems reasonable that there would be a long leading
+  tail. It will only become advantageous, either to accrue social
+  capital or to avoid social destruction, to become a zealot if the
+  organization is highly homogenous with respect to your worldview
+  (\textgreater{}80\%?). People with high thresholds for homogeneity
+  will likely end up as zealots if the organization tends towards
+  homogeneity in their worldview.
+
+  We have buckets \textless{}5, 10, 15, 20, 25, 30, 35, 40, 45, 50
+  \ldots{} \textgreater{}. These are associated with the following
+  probabilities: \textless{}.01, .02, .05, .07, .1, .135, .17, .205, .4,
+  .45, .51, .58, .66, .75, .85, .95, .96, .97, .98. .99\textgreater{}
+
+  Although I'd have like to use a continuous map here, for the sake of
+  convenience, I've used discretized buckets.
+\item
+  Each individual has TOPP, or ``tolerance to opposition'' value. This
+  is the percentage of the organization that must be of a competing
+  worldview for an individual to resigns. TOPP is a measure of an
+  individual's tolerance for being\\
+  in the minority. This can be conceptualized, in psychometric terms, as
+  how ``disagreeable'' an individual is. I've given TOPP a normal
+  distribution in the organization's workforce. However, the question of
+  which distribution is the right one to use should be revisited.
+  Intuition suggests that perhaps a beta distribution with carefully
+  selected parameters is the better option.
+\item
+  Any organization will have a natural steady turn over rate. We assume
+  that individuals won't be fired for ideological reasons unless the
+  leader is a zealot. In the normal case, once an individual leaves the
+  organization (incompetence, surpassed threshold), they are replaced by
+  someone from the hiring pool. Here are some factors to consider:
+
+  \begin{enumerate}
+  \def\labelenumii{\arabic{enumii}.}
+  \tightlist
+  \item
+    The hiring pool might be ideologically biased --\textgreater{} note
+    that unbiased hring (D mode) will select for this bias
+  \item
+    If in SR mode, then the bias of the leader will compound the hiring
+    pool bias
+  \item
+    If in ASR mode, then the bias of the leader will counteract the
+    hiring pool bias
+  \end{enumerate}
+\end{enumerate}
+
+\end{document}
