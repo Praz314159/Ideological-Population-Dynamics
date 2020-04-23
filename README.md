@@ -88,9 +88,7 @@ The files/folders in this repository are as follows:
 
 MODEL FUNCTIONALITY  
 
-1. We have the following general rules:
-
-<center>
+1. <center>
 
    |Speaker|Listener|Final|
    |-------|--------|-----|
@@ -98,7 +96,8 @@ MODEL FUNCTIONALITY
    |  A,A' |  AB    |  A  |
    |  B    |  A     |  AB |
    |  B    |  AB    |  B  |
-</center> 
+
+   </center> 
 
    Note that this is modulated by preference falsification. Consider what happens when an individual is the 
    listener in an interaction. We have various scenarios:
@@ -140,13 +139,13 @@ MODEL FUNCTIONALITY
    probabilities: <.01, .02, .05, .07, .1, .135, .17, .205, .4, .45, .51, .58, .66, .75, .85, .95, .96, .97, 
    .98. .99>
 
-   Although I'd have like to use a continuous map here, for the sake of convenience, I've used discretized
-   buckets.  
+Although I'd have like to use a continuous map here, for the sake of convenience, I've used discretized
+buckets.  
 
 2. Each individual has TOPP, or "tolerance to opposition" value. This is the percentage of the organization that must
-   be of a competing worldview for an individual to resigns. TOPP is a measure of an individual's tolerance for being in the 
-   minority. This can be conceptualized, in psychometric terms, as how "disagreeable" an individual is. I've given TOPP
-   a normal distribution in the organization's workforce. However, the question of which distribution is the right one to 
+   be of a competing worldview for an individual to resigns. TOPP is a measure of an individual's tolerance for being    
+   in the minority. This can be conceptualized, in psychometric terms, as how "disagreeable" an individual is. I've given 
+   TOPP a normal distribution in the organization's workforce. However, the question of which distribution is the right one to 
    use should be revisited. Intuition suggests that perhaps a beta distribution with carefully selected parameters is the 
    better option. 
 
