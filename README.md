@@ -140,19 +140,19 @@ MODEL FUNCTIONALITY
   Although I'd have like to use a continuous map here, for the sake of convenience, I've used discretized
   buckets.  
 
-2.  Each individual has TOPP, or "tolerance to opposition" value. This is the percentage of the organization that must
-    be of a competing worldview for an individual to resigns. TOPP is a measure of an individual's tolerance for being in the 
-    minority. This can be conceptualized, in psychometric terms, as how "disagreeable" an individual is. I've given TOPP
-    a normal distribution in the organization's workforce. However, the question of which distribution is the right one to 
-    use should be revisited. Intuition suggests that perhaps a beta distribution with carefully selected parameters is the 
-    better option. 
+2. Each individual has TOPP, or "tolerance to opposition" value. This is the percentage of the organization that must
+   be of a competing worldview for an individual to resigns. TOPP is a measure of an individual's tolerance for being in the 
+   minority. This can be conceptualized, in psychometric terms, as how "disagreeable" an individual is. I've given TOPP
+   a normal distribution in the organization's workforce. However, the question of which distribution is the right one to 
+   use should be revisited. Intuition suggests that perhaps a beta distribution with carefully selected parameters is the 
+   better option. 
 
-3.  Any organization will have a natural steady turn over rate. We assume that individuals won't be fired for 
-    ideological reasons unless the leader is a zealot. In the normal case, once an individual leaves the organization
-    (incompetence, surpassed threshold), they are replaced by someone from the hiring pool. Here are some factors to 
-    consider: 
+3. Any organization will have a natural steady turn over rate. We assume that individuals won't be fired for 
+   ideological reasons unless the leader is a zealot. In the normal case, once an individual leaves the organization
+   (incompetence, surpassed threshold), they are replaced by someone from the hiring pool. Here are some factors to 
+   consider: 
 
-        1. The hiring pool might be ideologically biased --> note that unbiased hring (D mode) will select for this bias 
-        2. If in SR mode, then the bias of the leader will compound the hiring pool bias 
-        3. If in ASR mode, then the bias of the leader will counteract the hiring pool bias 
+      1. The hiring pool might be ideologically biased --> note that unbiased hring (D mode) will select for this bias 
+      2. If in SR mode, then the bias of the leader will compound the hiring pool bias 
+      3. If in ASR mode, then the bias of the leader will counteract the hiring pool bias 
 
