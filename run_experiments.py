@@ -112,7 +112,7 @@ def run_simulation(Org, epochs):
         #Firing 
         if Org.num_interactions % 5 == 0:
             pos_to_fill = Org.fire()
-            #print("POSITION FIRED: ", pos_to_fill)
+            #print("POSITION FaIRED: ", pos_to_fill)
             Org.hire(pos_to_fill)
  
     final_workforce = Org.Workforce
@@ -330,9 +330,17 @@ def main():
         polarization_vals, fractional_A, fractional_A_Zealots, fractional_B, fractional_B_Zealots, \
                 fractional_Moderates, initial_TOPP, final_TOPP, initial_character, final_character \
                 = run_simulation(Org, epochs)
-
+        
+        ################# Monkey fix for polarization-epoch dict ###################### 
+        polarization_dict = {}
+        for i in range(len(polarization_vals)):
+            polarization_dict.update({i: polarization_vals[i]})
+        
+        ############################################################################### 
+        
         #get info 
         if args.info == "Subpopulations": #default 
+            print(polarization_dict) 
             plot_single(polarization_vals, fractional_A, fractional_A_Zealots, fractional_B, \
                     fractional_B_Zealots, fractional_Moderates)
         elif args.info == "TOPP":

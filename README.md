@@ -7,9 +7,24 @@ and, more importantly, how it might become overrun by zealots. This project is a
 the ideological population dynamics of an organization in which individual are interacting, 
 resigning, being fired, and being hired. The model I've developed is an extension of the model proposed
 by applied mathematician Steven Strogatz in his paper "Encouraging Moderation." The paper is included in
-the "Reference Papers" folder. Although my model follows the same paradigm as Strogatz's, it does involve
-novel mathematical contributions such as, for example, a polarization metric that construes polarization 
-as how "separated" the subpopulations (defined by worldview) comprising the organization are. 
+the "Reference Papers" folder. Although my model follows the same paradigm as Strogatz's, it contains noteworthy
+differences. For example, I assume that there exists a subpopulation of zealots associated with both the 
+prevailing worldview and the insurgent worldview. The subpopulation of zealots associated with the prevailing 
+worldview approximates an entrenched establishment whose interests align with preservation of the status quo. I have
+also made an effort to incorporate known social psychological phenomena such as preference falsification and 
+disagreeability. This effort to make the model consistent with the current psychological literature required
+an amendment to Strogatz's conception of "zealot", which is best summed up by the Churchillian definition, someone 
+"who never changes [his] mind, and never changes the subject." The most significant modifications, however, are
+related to the specific challenge of modeling an organization rather than a community, which admits hiring
+and firing dynamics. Novel mathematical contributions include a polarization metric that construes polarization 
+as how "separated" the subpopulations (defined by worldview) comprising the organization are; a system of differential
+equations and its numerical solution, describing the ideological population dynamics of an organization; and an
+analysis of how various organization social network topologies affect ideological population dynamics. In particular, 
+simulations were run on various random network types with respect to topological properties such as clustering 
+coefficients in order to understand which networks are most robust against component separation. Preliminary 
+results suggest that as clustering increases, prevasive homogenization decreases. However, individual clusters
+become locally homogenous. This may lead to increased intergroup hatred and conflict, despite lower global 
+polarization.  
 
 The applications of this model, I realize now, are quite impactful. Increasingly, certain sectors such as 
 tech, non-profit, and higher education, are becoming ideologically homogenous. However, ideological 
@@ -42,10 +57,16 @@ The files/folders in this repository are as follows:
    description of the model. This document is currently in progress. 
 5. **Reference Papers**: This folder contains academic literature that has informed this research. 
 6. **Resultes-Figures**: This folder contains various plots that have been generated from simulations over the 
-   course of this project. 
+   course of this project. There are two types of plots included. The first is a plot of the fractional 
+   representation of each ideological subpopulation over time. These plots generally validate the viability of the 
+   anti-polarization strategy I've implemented. The second is a plot of the change in TOPP distribution over the 
+   workforce. This is particularly interesting because it shows that the organization will become not only 
+   highly polarized, even homogenous, but will also become overrun by very disagreeable people.  
 7. **Notes.txt**: This document is a "progress journal" of sorts, that contains my thoughts during development. 
 
 <h1> Model Description </h1>   
+
+Below is a rough outline of the model. 
 
 <h2> Model Assumptions </h2>  
 
@@ -93,10 +114,12 @@ The files/folders in this repository are as follows:
 
    |Speaker|Listener|Final|
    |-------|--------|-----|
-   |  A,A' |  B     |  AB |
+   |  A    |  B     |  AB |
    |  A,A' |  AB    |  A  |
+   |  A'   |  B     |  A  |
    |  B    |  A     |  AB |
-   |  B    |  AB    |  B  |
+   |  B,B' |  AB    |  B  |
+   |  B'   |  A     |  B  |
 
    </center> 
 

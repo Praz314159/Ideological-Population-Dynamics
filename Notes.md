@@ -1,10 +1,20 @@
 ##################################################################
 Notes on IPM being developed 
 ##################################################################
-4/16/20: 
+4/26/20: now we want to look at how clustering coefficient affects polarization rates there's a question here about how to 
+measure polarization rates, because there are cascade points after which polarization quickly jumps. One option
+is to take the average slope over the entire simulation lifespan. This is fairly straght forward, we take 
+(p_final-p_initial)/num_epochs. Ok, maybe this is the wrong approach. 
 
+What are the features of a simulation subpopulation graph. (1) initial rise (2) cascade point (3) slope following 
+cascade point (usually 0). Clustering coefficient could have the following affects: (1) change is initial rise -- 
+perhaps a slower increase (i.d, smaller slope) (2) move the cascade point later (more likely as clustering
+cefficient rises) (3) change dynamics after cascade point, but I don't know how. 
 
-
+We can define the cascade point as as sudden increase in slope. The elbow point is hard to locate because "sudden
+increase" is ill-defined. Well, I guess the next step has just revealed itself. I need investigate the change in 
+slope at qualitatively validated cascade points in order to get an idea for what a reasonable increase to expect 
+looks like.  
 
 4/15/20: I was playing around with different network layouts. It turns out that the Spectral Theoreme is pretty usueful.
 By positioning nodes using the eigenvalues of the Laplacian of the small world network, we get some implicit structure 

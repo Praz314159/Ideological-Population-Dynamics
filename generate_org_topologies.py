@@ -15,8 +15,36 @@ chosen. Then, a random individual with whom the first individual has a relations
 ''' 
 import matplotlib.pyplot as plt 
 import networkx as nx 
-from Organization_model import Individual
-from Organizaation_model import Organization
+from Organization_Model import Individual
+from Organization_Model import Organization
+
+
+#demonstrating that clustering coefficient increases with k neighbors ring lattic parameters 
+organization_size = 100 
+rewiring_probability = .3 
+clustering_coefficients = [] 
+for neighboring_connections in range(2, int(organization_size / 2)):
+
+    graph = nx.watts_strogatz_graph(organization_size, neighboring_connections, rewiring_probability)
+    clustering_coefficients.append(nx.average_clustering(graph)) 
+
+'''
+now we want to look at how clustering coefficient affects polarization rates there's a question here about how to 
+measure polarization rates, because there are cascade points after which polarization quickly jumps. One option
+is to take the average slope over the entire simulation lifespan. This is fairly straght forward, we take 
+(p_final-p_initial)/num_epochs. Ok, maybe this is the wrong approach. 
+
+What are the features of a simulation subpopulation graph. (1) initial rise (2) cascade point (3) slope following 
+cascade point (usually 0). Clustering coefficient could have the following affects: (1) change is initial rise -- 
+perhaps a slower increase (i.d, smaller slope) (2) move the cascade point later (more likely as clustering
+cefficient rises) (3) change dynamics after cascade point, but I don't know how. 
+
+We can define the cascade point as as sudden increase in slope. The elbow point is hard to locate because "sudden
+increase" is ill-defined. Well, I guess the next step has just revealed itself. I need investigate the change in 
+slope at qualitatively validated cascade points in order to get an idea for what a reasonable increase to expect 
+looks like. 
+
+''' 
 
 
 
