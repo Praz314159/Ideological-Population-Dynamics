@@ -1,6 +1,5 @@
-##################################################################
-Notes on IPM being developed 
-##################################################################
+<h1> Notes on IPM being developed </h1>
+
 4/26/20: now we want to look at how clustering coefficient affects polarization rates there's a question here about how to 
 measure polarization rates, because there are cascade points after which polarization quickly jumps. One option
 is to take the average slope over the entire simulation lifespan. This is fairly straght forward, we take 
