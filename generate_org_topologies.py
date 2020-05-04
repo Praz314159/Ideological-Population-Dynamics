@@ -17,16 +17,31 @@ import matplotlib.pyplot as plt
 import networkx as nx 
 from Organization_Model import Individual
 from Organization_Model import Organization
-
+import numpy as np 
 
 #demonstrating that clustering coefficient increases with k neighbors ring lattic parameters 
-organization_size = 100 
+organization_size = 200 
 rewiring_probability = .3 
 clustering_coefficients = [] 
 for neighboring_connections in range(2, int(organization_size / 2)):
+    K_coefficients = []
+    for i in range(5): 
+        graph = nx.watts_strogatz_graph(organization_size, neighboring_connections, rewiring_probability)
+        clustering_coefficient = nx.average_clustering(graph) 
+        K_coefficients.append(clustering_coefficient) 
+    
+    print("K = ", neighboring_connections, ": ", K_coefficients) 
+    avg_K_clustering = sum(K_coefficients)/len(K_coefficients) 
+    clustering_coefficients.append(avg_K_clustering)  
 
-    graph = nx.watts_strogatz_graph(organization_size, neighboring_connections, rewiring_probability)
-    clustering_coefficients.append(nx.average_clustering(graph)) 
+plt.plot(clustering_coefficients) 
+plt.xlabel("K") 
+plt.ylabel("Average Clustering Coefficient") 
+plt.title("Watts-Strogatz Small World Networks: K vs Clustering Coefficient") 
+plt.show()
+
+
+
 
 '''
 now we want to look at how clustering coefficient affects polarization rates there's a question here about how to 
