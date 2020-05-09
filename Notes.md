@@ -1,6 +1,12 @@
 <h1> Notes on IPM being developed </h1>
 
-4/26/20: now we want to look at how clustering coefficient affects polarization rates there's a question here about how to 
+**5/02/20**: I've validated that as the number of neighboring connections (K) in the ring lattice (pre-rewiring) of the 
+base Watts-Strogatz Small World Network increases, so does the network's clustering coefficient. The next step, of course, is 
+running the simulatiom on networks with increasing correlation coefficients. However, this requires measuring some property of 
+the polarization data. Ideally, something like slope would be measured. That is "rate of polarization". Another option is 
+equilibrium value. That is, the polarization value once slope = 0.  
+
+**4/26/20**: now we want to look at how clustering coefficient affects polarization rates there's a question here about how to 
 measure polarization rates, because there are cascade points after which polarization quickly jumps. One option
 is to take the average slope over the entire simulation lifespan. This is fairly straght forward, we take 
 (p_final-p_initial)/num_epochs. Ok, maybe this is the wrong approach. 
@@ -15,7 +21,7 @@ increase" is ill-defined. Well, I guess the next step has just revealed itself. 
 slope at qualitatively validated cascade points in order to get an idea for what a reasonable increase to expect 
 looks like.  
 
-4/15/20: I was playing around with different network layouts. It turns out that the Spectral Theoreme is pretty usueful.
+**4/15/20**: I was playing around with different network layouts. It turns out that the Spectral Theoreme is pretty usueful.
 By positioning nodes using the eigenvalues of the Laplacian of the small world network, we get some implicit structure 
 that reflects graph characteristics like connectedness, cut sparseness. (https://www.semanticscholar.org/paper/Drawing-
 graphs-by-eigenvectors%3A-theory-and-practice-Koren/64d8c8099fef68bdfd7bab4c57b9c5e5f5aa21a6). This visualization gave 
@@ -36,7 +42,7 @@ maintaining ideological diversity is to have multiple leaders of different world
 biased way. This way, instead of relying on a single individual who has to check his own bias, the responsibility of 
 institutional discomfirmation is distributed among the organization's leadership. 
 
-4/11/20: Reading about different network topologies: 
+**4/11/20**: Reading about different network topologies: 
 
 1. Dunbar's Number: This is the number of close social relationships that humans can maintain at a given point.
 Number was extrapolated by anthropologist Robin Dunbar (British) in the 1990s from the results obtained through 
@@ -74,7 +80,7 @@ https://en.wikipedia.org/wiki/Watts%E2%80%93Strogatz_model
 https://en.wikipedia.org/wiki/Scale-free_network
 https://www.springer.com/journal/10588 --> journal to possibly publish in 
 
-4/8/20: I feel like I'm now making some serious progress. I made a number of refinements that make the model
+**4/8/20**: I feel like I'm now making some serious progress. I made a number of refinements that make the model
 more "up-to-date". They are: 
 
 1. Making the interaction rules explicit 
@@ -101,11 +107,11 @@ The other important step I'd like to take is underlaying the organization with a
 the structure of interactions. Clearly, not all organizations are densely connected. They may have densely 
 connected components such as teams, but only is small non-profits or like organizations will this be the case. 
 
-3/19/20: I've taken an interest in tracking the TOPP distribution changes over time. I've build out the CMI for 
+**3/19/20**: I've taken an interest in tracking the TOPP distribution changes over time. I've build out the CMI for 
 simulation running in order to accomodate this. But, for some reason -- I'm not sure why yet -- the TOPP 
 distribution isn't showing any change between the intitial workforce and the final workforce. What's going on??!! 
 
-3/12/20-3/13/20: Fixed point analysis is proving extremely challenging. Getting fixed points of nonlinear system 
+**3/12/20-3/13/20**: Fixed point analysis is proving extremely challenging. Getting fixed points of nonlinear system 
 of diffeqs with degree >3 is incredibly difficult. I'll be on the lookout for computational methods. For now, though
 I'm going to focus on developing a precise mathematical language for the model. That way, when I do get back to 
 analysis of the construction, things will be easier. 
@@ -124,29 +130,29 @@ default, self-replication, and anti-self-replication mode, tracking and plotting
 values for each. More importantly, I can plot all three against eachother for the same initial conditions. This 
 gives a good visualization of how the different hiring strategies affect the ideological makeup of the organization.
 
-3/10/20: I'm now conducting a fixed point analysis of the system of nonlinear differential equations. 
+**3/10/20**: I'm now conducting a fixed point analysis of the system of nonlinear differential equations. 
 It looks like the easy fixed point analysis given in the Strogatz paper won't be applicable here. 
 However, it might be possible to conduct a generalized stability analysis using methods involving 
 eigenanalysis of the Jacobian. I also was able to think a bit more carefully about the system of 
 differential equations I orginally drew up. I realized several flaws which have now been corrected.
 
-3/7/20: For the past few days, I have been working on the mathematical characterization of the system.
+**3/7/20**: For the past few days, I have been working on the mathematical characterization of the system.
 There are multiple areas in which things are illdefined. Perhaps I should have begun with the 
 mathematical characterization then implemented the model to validate analytical results. In 
 particular, I have finally come up with what I think is a workable metric for polarization that is 
 constructed, first, using an average of three values that tell us how distant from being equal each 
 subpopulation is relative to the others. Note that this average, which we'll call rho_0 is in [0,inf).
  Because we want the polarization value to be in the interval [0,1), we take Polarization = 
-2/pi*arctan(rho_0). Now polarization is increasing as rho_0 increases and converges to a limit of 1 
+2/pi x arctan(rho_0). Now polarization is increasing as rho_0 increases and converges to a limit of 1 
 on [0,inf).
 
-2/29/20: Ran a test today that confirmed that the salient variable in anti-self replication here is 
+**2/29/20**: Ran a test today that confirmed that the salient variable in anti-self replication here is 
 how exhaustive the search for moderates is. If the hiring pool is sufficiently compromised, then if 
 the search isn't exhaustive enough, then the organization will end up hiring As and Bs instead of 
 moderates. More accurately, the organization will hire with the same bias as the hiring pool, and 
 polarization will steadly increase. 
 
-2/27/20: For some reason, when in ASR mode, whenever a new AB is hired, he is hired to the same 
+**2/27/20**: For some reason, when in ASR mode, whenever a new AB is hired, he is hired to the same 
 position. In one case it was position 99. It looks like when ASR mode is entered, any AB will 
 always resign. We therefore get stuck in a rut, where the same position resigned by an AB is
 filled by an AB who then resigns again. There is a choice here about whether or not to assume that the
@@ -165,11 +171,11 @@ is kept in check, hovering at around .6, which is the threshold used to trigger 
 ABs. In the opposite case, the predominant worldview and the opposite worldview zealots converge to
 roughly .5, while everything else converges to 0. 
 
-2/21/20: The code is now fully debugged and working. The main error fixed today was particularly 
+**2/21/20**: The code is now fully debugged and working. The main error fixed today was particularly 
 frustrating, although I learned quite a bit from it: 
 
 I originally updated the configuration of the organization's workforce using an update_config() 
-function. Statistical information about the workforce was stored as fields (n_*, N_*, polarization,
+function. Statistical information about the workforce was stored as fields (n_star, N_star, polarization,
  etc.). The update_config() function then either incremented or decremented the count of individual
  with a particular worldview when a change in the workforce took place -- hiring, firing, 
 interaction, resignation. It's unclear why, but this resulted in an out-of-sync issue between the 
@@ -197,13 +203,13 @@ In addition, it is probably time to drop all the notes made thus far into a word
 linguistically flush out the model. This will be a good way to get the ball rolling on the paper 
 whose publication, I'm sure, is inevitable. Ha, laughable.   
 
-2/18/20: I've gotten the model to run. However, there are a few bugs that need to be worked out:
+**2/18/20**: I've gotten the model to run. However, there are a few bugs that need to be worked out:
 	1. For some reason the update function is not worked as I'd like it to. It seems to be 
 misbehaving when interactions, firings, hirings, and resignations occur. When individuals are added
 to the organization's workforce, we have 1K individuals. This should remain constant. For some 
 reason, though, it isn't. This means, likely, that I'm not decrementing everywhere I should be. 
 Perhaps in the resignation function? 
-	2. For some reason, negative n_* values were being achieved. This doesn't make any sense, 
+	2. For some reason, negative n_star values were being achieved. This doesn't make any sense, 
 since for this to happen, a resignation or interaction-as-listener needs to take place for a 
 worldview that isn't represented in the organization. That is, a non-existent individual is having 
 his mind changed or is resigning or is being fired from the organization. 
