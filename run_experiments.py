@@ -13,7 +13,8 @@ from Organization_Topo_Model import Individual as Individual_Topo
 from Organization_Topo_Model import Organization as Organization_Topo
 import matplotlib.pyplot as plt 
 import argparse 
-
+import natural_cubic_spline as cs 
+import numpy as np 
 
 def set_initial_conditions(topology, Org_size, HP_size, config_A, config_B, config_AB, A_config, B_config,\
         Hconfig_A, Hconfig_B, Hconfig_AB, A_HPconfig, B_HPconfig, Leader_worldview): 
@@ -150,18 +151,89 @@ def run_simulation(Org, epochs):
 
 def plot_single(polarization_vals, fractional_A, fractional_A_Zealots, fractional_B, fractional_B_Zealots, \
         fractional_Moderates):
+    
+    #getting cubic spline interpolatitions -- pre-deciding here # of knots 
 
-    plt.plot(polarization_vals, label = "Polarization")
-    plt.plot(fractional_A, label = "A")
-    plt.plot(fractional_A_Zealots, label = "A Zealots")
-    plt.plot(fractional_B, label = "B")
-    plt.plot(fractional_B_Zealots, label = "B Zealots")
-    plt.plot(fractional_Moderates, label = "Moderates")
+    # we want to smooth the each of the plots of fractional representations, then we want to 
+    # locate specific key points: 1st derivative max, 2nd derivative max, 2nd derivative min 
+    # 2nd derivative max corresponds roughly to the tipping point of ideological takeover, 2nd derivative
+    # min corresponds roughly to the point at which the takeover is complete. The time between the two 
+    # indicates how long the "noticeable radicalization" period lasted, time between start and 2nd 
+    #derivative max indicates how long "invisible radicaliZation" period lasted, etc. 
+
+    x = np.asarray([i for i in range(len(polarization_vals))])
+
+    #polarization_vals
+    model_50_P = cs.get_natural_cubic_spline_model(x, np.asarray(polarization_vals), minval = min(x), \
+            maxval = max(x), n_knots = 50)
+    est_50_P = model_50_P.predict(x) 
+
+    #fractional_A
+    model_50_A =  cs.get_natural_cubic_spline_model(x, fractional_A,\
+            minval = min(x), maxval = max(x), n_knots = 50)
+    est_50_A = model_50_A.predict(x) 
+
+    #fractional_A_Zealots
+    model_50_AZ =  cs.get_natural_cubic_spline_model(x, fractional_A_Zealots,\
+            minval = min(x), maxval = max(x), n_knots = 50)
+    est_50_AZ = model_50_AZ.predict(x) 
+
+    #fractional_B
+    model_50_B =  cs.get_natural_cubic_spline_model(x, fractional_B,\
+            minval = min(x), maxval = max(x), n_knots = 50)
+    est_50_B = model_50_B.predict(x) 
+
+    #fractional_B_Zealot
+    model_50_BZ =  cs.get_natural_cubic_spline_model(x, fractional_B_Zealots,\
+            minval = min(x), maxval = max(x), n_knots = 50)
+    est_50_BZ = model_50_BZ.predict(x) 
+
+    #fractional_Moderates 
+    model_50_M =  cs.get_natural_cubic_spline_model(x, fractional_Moderates,\
+            minval = min(x), maxval = max(x), n_knots = 50)
+    est_50_M = model_50_M.predict(x) 
+    
+    #plotting 
+    #plt.plot(polarization_vals, color = 'b', label = "Polarization")
+    plt.plot(est_50_P, 'bo-', label = "P Interpolation") 
+    #plt.plot(fractional_A, color = 'r', label = "A")
+    plt.plot(est_50_A, 'ro-', label = "A Interpolation") 
+    #plt.plot(fractional_A_Zealots, 'g', label = "A Zealots")
+    plt.plot(est_50_AZ, 'go-', label = "AZ Interpolation") 
+    #plt.plot(fractional_B, color = 'm', label = "B")
+    plt.plot(est_50_B, 'mo-', label = "B Interpolation") 
+    #plt.plot(fractional_B_Zealots, color = "c", label = "B Zealots")
+    plt.plot(est_50_BZ, 'co-', label = "BZ Interpolation") 
+    #plt.plot(fractional_Moderates, color = "k", label = "Moderates")
+    plt.plot(est_50_M, 'ko-', label = "M Interpolation") 
     plt.title("Ideological Configuration of Organization Over Time") 
     plt.xlabel("Number of Interactions")
     plt.ylabel("Fractional Representation in the Organization")
     plt.legend()
     plt.show()
+    pass 
+
+
+def cubic_spline_smooth(x, y):
+
+    # we want to smooth the each of the plots of fractional representations, then we want to 
+    # locate specific key points: 1st derivative max, 2nd derivative max, 2nd derivative min 
+    # 2nd derivative max corresponds roughly to the tipping point of ideological takeover, 2nd derivative
+    # min corresponds roughly to the point at which the takeover is complete. The time between the two 
+    # indicates how long the "noticeable radicalization" period lasted, time between start and 2nd 
+    #derivative max indicates how long "invisible radicaliZation" period lasted, etc. 
+
+    # The number of knots can be used to control the amount of smoothness
+    model_6 = get_natural_cubic_spline_model(x, y, minval=min(x), maxval=max(x), n_knots=6)
+    model_15 = get_natural_cubic_spline_model(x, y, minval=min(x), maxval=max(x), n_knots=15)
+    y_est_6 = model_6.predict(x)
+    y_est_15 = model_15.predict(x)
+
+
+    plt.plot(x, y, ls='', marker='.', label='originals')
+    plt.plot(x, y_est_6, marker='.', label='n_knots = 6')
+    plt.plot(x, y_est_15, marker='.', label='n_knots = 15')
+    plt.legend(); plt.show()
     pass 
 
 def plot_all(D, SR, ASR):
