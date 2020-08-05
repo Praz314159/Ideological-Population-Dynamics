@@ -1,5 +1,13 @@
 <h1> Notes on IPM being developed </h1>
 
+**8/5/20**: Realized that the way to get the critical values I was looking for was to smooth the plots using cubic spline 
+interpolation. Changed plot strategy to cubic spline interpolation and tried to calculate critical values -- 1st derivative
+max, 2nd derivative max, 2nd derivative min. 2nd derivative max seems to usually work when finding the "tipping point" 
+of ideological takeover. However, the 2nd derivativ min doesn't seem to be working quite as well. My first intuition is 
+that this has something to do with the number of knots used in the interpolation. I'm using 50 knots, but that isn't for 
+any well-motivated reason other than that the number of epochs for simulations tend to be quite large. Perhaps I need to 
+reevaluate this... 
+
 **5/02/20**: I've validated that as the number of neighboring connections (K) in the ring lattice (pre-rewiring) of the 
 base Watts-Strogatz Small World Network increases, so does the network's clustering coefficient. The next step, of course, is 
 running the simulatiom on networks with increasing correlation coefficients. However, this requires measuring some property of 
