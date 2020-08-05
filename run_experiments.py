@@ -15,6 +15,8 @@ import matplotlib.pyplot as plt
 import argparse 
 import natural_cubic_spline as cs 
 import numpy as np 
+import sys 
+
 
 def set_initial_conditions(topology, Org_size, HP_size, config_A, config_B, config_AB, A_config, B_config,\
         Hconfig_A, Hconfig_B, Hconfig_AB, A_HPconfig, B_HPconfig, Leader_worldview): 
@@ -162,50 +164,86 @@ def plot_single(polarization_vals, fractional_A, fractional_A_Zealots, fractiona
     #derivative max indicates how long "invisible radicaliZation" period lasted, etc. 
 
     x = np.asarray([i for i in range(len(polarization_vals))])
-
+    estimations = []
     #polarization_vals
     model_50_P = cs.get_natural_cubic_spline_model(x, np.asarray(polarization_vals), minval = min(x), \
             maxval = max(x), n_knots = 50)
-    est_50_P = model_50_P.predict(x) 
+    est_50_P = model_50_P.predict(x)
+    estimations.append(est_50_P) 
 
     #fractional_A
     model_50_A =  cs.get_natural_cubic_spline_model(x, fractional_A,\
             minval = min(x), maxval = max(x), n_knots = 50)
-    est_50_A = model_50_A.predict(x) 
+    est_50_A = model_50_A.predict(x)
+    estimations.append(est_50_A) 
 
     #fractional_A_Zealots
     model_50_AZ =  cs.get_natural_cubic_spline_model(x, fractional_A_Zealots,\
             minval = min(x), maxval = max(x), n_knots = 50)
-    est_50_AZ = model_50_AZ.predict(x) 
+    est_50_AZ = model_50_AZ.predict(x)
+    estimations.append(est_50_AZ) 
 
     #fractional_B
     model_50_B =  cs.get_natural_cubic_spline_model(x, fractional_B,\
             minval = min(x), maxval = max(x), n_knots = 50)
-    est_50_B = model_50_B.predict(x) 
+    est_50_B = model_50_B.predict(x)
+    estimations.append(est_50_B)
 
     #fractional_B_Zealot
     model_50_BZ =  cs.get_natural_cubic_spline_model(x, fractional_B_Zealots,\
             minval = min(x), maxval = max(x), n_knots = 50)
-    est_50_BZ = model_50_BZ.predict(x) 
+    est_50_BZ = model_50_BZ.predict(x)
+    estimations.append(est_50_BZ)
 
     #fractional_Moderates 
     model_50_M =  cs.get_natural_cubic_spline_model(x, fractional_Moderates,\
             minval = min(x), maxval = max(x), n_knots = 50)
-    est_50_M = model_50_M.predict(x) 
+    est_50_M = model_50_M.predict(x)
+    estimations.append(est_50_M) 
     
+    #polarization critical values 
+    der_1 = np.gradient(est_50_P)
+    der_2 = np.gradient(der_1) 
+    max_der_1 = der_1.max() 
+    max_der_1_index = np.argmax(der_1) 
+    max_der_2 = der_2.max() 
+    max_der_2_index = np.argmax(der_2) 
+    min_der_2 = der_2.min() 
+    min_der_2_index = np.argmin(der_2)
+    x_critical = [max_der_2_index, min_der_2_index]
+    y_critical = [polarization_vals[max_der_2_index], polarization_vals[min_der_2_index]]
+
+    '''
+    critical_vals = []
+    for est in estimations: 
+        #first derivative 
+        der_1 = np.gradient(est)
+        der_2 = np.gradient(der_1) 
+        max_der_1 = der_1.max() 
+        max_der_1_index = np.argmax(der_1) 
+        max_der_2 = der_2.max() 
+        max_der_2_index = np.argmax(der_2) 
+        min_der_2 = der_2.min() 
+        min_der_2_index = der_2.argmin(der_2)
+        critical_vals.append((max_der_1_index, max_der_2_index, min_der_2_index))
+    '''  
+
     #plotting 
-    #plt.plot(polarization_vals, color = 'b', label = "Polarization")
-    plt.plot(est_50_P, 'bo-', label = "P Interpolation") 
+    #plt.plot(polarization_vals, 'b--', label = "Polarization")
+    plt.plot(est_50_P, 'b', label = "P Interpolation")
+    #plt.plot(der_1, "b+") 
+    #plt.plot(der_2, "b*")
+    plt.plot(x_critical, y_critical, 'b+', markersize = 20)
     #plt.plot(fractional_A, color = 'r', label = "A")
-    plt.plot(est_50_A, 'ro-', label = "A Interpolation") 
+    plt.plot(est_50_A, 'r', label = "A Interpolation") 
     #plt.plot(fractional_A_Zealots, 'g', label = "A Zealots")
-    plt.plot(est_50_AZ, 'go-', label = "AZ Interpolation") 
+    plt.plot(est_50_AZ, 'g', label = "AZ Interpolation") 
     #plt.plot(fractional_B, color = 'm', label = "B")
-    plt.plot(est_50_B, 'mo-', label = "B Interpolation") 
+    plt.plot(est_50_B, 'm', label = "B Interpolation") 
     #plt.plot(fractional_B_Zealots, color = "c", label = "B Zealots")
-    plt.plot(est_50_BZ, 'co-', label = "BZ Interpolation") 
+    plt.plot(est_50_BZ, 'c', label = "BZ Interpolation") 
     #plt.plot(fractional_Moderates, color = "k", label = "Moderates")
-    plt.plot(est_50_M, 'ko-', label = "M Interpolation") 
+    plt.plot(est_50_M, 'k', label = "M Interpolation") 
     plt.title("Ideological Configuration of Organization Over Time") 
     plt.xlabel("Number of Interactions")
     plt.ylabel("Fractional Representation in the Organization")
