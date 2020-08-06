@@ -166,41 +166,52 @@ def plot_single(polarization_vals, fractional_A, fractional_A_Zealots, fractiona
     x = np.asarray([i for i in range(len(polarization_vals))])
     estimations = []
     #polarization_vals
-    model_50_P = cs.get_natural_cubic_spline_model(x, np.asarray(polarization_vals), minval = min(x), \
-            maxval = max(x), n_knots = 50)
+    model_50_P = cs.get_natural_cubic_spline_model(x, polarization_vals,\
+            minval = min(x), maxval = max(x), n_knots = 50)
     est_50_P = model_50_P.predict(x)
     estimations.append(est_50_P) 
+
+    model_20_P = cs.get_natural_cubic_spline_model(x, polarization_vals,\
+            minval = min(x), maxval = max(x), n_knots = 20) 
+    est_20_P = model_20_P.predict(x) 
+    estimations.append(est_20_P) 
+
+    model_35_P = cs.get_natural_cubic_spline_model(x, polarization_vals,\
+            minval = min(x), maxval = max(x), n_knots = 35)
+    est_35_P = model_35_P.predict(x) 
+    estimations.append(est_35_P) 
 
     #fractional_A
     model_50_A =  cs.get_natural_cubic_spline_model(x, fractional_A,\
             minval = min(x), maxval = max(x), n_knots = 50)
     est_50_A = model_50_A.predict(x)
-    estimations.append(est_50_A) 
+    #estimations.append(est_50_A) 
 
     #fractional_A_Zealots
     model_50_AZ =  cs.get_natural_cubic_spline_model(x, fractional_A_Zealots,\
             minval = min(x), maxval = max(x), n_knots = 50)
     est_50_AZ = model_50_AZ.predict(x)
-    estimations.append(est_50_AZ) 
+    #estimations.append(est_50_AZ) 
 
     #fractional_B
     model_50_B =  cs.get_natural_cubic_spline_model(x, fractional_B,\
             minval = min(x), maxval = max(x), n_knots = 50)
     est_50_B = model_50_B.predict(x)
-    estimations.append(est_50_B)
+    #estimations.append(est_50_B)
 
     #fractional_B_Zealot
     model_50_BZ =  cs.get_natural_cubic_spline_model(x, fractional_B_Zealots,\
             minval = min(x), maxval = max(x), n_knots = 50)
     est_50_BZ = model_50_BZ.predict(x)
-    estimations.append(est_50_BZ)
+    #estimations.append(est_50_BZ)
 
     #fractional_Moderates 
     model_50_M =  cs.get_natural_cubic_spline_model(x, fractional_Moderates,\
             minval = min(x), maxval = max(x), n_knots = 50)
     est_50_M = model_50_M.predict(x)
-    estimations.append(est_50_M) 
-    
+    #estimations.append(est_50_M) 
+ 
+    '''
     #polarization critical values 
     der_1 = np.gradient(est_50_P)
     der_2 = np.gradient(der_1) 
@@ -212,41 +223,73 @@ def plot_single(polarization_vals, fractional_A, fractional_A_Zealots, fractiona
     min_der_2_index = np.argmin(der_2)
     x_critical = [max_der_2_index, min_der_2_index]
     y_critical = [polarization_vals[max_der_2_index], polarization_vals[min_der_2_index]]
-
     '''
-    critical_vals = []
-    for est in estimations: 
-        #first derivative 
+    
+    x_critical = []
+    y_critical = []
+    first_derivatives = [] 
+    second_derivatives = [] 
+    est_names = ['Interpolation_50', 'Interpolation_25', 'Interpolation_35']
+    fd_names = ['FD_50', 'FD_25', 'FD_35']
+    sd_names = ['SD_50', 'SD_25', 'SD_35']
+    for est in estimations:  
         der_1 = np.gradient(est)
+        first_derivatives.append(der_1) 
         der_2 = np.gradient(der_1) 
+        second_derivatives.append(der_2) 
+
         max_der_1 = der_1.max() 
         max_der_1_index = np.argmax(der_1) 
         max_der_2 = der_2.max() 
         max_der_2_index = np.argmax(der_2) 
         min_der_2 = der_2.min() 
-        min_der_2_index = der_2.argmin(der_2)
-        critical_vals.append((max_der_1_index, max_der_2_index, min_der_2_index))
-    '''  
+        min_der_2_index = np.argmin(der_2)
+        
+        x_critical.append(max_der_2_index) 
+        x_critical.append(min_der_2_index)
+        y_critical.append(polarization_vals[max_der_2_index])
+        y_critical.append(polarization_vals[min_der_2_index]) 
+    
 
-    #plotting 
-    #plt.plot(polarization_vals, 'b--', label = "Polarization")
-    plt.plot(est_50_P, 'b', label = "P Interpolation")
-    #plt.plot(der_1, "b+") 
-    #plt.plot(der_2, "b*")
-    plt.plot(x_critical, y_critical, 'b+', markersize = 20)
-    #plt.plot(fractional_A, color = 'r', label = "A")
+    #plotting
+    plt.subplot(211) 
+    plt.plot(polarization_vals, label = "Polarization_RAW")
+
+    plt.plot(x_critical[0], y_critical[0], 'k|', markersize = 13, markeredgewidth = 2, label = "SD_50_MAX")
+    plt.plot(x_critical[1], y_critical[1], 'k+', markersize = 13, markeredgewidth = 2, label = "SD_50_MIN")
+    
+    for i in range(len(estimations)):
+        plt.plot(estimations[i], label = est_names[i])  
+    
+    plt.xlabel("Number of Interactions")
+    plt.ylabel("Polarization")
+    plt.legend()
+    plt.title("Polarization Cubic Splines") 
+    
+    plt.subplot(212)
+    for i in range(len(estimations)): 
+        plt.plot(first_derivatives[i], label = fd_names[i])
+        plt.plot(second_derivatives[i], label = sd_names[i])
+
+    '''
+    plt.plot(fractional_A, color = 'r', label = "A")
     plt.plot(est_50_A, 'r', label = "A Interpolation") 
-    #plt.plot(fractional_A_Zealots, 'g', label = "A Zealots")
+    plt.plot(fractional_A_Zealots, 'g', label = "A Zealots")
     plt.plot(est_50_AZ, 'g', label = "AZ Interpolation") 
-    #plt.plot(fractional_B, color = 'm', label = "B")
+    plt.plot(fractional_B, color = 'm', label = "B")
     plt.plot(est_50_B, 'm', label = "B Interpolation") 
-    #plt.plot(fractional_B_Zealots, color = "c", label = "B Zealots")
+    plt.plot(fractional_B_Zealots, color = "c", label = "B Zealots")
     plt.plot(est_50_BZ, 'c', label = "BZ Interpolation") 
-    #plt.plot(fractional_Moderates, color = "k", label = "Moderates")
+    plt.plot(fractional_Moderates, color = "k", label = "Moderates")
     plt.plot(est_50_M, 'k', label = "M Interpolation") 
     plt.title("Ideological Configuration of Organization Over Time") 
     plt.xlabel("Number of Interactions")
     plt.ylabel("Fractional Representation in the Organization")
+    plt.legend()
+    plt.show()
+    '''
+    plt.ylabel("Polarization") 
+    plt.title("Polarization Cubic Splines") 
     plt.legend()
     plt.show()
     pass 
