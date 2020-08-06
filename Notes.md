@@ -1,5 +1,15 @@
 <h1> Notes on IPM being developed </h1>
 
+**8/6/20**: Tested various knot sizes. In the long run, 50 knotes seems to work best. Next, I need to test how the 2nd 
+derivative max changes with different initial conditions and with different hiring policies. Of course, this poses a problem
+for the ASR policy, since the increase in polarization is gradual. The second derivative maximum, therefore, will not
+indicate a tipping point in the same way it does for the remaining two policies, D and SR. Perhaps, instead, we take the 
+time necessary for ASR polarization value to arrive at the 2nd derivative min value for the other policies. Hopefully the 
+difference between the latter and former is negative. 
+
+What type of plots do we want to generate? First of all, we have the obvious: we want the 2nd derivative max as various 
+parameters vary (i.e, fractional representation of moderates increases ([0,1]?)). -- **think harder about this** -- .   
+
 **8/5/20**: Realized that the way to get the critical values I was looking for was to smooth the plots using cubic spline 
 interpolation. Changed plot strategy to cubic spline interpolation and tried to calculate critical values -- 1st derivative
 max, 2nd derivative max, 2nd derivative min. 2nd derivative max seems to usually work when finding the "tipping point" 
