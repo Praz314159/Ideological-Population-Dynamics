@@ -255,7 +255,7 @@ def plot_single(polarization_vals, fractional_A, fractional_A_Zealots, fractiona
     plt.subplot(211) 
     plt.plot(polarization_vals, label = "Polarization_RAW")
 
-    plt.plot(x_critical[0], y_critical[0], 'k|', markersize = 13, markeredgewidth = 2, label = "SD_50_MAX")
+    plt.plot(x_critical[0], y_critical[0], 'ko', markersize = 13, markeredgewidth = 2, label = "SD_50_MAX")
     plt.plot(x_critical[1], y_critical[1], 'k+', markersize = 13, markeredgewidth = 2, label = "SD_50_MIN")
     
     for i in range(len(estimations)):
