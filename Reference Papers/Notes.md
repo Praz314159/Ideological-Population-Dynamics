@@ -1,6 +1,6 @@
 <h1> Notes on IPM being developed </h1>
 
-CHECKING SIGNED COMMIT 
+CHECKING SIGNED COMMIT SECOND PASS
 
 **8/6/20**: Tested various knot sizes. In the long run, 50 knotes seems to work best. Next, I need to test how the 2nd 
 derivative max changes with different initial conditions and with different hiring policies. Of course, this poses a problem
