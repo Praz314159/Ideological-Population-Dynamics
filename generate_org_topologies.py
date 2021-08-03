@@ -34,6 +34,11 @@ for neighboring_connections in range(2, int(organization_size / 2)):
     avg_K_clustering = sum(K_coefficients)/len(K_coefficients) 
     clustering_coefficients.append(avg_K_clustering)  
 
+
+
+
+
+
 plt.plot(clustering_coefficients) 
 plt.xlabel("K") 
 plt.ylabel("Average Clustering Coefficient") 
